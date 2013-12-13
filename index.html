@@ -1,0 +1,209 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <style>
+            body {
+                background-color: #000000;
+                margin: 0px;
+                overflow: hidden;
+                font-family:Monospace;
+                font-size:13px;
+                text-align:center;
+                font-weight: bold;
+                text-align:center;
+            }
+
+            a {
+                color:#0078ff;
+            }
+
+            #info {
+                color:#fff;
+                position: absolute;
+                top: 0px; width: 100%;
+                padding: 5px;
+                z-index:100;
+            }
+
+        </style>
+    </head>
+    <body>
+
+
+        <script src="three.min.js"></script>
+
+        <script src="stats.min.js"></script>
+        <script src="pusher.color.js"></script>
+        <img id="globeImage" style="display:none" src="equirectangle_projection.png"/>
+        <script src="globeutils.js"></script>
+
+        <script>
+
+
+            var container, stats;
+            var camera, scene, renderer, particles, geometry, material, i, h, color, colors = [], sprite, size;
+            var mouseX = 0, mouseY = 0;
+
+            var windowHalfX = window.innerWidth / 2;
+            var windowHalfY = window.innerHeight / 2;
+            cameraDistance = 1500;
+            cameraAngle=0;
+
+
+
+            function init() {
+
+            }
+
+            function mapPoint(lat, lng, scale) {
+               if(!scale){
+                   scale = 200;
+               }
+               var phi = (90 - lat) * Math.PI / 180;
+               var theta = (180 - lng) * Math.PI / 180;
+               var x = scale * Math.sin(phi) * Math.cos(theta);
+               var y = scale * Math.cos(phi);
+               var z = scale * Math.sin(phi) * Math.sin(theta);
+               return {x: x, y: y, z:z};
+             }
+
+
+
+            function onWindowResize( event ) {
+
+                windowHalfX = window.innerWidth / 2;
+                windowHalfY = window.innerHeight / 2;
+
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+
+                renderer.setSize( window.innerWidth, window.innerHeight );
+
+            }
+
+            //
+
+            function animate() {
+
+                requestAnimationFrame( animate );
+
+                render();
+                stats.update();
+
+            }
+
+            function render() {
+
+                var time = Date.now() * 0.00005;
+
+                cameraAngle += .01;
+
+                camera.position.x = cameraDistance * Math.cos(cameraAngle);
+                camera.position.y = 0;
+                camera.position.z = cameraDistance * Math.sin(cameraAngle);
+
+
+                camera.lookAt( scene.position );
+
+                h = ( 360 * ( 1.0 + time ) % 360 ) / 360;
+                // material.color.setHSL( h, 1.0, 0.6 );
+
+                renderer.render( scene, camera );
+
+            }
+
+            var globeImage = document.getElementById('globeImage');
+
+            var samples = [
+            { 
+                offsetLat: 0,
+                offsetLon: 0,
+                incLat: 2,
+                incLon: 4
+                },
+                { 
+                    offsetLat: 1,
+                    offsetLon: 2,
+                    incLat: 2,
+                    incLon: 4
+                }
+                ];
+
+                GLOBEUTILS.landPoints(globeImage, samples, function(points){
+                    container = document.createElement( 'div' );
+                    document.body.appendChild( container );
+
+                    camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 3000 );
+                    camera.position.z = cameraDistance;
+
+                    scene = new THREE.Scene();
+                    scene.fog = new THREE.FogExp2( 0x000001, 0.0009 );
+
+                    geometry = new THREE.Geometry();
+
+                    sprite = THREE.ImageUtils.loadTexture( "hex2.png" );
+                    console.log(points.length);
+                    var myColors1 = pusher.color('orange').hueSet();
+                    var myColors = [];
+                    for(var i = 0; i< myColors1.length; i++){
+                        myColors.push(myColors1[i]);
+
+                        // myColors.push(myColors1[i].shade(.2 + Math.random()/2.0));
+                        // myColors.push(myColors1[i].shade(.2 + Math.random()/2.0));
+                    }
+
+                    for ( i = 0; i < points.length; i ++ ) {
+
+                        var vertex = new THREE.Vector3();
+                        var point = mapPoint(points[i].lat, points[i].lon, 500);
+                        vertex.x = point.x;
+                        vertex.y = point.y;
+                        vertex.z = point.z;
+
+                        geometry.vertices.push( vertex );
+                        //console.log(myColors[Math.floor(Math.random() * myColors.length)].hex6());
+
+                        colors[ i ] = new THREE.Color( myColors[Math.floor(Math.random() * myColors.length)].hex6());
+                        // colors[ i ].setHSL( ( vertex.x + 1000 ) / 2000, 1, 0.5 );
+
+                    }
+
+                    geometry.colors = colors;
+
+                    material = new THREE.ParticleSystemMaterial( { size: 15, map: sprite, vertexColors: true, transparent: true } );
+                    material.color.setHSL( 1.0, 0.2, 0.7 );
+
+                    particles = new THREE.ParticleSystem( geometry, material );
+                    particles.sortParticles = true;
+
+                    scene.add( particles );
+
+                    //
+
+                    renderer = new THREE.WebGLRenderer( { clearAlpha: 1 } );
+                    renderer.setSize( window.innerWidth, window.innerHeight );
+                    container.appendChild( renderer.domElement );
+
+                    //
+
+                    stats = new Stats();
+                    stats.domElement.style.position = 'absolute';
+                    stats.domElement.style.top = '0px';
+                    container.appendChild( stats.domElement );
+
+                    //
+
+
+                    window.addEventListener( 'resize', onWindowResize, false );
+
+                    animate();
+
+
+                    });
+                </script>
+            </body>
+        </html>
+

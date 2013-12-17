@@ -34,6 +34,7 @@
 
 
         <script src="three.min.js"></script>
+        <script src="tween.min.js"></script>
 
         <script src="stats.min.js"></script>
         <script src="pusher.color.js"></script>
@@ -50,8 +51,39 @@
             var windowHalfX = window.innerWidth / 2;
             var windowHalfY = window.innerHeight / 2;
             cameraDistance = 1500;
-            cameraAngle=0;
+            cameraAngle=-2;
 
+            var animations = [];
+
+
+            function addAnimation(when, verticleIndex, position){
+                var pCount = animations.length-1;
+                while(pCount > 0 && animations[pCount].when < when){
+                    pCount--;
+                }
+                animations.splice(pCount+1,0, {when: when, verticleIndex: verticleIndex, position: position});
+            }
+
+            function runAnimations(){
+                var next;
+
+                if(animations.length == 0){
+                    return;
+                }
+
+                while(animations.length > 0 && (next = animations.pop()).when < Date.now()){
+                    particles.geometry.vertices[next.verticleIndex].x = next.position.x;
+                    particles.geometry.vertices[next.verticleIndex].y = next.position.y;
+                    particles.geometry.vertices[next.verticleIndex].z = next.position.z;
+
+                    particles.geometry.verticesNeedUpdate = true;
+                }
+                if(next.when >= Date.now()){
+                    animations.push(next);
+
+                }
+
+            }
 
 
             function init() {
@@ -60,7 +92,7 @@
 
             function mapPoint(lat, lng, scale) {
                if(!scale){
-                   scale = 200;
+                   scale = 500;
                }
                var phi = (90 - lat) * Math.PI / 180;
                var theta = (180 - lng) * Math.PI / 180;
@@ -87,6 +119,7 @@
             //
 
             function animate() {
+                runAnimations();
 
                 requestAnimationFrame( animate );
 
@@ -108,8 +141,12 @@
 
                 camera.lookAt( scene.position );
 
-                h = ( 360 * ( 1.0 + time ) % 360 ) / 360;
+                //h = ( 360 * ( 1.0 + time ) % 360 ) / 360;
                 // material.color.setHSL( h, 1.0, 0.6 );
+
+                for(var i = 0; i< lineCurves.length; i++){
+                    lineCurves[i].rotateY(-1 * time / 100);
+                }
 
                 renderer.render( scene, camera );
 
@@ -132,6 +169,8 @@
                 }
                 ];
 
+                /* POINTS */
+
                 GLOBEUTILS.landPoints(globeImage, samples, function(points){
                     container = document.createElement( 'div' );
                     document.body.appendChild( container );
@@ -140,12 +179,12 @@
                     camera.position.z = cameraDistance;
 
                     scene = new THREE.Scene();
-                    scene.fog = new THREE.FogExp2( 0x000001, 0.0009 );
+                    scene.fog = new THREE.FogExp2( 0x0000001, 0.0009 );
 
                     geometry = new THREE.Geometry();
 
                     sprite = THREE.ImageUtils.loadTexture( "hex2.png" );
-                    console.log(points.length);
+                    //console.log(points.length);
                     var myColors1 = pusher.color('orange').hueSet();
                     var myColors = [];
                     for(var i = 0; i< myColors1.length; i++){
@@ -155,47 +194,120 @@
                         // myColors.push(myColors1[i].shade(.2 + Math.random()/2.0));
                     }
 
+
                     for ( i = 0; i < points.length; i ++ ) {
 
                         var vertex = new THREE.Vector3();
                         var point = mapPoint(points[i].lat, points[i].lon, 500);
-                        vertex.x = point.x;
-                        vertex.y = point.y;
-                        vertex.z = point.z;
+                        var delay = 500+(180+points[i].lon)*8; 
+
+                        vertex.x = 0;
+                        vertex.y = 0;
+                        vertex.z = 0;
 
                         geometry.vertices.push( vertex );
-                        //console.log(myColors[Math.floor(Math.random() * myColors.length)].hex6());
+                        
+                        addAnimation(Date.now() + delay, i, {
+                            x : point.x,
+                            y : point.y,
+                            z : point.z});
+
+                        addAnimation(Date.now() + delay + 300, i, {
+                            x : point.x*.95,
+                            y : point.y*.95,
+                            z : point.z*.95});
 
                         colors[ i ] = new THREE.Color( myColors[Math.floor(Math.random() * myColors.length)].hex6());
-                        // colors[ i ].setHSL( ( vertex.x + 1000 ) / 2000, 1, 0.5 );
+                        
 
                     }
 
                     geometry.colors = colors;
 
-                    material = new THREE.ParticleSystemMaterial( { size: 15, map: sprite, vertexColors: true, transparent: true } );
-                    material.color.setHSL( 1.0, 0.2, 0.7 );
+                    material = new THREE.ParticleSystemMaterial( { size: 16, map: sprite, vertexColors: true, transparent: true } );
+                    //material.color.setHSL( 1.0, 0.2, 0.7 );
 
                     particles = new THREE.ParticleSystem( geometry, material );
                     particles.sortParticles = true;
 
+                    particles.geometry.dynamic=true;
+
+
                     scene.add( particles );
 
-                    //
+
+                    /* swirly lines */
+
+
+
+                    var materialSpline = new THREE.LineBasicMaterial({
+                        color: 0x8FD8D8,
+                        opacity: 0
+                    });
+                    /*
+                    setTimeout(function(){
+                        materialSpline.opacity = .5;
+
+                    }, 450);
+                    setTimeout(function(){
+                        materialSpline.opacity = 1;
+                    }, 900);
+
+                    setTimeout(function(){
+                        materialSpline.opacity = .4;
+                    }, 3000);
+
+                    setTimeout(function(){
+                        materialSpline.opacity = 0;
+                    }, 3100);
+                    */
+                    setTimeout(function(){
+                        for(var i = 0; i < lineCurves.length; i++){
+                            scene.remove(lineCurves[i]);
+                        }
+                    }, 4200);
+
+                    geometrySplines = [];
+                    lineCurves = [];
+
+                    for(var i = 0; i< 35; i++){
+                        geometrySplines[i] = new THREE.Geometry();
+
+                        var lat = Math.random()*180 + 90;
+                        var lon =  Math.random()*10;
+                        var lenBase = 5 + Math.floor(Math.random()*8);
+                        var sPoints = [];
+
+                        if(Math.random()<.2){
+                           lon = Math.random()*20-40;
+                            var lenBase = 5 + Math.floor(Math.random()*3);
+
+                        }
+
+                        for(var j = 0; j< lenBase; j++){
+                            var thisPoint = mapPoint(lat, lon - j * 5);
+                            sPoints.push(new THREE.Vector3(thisPoint.x, thisPoint.y, thisPoint.z));
+                        }
+
+                        var spline = new THREE.SplineCurve3(sPoints);
+
+                        var splinePoints = spline.getPoints(10);
+
+                        for(var k = 0; k < splinePoints.length; k++){
+                            geometrySplines[i].vertices.push(splinePoints[k]);  
+                        }
+                        lineCurves[i] = new THREE.Line(geometrySplines[i], materialSpline);
+                        scene.add(lineCurves[i]);
+                    }
 
                     renderer = new THREE.WebGLRenderer( { clearAlpha: 1 } );
                     renderer.setSize( window.innerWidth, window.innerHeight );
                     container.appendChild( renderer.domElement );
 
-                    //
-
                     stats = new Stats();
                     stats.domElement.style.position = 'absolute';
                     stats.domElement.style.top = '0px';
                     container.appendChild( stats.domElement );
-
-                    //
-
 
                     window.addEventListener( 'resize', onWindowResize, false );
 

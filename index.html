@@ -50,28 +50,35 @@
 
             var windowHalfX = window.innerWidth / 2;
             var windowHalfY = window.innerHeight / 2;
-            cameraDistance = 1500;
-            cameraAngle=-2;
+            cameraDistance = 2500;
+            cameraAngle=(Math.PI * 2) * .5;
 
-            var animations = [];
+            var pointAnimations = [];
+            var markerAnimations = [];
+
+            var markerGeometry = [];
+
+            var textLabels = [];
+
+            var lastRenderDate = new Date();
 
 
-            function addAnimation(when, verticleIndex, position){
-                var pCount = animations.length-1;
-                while(pCount > 0 && animations[pCount].when < when){
+            function addPointAnimation(when, verticleIndex, position){
+                var pCount = pointAnimations.length-1;
+                while(pCount > 0 && pointAnimations[pCount].when < when){
                     pCount--;
                 }
-                animations.splice(pCount+1,0, {when: when, verticleIndex: verticleIndex, position: position});
+                pointAnimations.splice(pCount+1,0, {when: when, verticleIndex: verticleIndex, position: position});
             }
 
-            function runAnimations(){
+            function runPointAnimations(){
                 var next;
 
-                if(animations.length == 0){
+                if(pointAnimations.length == 0){
                     return;
                 }
 
-                while(animations.length > 0 && (next = animations.pop()).when < Date.now()){
+                while(pointAnimations.length > 0 && (next = pointAnimations.pop()).when < Date.now()){
                     particles.geometry.vertices[next.verticleIndex].x = next.position.x;
                     particles.geometry.vertices[next.verticleIndex].y = next.position.y;
                     particles.geometry.vertices[next.verticleIndex].z = next.position.z;
@@ -79,7 +86,7 @@
                     particles.geometry.verticesNeedUpdate = true;
                 }
                 if(next.when >= Date.now()){
-                    animations.push(next);
+                    pointAnimations.push(next);
 
                 }
 
@@ -89,6 +96,93 @@
             function init() {
 
             }
+
+            var markerMaterial = new THREE.LineBasicMaterial({
+                color: 0x8FD8D8,
+                });
+
+
+            function addMarker(lat, lng, text){
+
+                var point = mapPoint(lat,lng);
+
+                var markerGeometry = new THREE.Geometry();
+                markerGeometry.vertices.push(new THREE.Vector3(point.x, point.y, point.z));
+                markerGeometry.vertices.push(new THREE.Vector3(point.x, point.y, point.z));
+
+                var line = new THREE.Line(markerGeometry, markerMaterial);
+                var textMesh = createLabel(text, point.x*1.2, point.y*1.2, point.z*1.2, 20, "white");
+                textMesh.rotateY(Math.PI/2 - cameraAngle);
+ 
+                scene.add(textMesh);
+                textLabels.push(textMesh);
+
+                setInterval(function(){
+                    while(textLabels.length > 50){
+                        scene.remove(textLabels.shift());
+
+                    }
+
+                },1000);
+
+                scene.add(line);
+
+                new TWEEN.Tween(point)
+                    .to( {x: point.x*1.2, y: point.y*1.2, z: point.z*1.2}, 1500 )
+                    .easing( TWEEN.Easing.Elastic.InOut )
+                    .onUpdate(function(){
+                        markerGeometry.vertices[1].x = this.x;
+                        markerGeometry.vertices[1].y = this.y;
+                        markerGeometry.vertices[1].z = this.z;
+                        markerGeometry.verticesNeedUpdate = true;
+                    })
+                    .start();
+
+
+
+
+            }
+
+            function createLabel(text, x, y, z, size, color, backGroundColor, backgroundMargin) {
+                if(!backgroundMargin)
+                backgroundMargin = 50;
+
+                var canvas = document.createElement("canvas");
+
+                var context = canvas.getContext("2d");
+                context.font = size + "pt Arial";
+
+                var textWidth = context.measureText(text).width;
+
+                canvas.width = textWidth;
+                canvas.height = size;
+                context = canvas.getContext("2d");
+                context.font = size + "pt Arial";
+
+                context.textAlign = "center";
+                context.textBaseline = "middle";
+                context.fillStyle = color;
+                context.fillText(text, canvas.width / 2, canvas.height / 2);
+
+                // context.strokeStyle = "black";
+                // context.strokeRect(0, 0, canvas.width, canvas.height);
+
+                var texture = new THREE.Texture(canvas);
+                texture.needsUpdate = true;
+
+                var material = new THREE.MeshBasicMaterial({
+                    map : texture
+                    });
+
+                    var mesh = new THREE.Mesh(new THREE.PlaneGeometry(canvas.width, canvas.height), material);
+                    // mesh.overdraw = true;
+                    mesh.doubleSided = true;
+                    mesh.position.x = x - canvas.width;
+                    mesh.position.y = y - canvas.height;
+                    mesh.position.z = z;
+
+                    return mesh;
+                }
 
             function mapPoint(lat, lng, scale) {
                if(!scale){
@@ -119,7 +213,8 @@
             //
 
             function animate() {
-                runAnimations();
+                runPointAnimations();
+                TWEEN.update();
 
                 requestAnimationFrame( animate );
 
@@ -130,9 +225,12 @@
 
             function render() {
 
-                var time = Date.now() * 0.00005;
 
-                cameraAngle += .01;
+                var renderTime = new Date() - lastRenderDate;
+                lastRenderDate = new Date();
+                var rotateCameraBy = (2 * Math.PI)/(20000/renderTime);
+
+                cameraAngle += rotateCameraBy;
 
                 camera.position.x = cameraDistance * Math.cos(cameraAngle);
                 camera.position.y = 0;
@@ -145,7 +243,11 @@
                 // material.color.setHSL( h, 1.0, 0.6 );
 
                 for(var i = 0; i< lineCurves.length; i++){
-                    lineCurves[i].rotateY(-1 * time / 100);
+                    lineCurves[i].rotateY((2 * Math.PI)/(3000/renderTime));
+                }
+
+                for(var i = 0; i< textLabels.length; i++){
+                    textLabels[i].rotateY(rotateCameraBy * -1);
                 }
 
                 renderer.render( scene, camera );
@@ -179,7 +281,7 @@
                     camera.position.z = cameraDistance;
 
                     scene = new THREE.Scene();
-                    scene.fog = new THREE.FogExp2( 0x0000001, 0.0009 );
+                    scene.fog = new THREE.Fog( 0x000000, cameraDistance-200, cameraDistance+550 );
 
                     geometry = new THREE.Geometry();
 
@@ -190,8 +292,8 @@
                     for(var i = 0; i< myColors1.length; i++){
                         myColors.push(myColors1[i]);
 
-                        // myColors.push(myColors1[i].shade(.2 + Math.random()/2.0));
-                        // myColors.push(myColors1[i].shade(.2 + Math.random()/2.0));
+                        myColors.push(myColors1[i].shade(.2 + Math.random()/2.0));
+                        myColors.push(myColors1[i].shade(.2 + Math.random()/2.0));
                     }
 
 
@@ -199,23 +301,23 @@
 
                         var vertex = new THREE.Vector3();
                         var point = mapPoint(points[i].lat, points[i].lon, 500);
-                        var delay = 500+(180+points[i].lon)*8; 
+                        var delay = 3000*((180+points[i].lon)/360.0); 
 
                         vertex.x = 0;
                         vertex.y = 0;
-                        vertex.z = 0;
+                        vertex.z = cameraDistance+1;
 
                         geometry.vertices.push( vertex );
                         
-                        addAnimation(Date.now() + delay, i, {
+                        addPointAnimation(Date.now() + delay, i, {
+                            x : point.x*1.05,
+                            y : point.y*1.05,
+                            z : point.z*1.05});
+
+                        addPointAnimation(Date.now() + delay + 400, i, {
                             x : point.x,
                             y : point.y,
                             z : point.z});
-
-                        addAnimation(Date.now() + delay + 300, i, {
-                            x : point.x*.95,
-                            y : point.y*.95,
-                            z : point.z*.95});
 
                         colors[ i ] = new THREE.Color( myColors[Math.floor(Math.random() * myColors.length)].hex6());
                         
@@ -225,7 +327,6 @@
                     geometry.colors = colors;
 
                     material = new THREE.ParticleSystemMaterial( { size: 16, map: sprite, vertexColors: true, transparent: true } );
-                    //material.color.setHSL( 1.0, 0.2, 0.7 );
 
                     particles = new THREE.ParticleSystem( geometry, material );
                     particles.sortParticles = true;
@@ -236,57 +337,61 @@
                     scene.add( particles );
 
 
+                    /* marker things */
+
+
                     /* swirly lines */
 
 
 
                     var materialSpline = new THREE.LineBasicMaterial({
                         color: 0x8FD8D8,
+                        transparent: true,
                         opacity: 0
                     });
-                    /*
-                    setTimeout(function(){
-                        materialSpline.opacity = .5;
+                    geometrySplines = [];
+                    lineCurves = [];
 
-                    }, 450);
-                    setTimeout(function(){
-                        materialSpline.opacity = 1;
-                    }, 900);
+                    new TWEEN.Tween( {opacity: 0})
+                        .to( {opacity: 1}, 500 )
+                        .onUpdate(function(){
+                            materialSpline.opacity = this.opacity;
+                        })
+                        .start();
 
-                    setTimeout(function(){
-                        materialSpline.opacity = .4;
-                    }, 3000);
+                    new TWEEN.Tween( {opacity: 1})
+                        .to( {opacity: 0}, 500 )
+                        .delay(2000)
+                        .onUpdate(function(){
+                            materialSpline.opacity = this.opacity;
 
-                    setTimeout(function(){
-                        materialSpline.opacity = 0;
-                    }, 3100);
-                    */
+                        })
+                        .start();
+
                     setTimeout(function(){
                         for(var i = 0; i < lineCurves.length; i++){
                             scene.remove(lineCurves[i]);
                         }
                     }, 4200);
 
-                    geometrySplines = [];
-                    lineCurves = [];
 
-                    for(var i = 0; i< 35; i++){
+                    for(var i = 0; i< 100; i++){
                         geometrySplines[i] = new THREE.Geometry();
 
                         var lat = Math.random()*180 + 90;
-                        var lon =  Math.random()*10;
-                        var lenBase = 5 + Math.floor(Math.random()*8);
+                        var lon =  Math.random()*5-25;
+                        var lenBase = 4 + Math.floor(Math.random()*5);
                         var sPoints = [];
 
-                        if(Math.random()<.2){
-                           lon = Math.random()*20-40;
-                            var lenBase = 5 + Math.floor(Math.random()*3);
+                        if(Math.random()<.3){
+                           lon = Math.random()*30 - 80;
+                           lenBase = 3 + Math.floor(Math.random()*3);
 
                         }
 
                         for(var j = 0; j< lenBase; j++){
                             var thisPoint = mapPoint(lat, lon - j * 5);
-                            sPoints.push(new THREE.Vector3(thisPoint.x, thisPoint.y, thisPoint.z));
+                            sPoints.push(new THREE.Vector3(thisPoint.x*1.05, thisPoint.y*1.05, thisPoint.z*1.05));
                         }
 
                         var spline = new THREE.SplineCurve3(sPoints);
@@ -310,6 +415,10 @@
                     container.appendChild( stats.domElement );
 
                     window.addEventListener( 'resize', onWindowResize, false );
+
+                    setInterval(function(){
+                        addMarker(Math.random()*180 + 90, Math.random()*360+180, "testing");
+                    }, 300);
 
                     animate();
 

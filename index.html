@@ -58,7 +58,6 @@
 
             var markerGeometry = [];
 
-            var textLabels = [];
 
             var lastRenderDate = new Date();
 
@@ -111,19 +110,11 @@
                 markerGeometry.vertices.push(new THREE.Vector3(point.x, point.y, point.z));
 
                 var line = new THREE.Line(markerGeometry, markerMaterial);
-                var textMesh = createLabel(text, point.x*1.2, point.y*1.2, point.z*1.2, 20, "white");
-                textMesh.rotateY(Math.PI/2 - cameraAngle);
+                var textSprite = createLabel(text, point.x*1.2, point.y*1.2, point.z*1.2, 20, "white");
+                // textMesh.rotateY(Math.PI/2 - cameraAngle);
  
-                scene.add(textMesh);
-                textLabels.push(textMesh);
+                scene.add(textSprite);
 
-                setInterval(function(){
-                    while(textLabels.length > 50){
-                        scene.remove(textLabels.shift());
-
-                    }
-
-                },1000);
 
                 scene.add(line);
 
@@ -170,10 +161,25 @@
                 var texture = new THREE.Texture(canvas);
                 texture.needsUpdate = true;
 
-                var material = new THREE.MeshBasicMaterial({
-                    map : texture
+                var material = new THREE.SpriteMaterial({
+                    map : texture,
+                    useScreenCoordinates: false,
+                    opacity:0
+                    
                     });
+                var sprite = new THREE.Sprite(material);
+                sprite.position = {x: x*1.1, y: y, z: z*1.1};
+                sprite.scale.set(canvas.width, canvas.height);
+                    new TWEEN.Tween( {opacity: 0})
+                        .to( {opacity: 1}, 500 )
+                        .onUpdate(function(){
+                            material.opacity = this.opacity
+                        }).delay(1000)
+                        .start();
+                return sprite;
 
+
+                    /*
                     var mesh = new THREE.Mesh(new THREE.PlaneGeometry(canvas.width, canvas.height), material);
                     // mesh.overdraw = true;
                     mesh.doubleSided = true;
@@ -182,6 +188,7 @@
                     mesh.position.z = z;
 
                     return mesh;
+                    */
                 }
 
             function mapPoint(lat, lng, scale) {
@@ -246,9 +253,6 @@
                     lineCurves[i].rotateY((2 * Math.PI)/(3000/renderTime));
                 }
 
-                for(var i = 0; i< textLabels.length; i++){
-                    textLabels[i].rotateY(rotateCameraBy * -1);
-                }
 
                 renderer.render( scene, camera );
 

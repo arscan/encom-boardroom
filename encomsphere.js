@@ -42,36 +42,48 @@
         return context.getImageData(x,y,1,1).data[0] === 0;
     };
 
-    var globe_samplePoints = function(globeContext, width, height, latoffset, lonoffset, latinc, loninc, cb){
+    var globe_samplePoints = function(projectionContext, width, height, latoffset, lonoffset, latinc, loninc, cb){
         var points = [];
         for(var lat = 90-latoffset; lat > -90; lat -= latinc){
             for(var lon = -180+lonoffset; lon < 180; lon += loninc){
                 var point = globe_latLonToXY(width, height, lat, lon);
-                if(globe_isPixelBlack(globeContext,point.x, point.y)){
+                if(globe_isPixelBlack(projectionContext,point.x, point.y)){
+                    cb({lat: lat, lon: lon});
                     points.push({lat: lat, lon: lon});
-                    //drawLatLon(pointContext,lat,lon);
                 }
             }
         }
         return points;
     };
 
+    var globe_mapPoint = function(lat, lng, scale) {
+       if(!scale){
+           scale = 500;
+       }
+       var phi = (90 - lat) * Math.PI / 180;
+       var theta = (180 - lng) * Math.PI / 180;
+       var x = scale * Math.sin(phi) * Math.cos(theta);
+       var y = scale * Math.cos(phi);
+       var z = scale * Math.sin(phi) * Math.sin(theta);
+       return {x: x, y: y, z:z};
+     }
+
     var globe_addPointAnimation = function(when, verticleIndex, position){
-        var pCount = pointAnimations.length-1;
-        while(pCount > 0 && pointAnimations[pCount].when < when){
+        var pCount = this.globe_pointAnimations.length-1;
+        while(pCount > 0 && this.globe_pointAnimations[pCount].when < when){
             pCount--;
         }
-        pointAnimations.splice(pCount+1,0, {when: when, verticleIndex: verticleIndex, position: position});
+        this.globe_pointAnimations.splice(pCount+1,0, {when: when, verticleIndex: verticleIndex, position: position});
     };
 
     var globe_runPointAnimations = function(){
         var next;
 
-        if(pointAnimations.length == 0){
+        if(this.globe_pointAnimations.length == 0){
             return;
         }
 
-        while(pointAnimations.length > 0 && (next = pointAnimations.pop()).when < Date.now()){
+        while(this.globe_pointAnimations.length > 0 && (next = this.globe_pointAnimations.pop()).when < Date.now()){
             this.globe_particles.geometry.vertices[next.verticleIndex].x = next.position.x;
             this.globe_particles.geometry.vertices[next.verticleIndex].y = next.position.y;
             this.globe_particles.geometry.vertices[next.verticleIndex].z = next.position.z;
@@ -79,7 +91,7 @@
             this.globe_particles.geometry.verticesNeedUpdate = true;
         }
         if(next.when >= Date.now()){
-            pointAnimations.push(next);
+            this.globe_pointAnimations.push(next);
 
         }
 
@@ -101,25 +113,27 @@
             myColors.push(myColors1[i].shade(.2 + Math.random()/2.0));
             myColors.push(myColors1[i].shade(.2 + Math.random()/2.0));
         }
+        var geometry = new THREE.Geometry();
 
-        for ( i = 0; i < points.length; i ++ ) {
+        for ( i = 0; i < this.points.length; i ++ ) {
+            
 
             var vertex = new THREE.Vector3();
-            var point = mapPoint(points[i].lat, points[i].lon, 500);
-            var delay = 3000*((180+points[i].lon)/360.0); 
+            var point = globe_mapPoint(this.points[i].lat, this.points[i].lon, 500);
+            var delay = 3000*((180+this.points[i].lon)/360.0); 
 
             vertex.x = 0;
             vertex.y = 0;
-            vertex.z = cameraDistance+1;
+            vertex.z = this.cameraDistance+1;
 
             geometry.vertices.push( vertex );
 
-            globe_addPointAnimation(Date.now() + delay, i, {
+            globe_addPointAnimation.call(this,Date.now() + delay, i, {
                 x : point.x*1.05,
                 y : point.y*1.05,
                 z : point.z*1.05});
 
-            globe_addPointAnimation(Date.now() + delay + 400, i, {
+            globe_addPointAnimation.call(this,Date.now() + delay + 400, i, {
                 x : point.x,
                 y : point.y,
                 z : point.z});
@@ -153,8 +167,8 @@
         var defaults = {
             mapUrl: "equirectangle_projection.png",
             size: 100,
-            width: 500,
-            height: 300,
+            width: document.width,
+            height: document.height,
             cameraDistance: 2500,
             samples: [
                 { 
@@ -170,7 +184,10 @@
                     incLon: 4
                 }
                 ],
-            points: []
+            points: [],
+            globe_pointAnimations: [],
+            lastRenderDate: new Date()
+            
         };
 
         extend(opts, defaults);
@@ -186,9 +203,9 @@
     /* public globe functions */
 
     globe.prototype.init = function(cb){
-        var img = document.createElement('img')
+        var  projectionContext,
+            img = document.createElement('img'),
             projectionCanvas = document.createElement('canvas'),
-            projectionContext,
             self = this;
             
         document.body.appendChild(projectionCanvas);
@@ -196,36 +213,43 @@
 
         img.addEventListener('load', function(){
             //image has loaded, may rsume
-            globeCanvas.width = img.width;
-            globeCanvas.height = img.height;
-            globeContext.drawImage(img, 0, 0, img.width, img.height);
-            for (var i = 0; i< samples.length; i++){
-                globe_samplePoints(globeContext,img.width, img.height, samples[i].offsetLat, samples[i].offsetLon, samples[i].incLat, samples[i].incLon, function(point){
+            projectionCanvas.width = img.width;
+            projectionCanvas.height = img.height;
+            projectionContext.drawImage(img, 0, 0, img.width, img.height);
+            for (var i = 0; i< self.samples.length; i++){
+                
+                globe_samplePoints(projectionContext,img.width, img.height, self.samples[i].offsetLat, self.samples[i].offsetLon, self.samples[i].incLat, self.samples[i].incLon, function(point){
                     self.points.push(point);
                 });
             }
-            document.body.removeChild(globeCanvas);
+            document.body.removeChild(projectionCanvas);
 
 
             // create the webgl context, renderer and camera
             if(self.containerId){
-                container = document.getElementById(self.containerId);
-                renderer.setSize( container.width, container.height);
-                self.width = container.width;
-                self.height = container.height;
+                self.container = document.getElementById(self.containerId);
+                self.width = self.container.width;
+                self.height = self.container.height;
             } else {
-                container = document.createElement( 'div' );
-                renderer.setSize( self.width, self.height);
+                self.container = document.createElement( 'div' );
+                self.container.width = self.width;
+                self.container.height = self.height;
             }
-            
+
+            document.body.appendChild( self.container );
+
             self.renderer = new THREE.WebGLRenderer( { clearAlpha: 1 } );
-            container.appendChild( renderer.domElement );
+            self.renderer.setSize( self.width, self.height);
+            self.container.appendChild( self.renderer.domElement );
+            console.log(self.container);
 
             // create the camera
 
             self.camera = new THREE.PerspectiveCamera( 50, self.width / self.height, 1, 3000 );
             self.camera.position.z = this.cameraDistance;
             self.cameraAngle=(Math.PI * 2) * .5;
+
+            // create the scene
 
             self.scene = new THREE.Scene();
             self.scene.fog = new THREE.Fog( 0x000000, self.cameraDistance-200, self.cameraDistance+550 );
@@ -234,38 +258,36 @@
             
             if(Stats){
                 self.stats = new Stats();
-                stats.domElement.style.position = 'absolute';
-                stats.domElement.style.top = '0px';
-                container.appendChild( stats.domElement );
+                self.stats.domElement.style.position = 'absolute';
+                self.stats.domElement.style.top = '0px';
+                self.container.appendChild( self.stats.domElement );
             }
 
+            // add the globe particles
+            
+            globe_mainParticles.call(self);
 
-            cb();
+            if(cb){
+                cb();
+            }
         });
 
-
-
-        // LOAD THE MAIN DATA POINTS
-        
-        // create the image
-        // wait for it to load
-        //
-        // after it loads, run stuff against i
-        //
 
         img.src = this.mapUrl;
     }
 
     globe.prototype.tick = function(){
-        this.globe_runPointAnimations();
+        globe_runPointAnimations.call(this);
         //TWEEN.update();
 
         //requestAnimationFrame( animate );
 
-        stats.update();
+        if(this.stats){
+            this.stats.update();
+        }
 
 
-        var renderTime = new Date() - (this.lastRenderDate || this.lastRenderDate = new Date());
+        var renderTime = new Date() - this.lastRenderDate;
         this.lastRenderDate = new Date();
         var rotateCameraBy = (2 * Math.PI)/(20000/renderTime);
 
@@ -289,7 +311,7 @@
        */
 
 
-        this.renderer.render( this.scene, camera );
+        this.renderer.render( this.scene, this.camera );
 
     }
 

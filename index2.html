@@ -36,6 +36,24 @@
         <script src="pusher.color.js"></script>
         <script src="encomsphere.js"></script>
 
+        <script>
+            setTimeout(function(){
+                globe = new ENCOM.globe();
+                globe.init(function(){
+                    animate();
+                });
+            },500);
+
+
+            function animate(){
+
+                globe.tick();
+
+                requestAnimationFrame(animate);
+
+            }
+
+        </script>
 
     </head>
     <body>

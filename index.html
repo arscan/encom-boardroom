@@ -370,7 +370,7 @@
 
                     geometry.colors = colors;
 
-                    material = new THREE.ParticleSystemMaterial( { size: 16, map: sprite, vertexColors: true, transparent: true } );
+                    material = new THREE.ParticleSystemMaterial( { size: 8 + Math.random()*10, map: sprite, vertexColors: true, transparent: true } );
 
                     particles = new THREE.ParticleSystem( geometry, material );
                     particles.sortParticles = true;

@@ -77,21 +77,23 @@
 
     var globe_runPointAnimations = function(){
         var next;
+        if(!this.firstRunTime){
+            this.firstRunTime = Date.now();
+        }
 
         if(this.globe_pointAnimations.length == 0){
             return;
         }
 
-        while(this.globe_pointAnimations.length > 0 && (next = this.globe_pointAnimations.pop()).when < Date.now()){
+        while(this.globe_pointAnimations.length > 0 && this.firstRunTime + (next = this.globe_pointAnimations.pop()).when < Date.now()){
             this.globe_particles.geometry.vertices[next.verticleIndex].x = next.position.x;
             this.globe_particles.geometry.vertices[next.verticleIndex].y = next.position.y;
             this.globe_particles.geometry.vertices[next.verticleIndex].z = next.position.z;
 
             this.globe_particles.geometry.verticesNeedUpdate = true;
         }
-        if(next.when >= Date.now()){
+        if(this.firstRunTime + next.when >= Date.now()){
             this.globe_pointAnimations.push(next);
-
         }
 
     };
@@ -126,12 +128,12 @@
 
             geometry.vertices.push( vertex );
 
-            globe_addPointAnimation.call(this,Date.now() + delay, i, {
-                x : point.x*1.05,
-                y : point.y*1.05,
-                z : point.z*1.05});
+            globe_addPointAnimation.call(this,delay, i, {
+                x : point.x*this.swirlMultiplier,
+                y : point.y*this.swirlMultiplier,
+                z : point.z*this.swirlMultiplier});
 
-            globe_addPointAnimation.call(this,Date.now() + delay + 400, i, {
+            globe_addPointAnimation.call(this,delay + 400, i, {
                 x : point.x,
                 y : point.y,
                 z : point.z});
@@ -156,12 +158,13 @@
 
 
     var globe_swirls = function(){
-        var materialSpline = new THREE.LineBasicMaterial({
+        var geometrySpline,
+            materialSpline = new THREE.LineBasicMaterial({
             color: 0x8FD8D8,
-            //transparent: true,
+            transparent: true,
+            linewidth: 2,
             opacity: 1
         });
-        var geometrySpline;
 
         /*
         new TWEEN.Tween( {opacity: 0})
@@ -179,16 +182,14 @@
 
             })
             .start();
-           */
 
-        // setTimeout(function(){
-        //     for(var i = 0; i < lineCurves.length; i++){
-        //         scene.remove(lineCurves[i]);
-        //     }
-        // }, 4200);
+        setTimeout(function(){
+            this.scene.remove(this.swirl);
+        }, 4200);
+       */
 
 
-        for(var i = 0; i< 100; i++){
+        for(var i = 0; i<75; i++){
             geometrySpline = new THREE.Geometry();
 
             var lat = Math.random()*180 + 90;
@@ -203,19 +204,25 @@
 
             for(var j = 0; j< lenBase; j++){
                 var thisPoint = globe_mapPoint(lat, lon - j * 5);
-                sPoints.push(new THREE.Vector3(thisPoint.x*1.05, thisPoint.y*1.05, thisPoint.z*1.05));
-                console.log(thisPoint);
+                sPoints.push(new THREE.Vector3(thisPoint.x*this.swirlMultiplier, thisPoint.y*this.swirlMultiplier, thisPoint.z*this.swirlMultiplier));
+
+                //TODO i took out the spline... should i remove permanently?
+                geometrySpline.vertices.push(sPoints[j]);  
             }
+
+            /*
 
             var spline = new THREE.SplineCurve3(sPoints);
 
-            var splinePoints = spline.getPoints(10);
+            var splinePoints = spline.getPoints(1);
 
             for(var k = 0; k < splinePoints.length; k++){
                 geometrySpline.vertices.push(splinePoints[k]);  
             }
 
-            this.swirl.add(THREE.Line(geometrySpline, materialSpline));
+           */
+
+            this.swirl.add(new THREE.Line(geometrySpline, materialSpline));
             
         }
         this.scene.add(this.swirl);
@@ -234,6 +241,7 @@
             size: 100,
             width: document.width,
             height: document.height,
+            swirlMultiplier: 1.1,
             cameraDistance: 2500,
             samples: [
                 { 
@@ -251,7 +259,6 @@
                 ],
             points: [],
             globe_pointAnimations: [],
-            lastRenderDate: new Date(),
             swirl: new THREE.Object3D()
             
         };
@@ -352,6 +359,10 @@
             this.stats.update();
         }
 
+        if(!this.lastRenderDate){
+            this.lastRenderDate = new Date();
+        }
+
 
         var renderTime = new Date() - this.lastRenderDate;
         this.lastRenderDate = new Date();
@@ -366,16 +377,7 @@
 
         this.camera.lookAt( this.scene.position );
 
-        //h = ( 360 * ( 1.0 + time ) % 360 ) / 360;
-        // material.color.setHSL( h, 1.0, 0.6 );
-        //
-
-        /*
-        for(var i = 0; i< lineCurves.length; i++){
-            lineCurves[i].rotateY((2 * Math.PI)/(3000/renderTime));
-        }
-       */
-      this.swirl.rotateY((2 * Math.PI)/(3000/renderTime));
+        this.swirl.rotateY((2 * Math.PI)/(3000/renderTime));
         this.renderer.render( this.scene, this.camera );
 
     }

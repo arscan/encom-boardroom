@@ -38,7 +38,6 @@
     };
 
     var globe_isPixelBlack = function(context, x, y){
-        // console.log(context.getImageData(x,y,1,1));
         return context.getImageData(x,y,1,1).data[0] === 0;
     };
 
@@ -104,7 +103,6 @@
         var colors = [];
 
         var sprite = THREE.ImageUtils.loadTexture( "hex2.png" );
-        //console.log(points.length);
         var myColors1 = pusher.color('orange').hueSet();
         var myColors = [];
         for(var i = 0; i< myColors1.length; i++){
@@ -156,6 +154,73 @@
 
     };
 
+
+    var globe_swirls = function(){
+        var materialSpline = new THREE.LineBasicMaterial({
+            color: 0x8FD8D8,
+            //transparent: true,
+            opacity: 1
+        });
+        var geometrySpline;
+
+        /*
+        new TWEEN.Tween( {opacity: 0})
+            .to( {opacity: 1}, 500 )
+            .onUpdate(function(){
+                materialSpline.opacity = this.opacity;
+            })
+            .start();
+
+        new TWEEN.Tween( {opacity: 1})
+            .to( {opacity: 0}, 500 )
+            .delay(2000)
+            .onUpdate(function(){
+                materialSpline.opacity = this.opacity;
+
+            })
+            .start();
+           */
+
+        // setTimeout(function(){
+        //     for(var i = 0; i < lineCurves.length; i++){
+        //         scene.remove(lineCurves[i]);
+        //     }
+        // }, 4200);
+
+
+        for(var i = 0; i< 100; i++){
+            geometrySpline = new THREE.Geometry();
+
+            var lat = Math.random()*180 + 90;
+            var lon =  Math.random()*5-25;
+            var lenBase = 4 + Math.floor(Math.random()*5);
+            var sPoints = [];
+
+            if(Math.random()<.3){
+                lon = Math.random()*30 - 80;
+                lenBase = 3 + Math.floor(Math.random()*3);
+            }
+
+            for(var j = 0; j< lenBase; j++){
+                var thisPoint = globe_mapPoint(lat, lon - j * 5);
+                sPoints.push(new THREE.Vector3(thisPoint.x*1.05, thisPoint.y*1.05, thisPoint.z*1.05));
+                console.log(thisPoint);
+            }
+
+            var spline = new THREE.SplineCurve3(sPoints);
+
+            var splinePoints = spline.getPoints(10);
+
+            for(var k = 0; k < splinePoints.length; k++){
+                geometrySpline.vertices.push(splinePoints[k]);  
+            }
+
+            this.swirl.add(THREE.Line(geometrySpline, materialSpline));
+            
+        }
+        this.scene.add(this.swirl);
+    };
+
     /* globe constructor */
 
     function globe(opts){
@@ -186,7 +251,8 @@
                 ],
             points: [],
             globe_pointAnimations: [],
-            lastRenderDate: new Date()
+            lastRenderDate: new Date(),
+            swirl: new THREE.Object3D()
             
         };
 
@@ -241,7 +307,6 @@
             self.renderer = new THREE.WebGLRenderer( { clearAlpha: 1 } );
             self.renderer.setSize( self.width, self.height);
             self.container.appendChild( self.renderer.domElement );
-            console.log(self.container);
 
             // create the camera
 
@@ -266,6 +331,7 @@
             // add the globe particles
             
             globe_mainParticles.call(self);
+            globe_swirls.call(self);
 
             if(cb){
                 cb();
@@ -278,7 +344,7 @@
 
     globe.prototype.tick = function(){
         globe_runPointAnimations.call(this);
-        //TWEEN.update();
+        TWEEN.update();
 
         //requestAnimationFrame( animate );
 
@@ -309,8 +375,7 @@
             lineCurves[i].rotateY((2 * Math.PI)/(3000/renderTime));
         }
        */
-
-
+      this.swirl.rotateY((2 * Math.PI)/(3000/renderTime));
         this.renderer.render( this.scene, this.camera );
 
     }

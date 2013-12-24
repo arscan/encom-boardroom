@@ -98,6 +98,53 @@
 
     };
 
+    var globe_createLabel = function(text, x, y, z, size, color, backGroundColor, backgroundMargin) {
+        if(!backgroundMargin)
+            backgroundMargin = 50;
+
+        var canvas = document.createElement("canvas");
+
+        var context = canvas.getContext("2d");
+        context.font = size + "pt Arial";
+
+        var textWidth = context.measureText(text).width;
+
+        canvas.width = textWidth;
+        canvas.height = size;
+        context = canvas.getContext("2d");
+        context.font = size + "pt Arial";
+
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillStyle = color;
+        context.fillText(text, canvas.width / 2, canvas.height / 2);
+
+        // context.strokeStyle = "black";
+        // context.strokeRect(0, 0, canvas.width, canvas.height);
+
+        var texture = new THREE.Texture(canvas);
+        texture.needsUpdate = true;
+
+        var material = new THREE.SpriteMaterial({
+            map : texture,
+            useScreenCoordinates: false,
+            opacity:0
+            
+            });
+        var sprite = new THREE.Sprite(material);
+        sprite.position = {x: x*1.1, y: y+20, z: z*1.1};
+        sprite.scale.set(canvas.width, canvas.height);
+            new TWEEN.Tween( {opacity: 0})
+                .to( {opacity: 1}, 500 )
+                .onUpdate(function(){
+                    material.opacity = this.opacity
+                }).delay(1000)
+                .start();
+
+        return sprite;
+
+    }
+
     var globe_mainParticles = function(){
 
         var material, geometry;
@@ -120,7 +167,7 @@
 
             var vertex = new THREE.Vector3();
             var point = globe_mapPoint(this.points[i].lat, this.points[i].lon, 500);
-            var delay = 3000*((180+this.points[i].lon)/360.0); 
+            var delay = this.swirlTime*((180+this.points[i].lon)/360.0); 
 
             vertex.x = 0;
             vertex.y = 0;
@@ -133,7 +180,7 @@
                 y : point.y*this.swirlMultiplier,
                 z : point.z*this.swirlMultiplier});
 
-            globe_addPointAnimation.call(this,delay + 400, i, {
+            globe_addPointAnimation.call(this,delay + 500, i, {
                 x : point.x,
                 y : point.y,
                 z : point.z});
@@ -165,18 +212,12 @@
             linewidth: 2,
             opacity: 1
         });
-
-        /*
-        new TWEEN.Tween( {opacity: 0})
-            .to( {opacity: 1}, 500 )
-            .onUpdate(function(){
-                materialSpline.opacity = this.opacity;
-            })
-            .start();
+        var sPoint;
+        var _this = this;
 
         new TWEEN.Tween( {opacity: 1})
             .to( {opacity: 0}, 500 )
-            .delay(2000)
+            .delay(this.swirlTime-500)
             .onUpdate(function(){
                 materialSpline.opacity = this.opacity;
 
@@ -184,43 +225,28 @@
             .start();
 
         setTimeout(function(){
-            this.scene.remove(this.swirl);
-        }, 4200);
-       */
+            _this.scene.remove(_this.swirl);
+        }, this.swirlTime);
 
 
         for(var i = 0; i<75; i++){
             geometrySpline = new THREE.Geometry();
 
             var lat = Math.random()*180 + 90;
-            var lon =  Math.random()*5-25;
+            var lon =  Math.random()*5;
             var lenBase = 4 + Math.floor(Math.random()*5);
-            var sPoints = [];
 
             if(Math.random()<.3){
-                lon = Math.random()*30 - 80;
+                lon = Math.random()*30 - 50;
                 lenBase = 3 + Math.floor(Math.random()*3);
             }
 
             for(var j = 0; j< lenBase; j++){
                 var thisPoint = globe_mapPoint(lat, lon - j * 5);
-                sPoints.push(new THREE.Vector3(thisPoint.x*this.swirlMultiplier, thisPoint.y*this.swirlMultiplier, thisPoint.z*this.swirlMultiplier));
+                sPoint = new THREE.Vector3(thisPoint.x*this.swirlMultiplier, thisPoint.y*this.swirlMultiplier, thisPoint.z*this.swirlMultiplier);
 
-                //TODO i took out the spline... should i remove permanently?
-                geometrySpline.vertices.push(sPoints[j]);  
+                geometrySpline.vertices.push(sPoint);  
             }
-
-            /*
-
-            var spline = new THREE.SplineCurve3(sPoints);
-
-            var splinePoints = spline.getPoints(1);
-
-            for(var k = 0; k < splinePoints.length; k++){
-                geometrySpline.vertices.push(splinePoints[k]);  
-            }
-
-           */
 
             this.swirl.add(new THREE.Line(geometrySpline, materialSpline));
             
@@ -241,8 +267,9 @@
             size: 100,
             width: document.width,
             height: document.height,
-            swirlMultiplier: 1.1,
-            cameraDistance: 2500,
+            swirlMultiplier: 1.20,
+            swirlTime: 3500,
+            cameraDistance: 2000,
             samples: [
                 { 
                     offsetLat: 0,
@@ -283,6 +310,8 @@
             
         document.body.appendChild(projectionCanvas);
         projectionContext = projectionCanvas.getContext('2d');
+
+        this.markerTopTexture = new THREE.ImageUtils.loadTexture( 'markertop.png' );
 
         img.addEventListener('load', function(){
             //image has loaded, may rsume
@@ -349,11 +378,50 @@
         img.src = this.mapUrl;
     }
 
+    globe.prototype.addMarker = function(lat, lng, text){
+
+        var point = globe_mapPoint(lat,lng);
+        var markerGeometry = new THREE.Geometry();
+        var markerMaterial = new THREE.LineBasicMaterial({
+            color: 0x8FD8D8,
+            });
+        var _this = this;
+
+        markerGeometry.vertices.push(new THREE.Vector3(point.x, point.y, point.z));
+        markerGeometry.vertices.push(new THREE.Vector3(point.x, point.y, point.z));
+
+        var line = new THREE.Line(markerGeometry, markerMaterial);
+
+
+        var textSprite = globe_createLabel(text, point.x*1.2, point.y*1.2, point.z*1.2, 20, "white");
+        // textMesh.rotateY(Math.PI/2 - cameraAngle);
+
+        this.scene.add(line);
+        this.scene.add(textSprite);
+
+        new TWEEN.Tween(point)
+            .to( {x: point.x*1.2, y: point.y*1.2, z: point.z*1.2}, 1500 )
+            .easing( TWEEN.Easing.Elastic.InOut )
+            .onUpdate(function(){
+                markerGeometry.vertices[1].x = this.x;
+                markerGeometry.vertices[1].y = this.y;
+                markerGeometry.vertices[1].z = this.z;
+                markerGeometry.verticesNeedUpdate = true;
+            })
+            .onComplete(function(){
+                var markerMaterial = new THREE.SpriteMaterial({map: _this.markerTopTexture, color: 0xFD7D8});
+                var markerTop = new THREE.Sprite(markerMaterial);
+                markerTop.position.set(point.x, point.y, point.z);
+                markerTop.scale.set(15, 15);
+                _this.scene.add(markerTop);
+
+            })
+            .start();
+    }
+
     globe.prototype.tick = function(){
         globe_runPointAnimations.call(this);
         TWEEN.update();
-
-        //requestAnimationFrame( animate );
 
         if(this.stats){
             this.stats.update();
@@ -377,16 +445,12 @@
 
         this.camera.lookAt( this.scene.position );
 
-        this.swirl.rotateY((2 * Math.PI)/(3000/renderTime));
+        this.swirl.rotateY((2 * Math.PI)/(this.swirlTime/renderTime));
         this.renderer.render( this.scene, this.camera );
 
     }
 
     
-    globe.prototype.addMarker = function(){
-
-
-    }
 
     /*
     var landPoints = function(img, samples, cb){

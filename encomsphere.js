@@ -132,7 +132,7 @@
             
             });
         var sprite = new THREE.Sprite(material);
-        sprite.position = {x: x*1.1, y: y+20, z: z*1.1};
+        sprite.position = {x: x*1.1, y: y + (y < 0 ? -20 : 20), z: z*1.1};
         sprite.scale.set(canvas.width, canvas.height);
             new TWEEN.Tween( {opacity: 0})
                 .to( {opacity: 1}, 500 )
@@ -151,7 +151,7 @@
 
         var colors = [];
 
-        var sprite = THREE.ImageUtils.loadTexture( "hex2.png" );
+        var sprite = THREE.ImageUtils.loadTexture( "hex.png" );
         var myColors1 = pusher.color('orange').hueSet();
         var myColors = [];
         for(var i = 0; i< myColors1.length; i++){
@@ -203,7 +203,6 @@
 
     };
 
-
     var globe_swirls = function(){
         var geometrySpline,
             materialSpline = new THREE.LineBasicMaterial({
@@ -254,6 +253,34 @@
         this.scene.add(this.swirl);
     };
 
+    var globe_removeMarker = function(marker){
+
+        var pos = marker.line.geometry.vertices[1];
+        var _this = this;
+        this.scene.remove(marker.line);
+        this.scene.remove(marker.label);
+
+        new TWEEN.Tween({posx: pos.x, posy: pos.y, posz: pos.z, opacity: 1})
+            .to( {posx: pos.x/1.2, posy: pos.y/1.2, posz: pos.z/1.2, opacity: 0}, 1000 )
+            .easing( TWEEN.Easing.Bounce.Out)
+            .onUpdate(function(){
+
+                /* I took off opacity, turns out I like killing it right away */
+
+                //marker.line.geometry.vertices[1].set(this.posx, this.posy, this.posz);
+                //marker.line.geometry.verticesNeedUpdate = true;
+                //marker.label.material.opacity = this.opacity;
+                marker.top.position.set(this.posx, this.posy, this.posz);
+            })
+            .onComplete(function(){
+            })
+            .start();
+    };
+
+    var globe_removeMarkerLabel = function(marker){
+
+    };
+
     /* globe constructor */
 
     function globe(opts){
@@ -286,8 +313,9 @@
                 ],
             points: [],
             globe_pointAnimations: [],
-            swirl: new THREE.Object3D()
-            
+            swirl: new THREE.Object3D(),
+            markers: [],
+            maxMarkers: 20 
         };
 
         extend(opts, defaults);
@@ -325,7 +353,6 @@
                 });
             }
             document.body.removeChild(projectionCanvas);
-
 
             // create the webgl context, renderer and camera
             if(self.containerId){
@@ -392,12 +419,27 @@
 
         var line = new THREE.Line(markerGeometry, markerMaterial);
 
-
         var textSprite = globe_createLabel(text, point.x*1.2, point.y*1.2, point.z*1.2, 20, "white");
         // textMesh.rotateY(Math.PI/2 - cameraAngle);
 
         this.scene.add(line);
         this.scene.add(textSprite);
+
+
+        var markerMaterial = new THREE.SpriteMaterial({map: _this.markerTopTexture, color: 0xFD7D8});
+        var markerTop = new THREE.Sprite(markerMaterial);
+        markerTop.scale.set(15, 15);
+        markerTop.position.set(point.x*1.2, point.y*1.2, point.z*1.2);
+
+        this.markers.push({
+            line: line,
+            label: textSprite,
+            top: markerTop
+        });
+
+        if(this.markers.length > this.maxMarkers){
+            globe_removeMarker.call(this, this.markers.shift());
+        }
 
         new TWEEN.Tween(point)
             .to( {x: point.x*1.2, y: point.y*1.2, z: point.z*1.2}, 1500 )
@@ -409,10 +451,6 @@
                 markerGeometry.verticesNeedUpdate = true;
             })
             .onComplete(function(){
-                var markerMaterial = new THREE.SpriteMaterial({map: _this.markerTopTexture, color: 0xFD7D8});
-                var markerTop = new THREE.Sprite(markerMaterial);
-                markerTop.position.set(point.x, point.y, point.z);
-                markerTop.scale.set(15, 15);
                 _this.scene.add(markerTop);
 
             })
@@ -439,7 +477,7 @@
         this.cameraAngle += rotateCameraBy;
 
         this.camera.position.x = this.cameraDistance * Math.cos(this.cameraAngle);
-        this.camera.position.y = 0;
+        this.camera.position.y = 200*Math.sin(this.cameraAngle);
         this.camera.position.z = this.cameraDistance * Math.sin(this.cameraAngle);
 
 
@@ -449,53 +487,6 @@
         this.renderer.render( this.scene, this.camera );
 
     }
-
-    
-
-    /*
-    var landPoints = function(img, samples, cb){
-
-        // note:i don't think this is working because i need to wait for the document to finish loading
-        var points = [];
-        var loaded = false;
-
-        var getPoints = function(){
-            if(loaded){
-                return;
-            } 
-            loaded = true;
-
-            var globeCanvas = document.createElement('canvas');
-            document.body.appendChild(globeCanvas);
-            var globeContext = globeCanvas.getContext('2d');
-            globeCanvas.width = img.width;
-            globeCanvas.height = img.height;
-            globeContext.drawImage(img, 0, 0, img.width, img.height);
-            console.log(img.height);
-
-            for (var i = 0; i< samples.length; i++){
-                samplePoints(globeContext,img.width, img.height, samples[i].offsetLat, samples[i].offsetLon, samples[i].incLat, samples[i].incLon, function(point){
-                    points.push(point);
-                });
-            }
-            cb(points);
-            document.body.removeChild(globeCanvas);
-        };
-
-        img.addEventListener('load', getPoints);
-        // in case we alread finished loading the image
-        if(img.complete){
-            getPoints();
-        }
-        setTimeout(function(){
-            console.log(img.complete);
-
-        },1000);
-
-    };
-   */
-
-
 
     return {
         globe: globe,

@@ -52,11 +52,13 @@
             this.currentDisplayTime += milliSec;
             while (this.currentDisplayTime > this.tileDisplayDuration)
                 {
+                    console.log("theoretically updating texture");
                     this.currentDisplayTime -= this.tileDisplayDuration;
                     this.currentTile++;
                     if (this.currentTile == this.numberOfTiles)
                         this.currentTile = 0;
                     var currentColumn = this.currentTile % this.tilesHorizontal;
+                    console.log(texture.offset);
                     texture.offset.x = currentColumn / this.tilesHorizontal;
                     var currentRow = Math.floor( this.currentTile / this.tilesHorizontal );
                     texture.offset.y = currentRow / this.tilesVertical;
@@ -320,6 +322,38 @@
 
     };
 
+    var globe_addSatellite = function(lat, lon, dist){
+
+        var point = globe_mapPoint(lat,lon);
+        point.x *= dist;
+        point.y *= dist;
+        point.z *= dist;
+
+        if(!this.satelliteTexture){
+            this.satelliteTexture = new THREE.ImageUtils.loadTexture( 'satellite.png' );
+        }
+
+        var animator = new TextureAnimator(this.satelliteTexture,5, 1, 5, 1000);
+
+        this.satelliteAnimations.push(animator);
+
+        var material = new THREE.MeshBasicMaterial({
+            map : this.satelliteTexture,
+            side: THREE.DoubleSide});
+
+        var geo = new THREE.PlaneGeometry(40,40,1,1);
+        var mesh = new THREE.Mesh(geo, material);
+        mesh.position.set(point.x, point.y, point.z);
+        this.scene.add(mesh);
+
+    };
+
+    var globe_updateSatellites = function(renderTime){
+        for(var i = 0; i< this.satelliteAnimations.length; i++){
+            this.satelliteAnimations[i].update(renderTime);
+        }
+    };
+
     /* globe constructor */
 
     function globe(opts){
@@ -354,7 +388,9 @@
             globe_pointAnimations: [],
             swirl: new THREE.Object3D(),
             markers: [],
-            maxMarkers: 20 
+            maxMarkers: 20,
+            satelliteAnimations: []
+
         };
 
         extend(opts, defaults);
@@ -433,8 +469,14 @@
             // add the globe particles
             
             globe_mainParticles.call(self);
+
+            // add the swirls
             globe_swirls.call(self);
 
+            // add the satellites
+            globe_addSatellite.call(self,0,0,1.2);
+            globe_addSatellite.call(self,100,0,1.2);
+            globe_addSatellite.call(self,100,0,1.2);
             if(cb){
                 cb();
             }
@@ -509,6 +551,7 @@
         }
 
 
+
         var renderTime = new Date() - this.lastRenderDate;
         this.lastRenderDate = new Date();
         var rotateCameraBy = (2 * Math.PI)/(20000/renderTime);
@@ -524,6 +567,7 @@
 
         this.swirl.rotateY((2 * Math.PI)/(this.swirlTime/renderTime));
         this.renderer.render( this.scene, this.camera );
+        globe_updateSatellites.call(this, renderTime);
 
     }
 

@@ -352,7 +352,9 @@
 
         var material = new THREE.MeshBasicMaterial({
             map : this.satelliteTexture,
-            side: THREE.DoubleSide});
+            side: THREE.DoubleSide,
+            transparent: true
+        });
 
         var geo = new THREE.PlaneGeometry(200,200,1,1);
         var mesh = new THREE.Mesh(geo, material);
@@ -497,9 +499,8 @@
             globe_swirls.call(self);
 
             // add the satellites
-            globe_addSatellite.call(self,50,20,1.2);
-            globe_addSatellite.call(self,60,-20,1.2);
-            globe_addSatellite.call(self,-50,80,1.2);
+            globe_addSatellite.call(self,40,-20,1.6);
+            globe_addSatellite.call(self,-40,80,1.6);
             if(cb){
                 cb();
             }
@@ -588,6 +589,9 @@
 
         for(var i = 0; i< this.satelliteMeshes.length; i++){
             // this.satelliteMeshes[i].rotation.y-=rotateCameraBy;
+            this.satelliteMeshes[i].lookAt(this.camera.position);
+            this.satelliteMeshes[i].rotateZ(-3* Math.PI/2 - Math.cos(1*this.cameraAngle));
+            
         }
 
 

@@ -52,13 +52,11 @@
             this.currentDisplayTime += milliSec;
             while (this.currentDisplayTime > this.tileDisplayDuration)
                 {
-                    console.log("theoretically updating texture");
                     this.currentDisplayTime -= this.tileDisplayDuration;
                     this.currentTile++;
                     if (this.currentTile == this.numberOfTiles)
                         this.currentTile = 0;
                     var currentColumn = this.currentTile % this.tilesHorizontal;
-                    console.log(texture.offset);
                     texture.offset.x = currentColumn / this.tilesHorizontal;
                     var currentRow = Math.floor( this.currentTile / this.tilesHorizontal );
                     texture.offset.y = currentRow / this.tilesVertical;
@@ -221,6 +219,21 @@
                 y : point.y*this.swirlMultiplier,
                 z : point.z*this.swirlMultiplier});
 
+            globe_addPointAnimation.call(this,delay+400, i, {
+                x : point.x*(this.swirlMultiplier - .16),
+                y : point.y*(this.swirlMultiplier - .16),
+                z : point.z*(this.swirlMultiplier - .16)});
+
+            globe_addPointAnimation.call(this,delay+450, i, {
+                x : point.x*(this.swirlMultiplier - .18),
+                y : point.y*(this.swirlMultiplier - .18),
+                z : point.z*(this.swirlMultiplier - .18)});
+                
+            globe_addPointAnimation.call(this,delay+475, i, {
+                x : point.x*(this.swirlMultiplier - .19),
+                y : point.y*(this.swirlMultiplier - .19),
+                z : point.z*(this.swirlMultiplier - .19)});
+
             globe_addPointAnimation.call(this,delay + 500, i, {
                 x : point.x,
                 y : point.y,
@@ -333,7 +346,7 @@
             this.satelliteTexture = new THREE.ImageUtils.loadTexture( 'satellite.png' );
         }
 
-        var animator = new TextureAnimator(this.satelliteTexture,5, 1, 5, 1000);
+        var animator = new TextureAnimator(this.satelliteTexture,10, 5, 50, 100);
 
         this.satelliteAnimations.push(animator);
 
@@ -341,9 +354,18 @@
             map : this.satelliteTexture,
             side: THREE.DoubleSide});
 
-        var geo = new THREE.PlaneGeometry(40,40,1,1);
+        var geo = new THREE.PlaneGeometry(200,200,1,1);
         var mesh = new THREE.Mesh(geo, material);
+
+        this.satelliteMeshes.push(mesh);
+
         mesh.position.set(point.x, point.y, point.z);
+        // mesh.rotation.x = Math.PI/4;
+        // mesh.rotation.y = Math.PI/4;
+        // mesh.rotation.z = Math.PI/4;
+
+        mesh.rotation.z = -1*(lat/90)* Math.PI/2;
+        mesh.rotation.y = (lon/180)* Math.PI
         this.scene.add(mesh);
 
     };
@@ -389,7 +411,8 @@
             swirl: new THREE.Object3D(),
             markers: [],
             maxMarkers: 20,
-            satelliteAnimations: []
+            satelliteAnimations: [],
+            satelliteMeshes: []
 
         };
 
@@ -474,9 +497,9 @@
             globe_swirls.call(self);
 
             // add the satellites
-            globe_addSatellite.call(self,0,0,1.2);
-            globe_addSatellite.call(self,100,0,1.2);
-            globe_addSatellite.call(self,100,0,1.2);
+            globe_addSatellite.call(self,50,20,1.2);
+            globe_addSatellite.call(self,60,-20,1.2);
+            globe_addSatellite.call(self,-50,80,1.2);
             if(cb){
                 cb();
             }
@@ -561,6 +584,11 @@
         this.camera.position.x = this.cameraDistance * Math.cos(this.cameraAngle);
         this.camera.position.y = 200*Math.sin(this.cameraAngle);
         this.camera.position.z = this.cameraDistance * Math.sin(this.cameraAngle);
+
+
+        for(var i = 0; i< this.satelliteMeshes.length; i++){
+            // this.satelliteMeshes[i].rotation.y-=rotateCameraBy;
+        }
 
 
         this.camera.lookAt( this.scene.position );

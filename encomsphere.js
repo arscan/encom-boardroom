@@ -25,9 +25,17 @@
     };
 
     // from http://stemkoski.github.io/Three.js/Texture-Animation.html
-    var TextureAnimator = function(texture, tilesHoriz, tilesVert, numTiles, tileDispDuration) 
+    var TextureAnimator = function(texture, tilesHoriz, tilesVert, numTiles, tileDispDuration, repeatAtTile, endAtTile) 
     {   
         // note: texture passed by reference, will be updated by the update function.
+        
+        if(repeatAtTile == undefined){
+            repeatAtTile=0;
+        }
+
+        if(endAtTile == undefined){
+            endAtTile=numTiles;
+        }
 
         this.tilesHorizontal = tilesHoriz;
         this.tilesVertical = tilesVert;
@@ -52,14 +60,15 @@
             this.currentDisplayTime += milliSec;
             while (this.currentDisplayTime > this.tileDisplayDuration)
                 {
+                    // console.log(texture.offset.y);
                     this.currentDisplayTime -= this.tileDisplayDuration;
                     this.currentTile++;
-                    if (this.currentTile == this.numberOfTiles)
-                        this.currentTile = 0;
+                    if (this.currentTile == endAtTile)
+                        this.currentTile = repeatAtTile;
                     var currentColumn = this.currentTile % this.tilesHorizontal;
                     texture.offset.x = currentColumn / this.tilesHorizontal;
                     var currentRow = Math.floor( this.currentTile / this.tilesHorizontal );
-                    texture.offset.y = currentRow / this.tilesVertical;
+                    texture.offset.y = 1-(currentRow / this.tilesVertical) - 1/this.tilesVertical;
                 }
         };
     }   
@@ -346,7 +355,7 @@
             this.satelliteTexture = new THREE.ImageUtils.loadTexture( 'satellite.png' );
         }
 
-        var animator = new TextureAnimator(this.satelliteTexture,10, 5, 50, 100);
+        var animator = new TextureAnimator(this.satelliteTexture,10, 5, 50, 50, 38, 49);
 
         this.satelliteAnimations.push(animator);
 
@@ -359,12 +368,13 @@
         var geo = new THREE.PlaneGeometry(200,200,1,1);
         var mesh = new THREE.Mesh(geo, material);
 
+        mesh.tiltMultiplier = Math.PI/2 * (1 - Math.abs(lat / 90));
+        mesh.tiltDirection = (lat > 0 ? -1 : 1);
+        mesh.lon = lon;
+
         this.satelliteMeshes.push(mesh);
 
         mesh.position.set(point.x, point.y, point.z);
-        // mesh.rotation.x = Math.PI/4;
-        // mesh.rotation.y = Math.PI/4;
-        // mesh.rotation.z = Math.PI/4;
 
         mesh.rotation.z = -1*(lat/90)* Math.PI/2;
         mesh.rotation.y = (lon/180)* Math.PI
@@ -498,9 +508,44 @@
             // add the swirls
             globe_swirls.call(self);
 
-            // add the satellites
-            globe_addSatellite.call(self,40,-20,1.6);
-            globe_addSatellite.call(self,-40,80,1.6);
+            // add some test satelites
+            globe_addSatellite.call(self,89,0,1.6);
+            globe_addSatellite.call(self,45,0,1.6);
+            globe_addSatellite.call(self,10,0,1.6);
+            globe_addSatellite.call(self,-10,0,1.6);
+            globe_addSatellite.call(self,-45,0,1.6);
+            globe_addSatellite.call(self,-89,0,1.6);
+            globe_addSatellite.call(self,89,40,1.6);
+            globe_addSatellite.call(self,45,40,1.6);
+            globe_addSatellite.call(self,10,40,1.6);
+            globe_addSatellite.call(self,-10,40,1.6);
+            globe_addSatellite.call(self,-45,40,1.6);
+            globe_addSatellite.call(self,-89,40,1.6);
+            globe_addSatellite.call(self,89,90,1.6);
+            globe_addSatellite.call(self,45,90,1.6);
+            globe_addSatellite.call(self,10,90,1.6);
+            globe_addSatellite.call(self,-10,90,1.6);
+            globe_addSatellite.call(self,-45,90,1.6);
+            globe_addSatellite.call(self,-89,90,1.6);
+            globe_addSatellite.call(self,89,-90,1.6);
+            globe_addSatellite.call(self,45,-90,1.6);
+            globe_addSatellite.call(self,10,-90,1.6);
+            globe_addSatellite.call(self,-10,-90,1.6);
+            globe_addSatellite.call(self,-45,-90,1.6);
+            globe_addSatellite.call(self,-89,-90,1.6);
+            globe_addSatellite.call(self,89,-40,1.6);
+            globe_addSatellite.call(self,45,-40,1.6);
+            globe_addSatellite.call(self,10,-40,1.6);
+            globe_addSatellite.call(self,-10,-40,1.6);
+            globe_addSatellite.call(self,-45,-40,1.6);
+            globe_addSatellite.call(self,-89,-40,1.6);
+            globe_addSatellite.call(self,89,189,1.6);
+            globe_addSatellite.call(self,45,189,1.6);
+            globe_addSatellite.call(self,10,189,1.6);
+            globe_addSatellite.call(self,-10,189,1.6);
+            globe_addSatellite.call(self,-45,189,1.6);
+            globe_addSatellite.call(self,-89,189,1.6);
+
             if(cb){
                 cb();
             }
@@ -588,9 +633,22 @@
 
 
         for(var i = 0; i< this.satelliteMeshes.length; i++){
+            var mesh = this.satelliteMeshes[i];
             // this.satelliteMeshes[i].rotation.y-=rotateCameraBy;
-            this.satelliteMeshes[i].lookAt(this.camera.position);
-            this.satelliteMeshes[i].rotateZ(-3* Math.PI/2 - Math.cos(1*this.cameraAngle));
+            mesh.lookAt(this.camera.position);
+            mesh.rotateZ(mesh.tiltDirection * Math.PI/2);
+            mesh.rotateZ(Math.sin(this.cameraAngle + (mesh.lon / 180) * Math.PI) * mesh.tiltMultiplier * mesh.tiltDirection * -1);
+
+            // console.log(1-Math.abs(this.satelliteMeshes[i].lat/90.0))
+            // console.log(this.satelliteMeshes[i].theta);
+            // console.log(this.cameraAngle);
+            // console.log(Math.sin(this.cameraAngle));
+            //     this.satelliteMeshes[i].rotateZ(.66*Math.PI+1*(-3* Math.PI/2 - Math.cos(1*this.cameraAngle)));
+            // if(this.satelliteMeshes[i].lat > 0){
+            //     this.satelliteMeshes[i].rotateZ(.66*Math.PI+1*(-3* Math.PI/2 - Math.cos(1*this.cameraAngle)));
+            // } else {
+            //     this.satelliteMeshes[i].rotateZ(-3* Math.PI/2 - Math.cos(1*this.cameraAngle));
+            // }
             
         }
 

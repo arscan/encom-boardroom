@@ -324,6 +324,25 @@
 
         var pos = marker.line.geometry.vertices[1];
         var _this = this;
+        var scaleDownBy = 1+ Math.random()*.2;
+
+        new TWEEN.Tween({posx: pos.x, posy: pos.y, posz: pos.z, opacity: 1})
+            .to( {posx: pos.x/scaleDownBy, posy: pos.y/scaleDownBy, posz: pos.z/scaleDownBy, opacity: 0}, 1000 )
+            .onUpdate(function(){
+
+                marker.line.geometry.vertices[1].set(this.posx, this.posy, this.posz);
+                marker.line.geometry.verticesNeedUpdate = true;
+                marker.label.material.opacity = this.opacity;
+                marker.top.material.opacity = this.opacity;
+                marker.top.position.set(this.posx, this.posy, this.posz);
+            })
+            .onComplete(function(){
+                _this.scene.remove(marker.label);
+                _this.scene.remove(marker.top);
+            })
+            .start();
+
+        /* old way
         this.scene.remove(marker.line);
         this.scene.remove(marker.label);
 
@@ -331,8 +350,6 @@
             .to( {posx: pos.x/1.2, posy: pos.y/1.2, posz: pos.z/1.2, opacity: 0}, 1000 )
             .easing( TWEEN.Easing.Bounce.Out)
             .onUpdate(function(){
-
-                /* I took off opacity, turns out I like killing it right away */
 
                 //marker.line.geometry.vertices[1].set(this.posx, this.posy, this.posz);
                 //marker.line.geometry.verticesNeedUpdate = true;
@@ -342,6 +359,8 @@
             .onComplete(function(){
             })
             .start();
+
+       */
     };
 
     var globe_removeMarkerLabel = function(marker){
@@ -388,7 +407,10 @@
             globe_pointAnimations: [],
             swirl: new THREE.Object3D(),
             markers: [],
+            markerCoords: {},
             maxMarkers: 20,
+            maxLines:1000,
+
             satelliteAnimations: [],
             satelliteMeshes: []
 
@@ -514,6 +536,17 @@
             label: textSprite,
             top: markerTop
         });
+
+        var labelKey = Math.floor(lat/10) + '-' + Math.floor(lng/10);
+        if(Math.abs(lat)>80){
+            labelKey = Math.floor(lat/10);
+        }
+
+        if(this.markerCoords[labelKey]){
+            this.markerCoords[labelKey].material.opacity = 0;
+        }
+
+        this.markerCoords[labelKey] = textSprite;
 
         if(this.markers.length > this.maxMarkers){
             globe_removeMarker.call(this, this.markers.shift());

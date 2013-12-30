@@ -1,8 +1,8 @@
 
 
-var numFrames = 50;
-var pixels = 100;
-var rows = 5;
+var numFrames = 84;
+var pixels = 200;
+var rows = 7;
 
 var cols = numFrames / rows;
 
@@ -49,16 +49,45 @@ for(var i = 0; i< numFrames; i++){
     var centerx = offsetx + 25;
     var centery = offsety + Math.floor(pixels/2);
 
-    ctx.fillStyle="#FF0000";
-    ctx.beginPath();
-    ctx.arc(centerx,centery,5,0,2*Math.PI);
-    ctx.fill();
 
-    ctx.strokeStyle=fadeToWhite[Math.floor((i/numFrames)*fadeToWhite.length)];
-    ctx.lineWidth=4;
+    if(i>0){
+        ctx.strokeStyle="#FFFFFF";
+        ctx.lineWidth=Math.min(2,i/4);
+        ctx.beginPath();
+        ctx.arc(centerx,centery,10,0,2*Math.PI);
+        ctx.stroke();
+    }
+
+    ctx.strokeStyle="#000000";
+    ctx.lineWidth=6;
     ctx.beginPath();
-    ctx.arc(centerx,centery,i*(pixels/1.5/numFrames),-Math.PI/12,Math.PI/12);
+    ctx.moveTo(centerx+5*Math.sin(i/5), centery-20);
+    ctx.lineTo(centerx-5*Math.sin(i/5), centery+20);
     ctx.stroke();
+
+    ctx.strokeStyle="#000000";
+    ctx.lineWidth=6;
+    ctx.beginPath();
+    ctx.moveTo(centerx-20, centery-5*Math.sin(i/5));
+    ctx.lineTo(centerx+20, centery+5*Math.sin(i/5));
+    ctx.stroke();
+   
+
+    ctx.strokeStyle="#FF0000";
+    ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.arc(centerx,centery,4,0,2*Math.PI);
+    ctx.stroke();
+
+
+
+    if(i>5){
+        ctx.strokeStyle=fadeToWhite[Math.floor((i/numFrames)*fadeToWhite.length)];
+        ctx.lineWidth=4;
+        ctx.beginPath();
+        ctx.arc(centerx,centery,i*(pixels/1.5/numFrames),-Math.PI/12,Math.PI/12);
+        ctx.stroke();
+    }
 
     if(i*(pixels/2/numFrames)-(pixels/2/4) > 0) {
 
@@ -86,7 +115,7 @@ for(var i = 0; i< numFrames; i++){
 
     if(i*(pixels/2/numFrames)-(pixels/2) > 0) {
         // ctx.strokeStyle=fadeToWhite[Math.floor((i/numFrames)*fadeToWhite.length)];
-        console.log(fadeToWhite[Math.floor((i/numFrames)*fadeToWhite.length) - 8]);
+        // console.log(fadeToWhite[Math.floor((i/numFrames)*fadeToWhite.length) - 8]);
         ctx.strokeStyle=fadeToWhite[Math.floor((i/numFrames)*fadeToWhite.length) - 8];
         ctx.lineWidth=3;
         ctx.beginPath();

@@ -54,6 +54,9 @@
 
         // which image is currently being displayed?
         this.currentTile = 0;
+        
+        console.log(texture.offset.y);
+        texture.offset.y = 1;
 
         this.update = function( milliSec )
         {
@@ -71,6 +74,7 @@
                     texture.offset.y = 1-(currentRow / this.tilesVertical) - 1/this.tilesVertical;
                 }
         };
+
     }   
 
     /* globe */
@@ -344,44 +348,6 @@
 
     };
 
-    var globe_addSatellite = function(lat, lon, dist){
-
-        var point = globe_mapPoint(lat,lon);
-        point.x *= dist;
-        point.y *= dist;
-        point.z *= dist;
-
-        if(!this.satelliteTexture){
-            this.satelliteTexture = new THREE.ImageUtils.loadTexture( 'satellite.png' );
-        }
-
-        var animator = new TextureAnimator(this.satelliteTexture,10, 5, 50, 50, 38, 49);
-
-        this.satelliteAnimations.push(animator);
-
-        var material = new THREE.MeshBasicMaterial({
-            map : this.satelliteTexture,
-            side: THREE.DoubleSide,
-            transparent: true
-        });
-
-        var geo = new THREE.PlaneGeometry(200,200,1,1);
-        var mesh = new THREE.Mesh(geo, material);
-
-        mesh.tiltMultiplier = Math.PI/2 * (1 - Math.abs(lat / 90));
-        mesh.tiltDirection = (lat > 0 ? -1 : 1);
-        mesh.lon = lon;
-
-        this.satelliteMeshes.push(mesh);
-
-        mesh.position.set(point.x, point.y, point.z);
-
-        mesh.rotation.z = -1*(lat/90)* Math.PI/2;
-        mesh.rotation.y = (lon/180)* Math.PI
-        this.scene.add(mesh);
-
-    };
-
     var globe_updateSatellites = function(renderTime){
         for(var i = 0; i< this.satelliteAnimations.length; i++){
             this.satelliteAnimations[i].update(renderTime);
@@ -508,44 +474,6 @@
             // add the swirls
             globe_swirls.call(self);
 
-            // add some test satelites
-            globe_addSatellite.call(self,89,0,1.6);
-            globe_addSatellite.call(self,45,0,1.6);
-            globe_addSatellite.call(self,10,0,1.6);
-            globe_addSatellite.call(self,-10,0,1.6);
-            globe_addSatellite.call(self,-45,0,1.6);
-            globe_addSatellite.call(self,-89,0,1.6);
-            globe_addSatellite.call(self,89,40,1.6);
-            globe_addSatellite.call(self,45,40,1.6);
-            globe_addSatellite.call(self,10,40,1.6);
-            globe_addSatellite.call(self,-10,40,1.6);
-            globe_addSatellite.call(self,-45,40,1.6);
-            globe_addSatellite.call(self,-89,40,1.6);
-            globe_addSatellite.call(self,89,90,1.6);
-            globe_addSatellite.call(self,45,90,1.6);
-            globe_addSatellite.call(self,10,90,1.6);
-            globe_addSatellite.call(self,-10,90,1.6);
-            globe_addSatellite.call(self,-45,90,1.6);
-            globe_addSatellite.call(self,-89,90,1.6);
-            globe_addSatellite.call(self,89,-90,1.6);
-            globe_addSatellite.call(self,45,-90,1.6);
-            globe_addSatellite.call(self,10,-90,1.6);
-            globe_addSatellite.call(self,-10,-90,1.6);
-            globe_addSatellite.call(self,-45,-90,1.6);
-            globe_addSatellite.call(self,-89,-90,1.6);
-            globe_addSatellite.call(self,89,-40,1.6);
-            globe_addSatellite.call(self,45,-40,1.6);
-            globe_addSatellite.call(self,10,-40,1.6);
-            globe_addSatellite.call(self,-10,-40,1.6);
-            globe_addSatellite.call(self,-45,-40,1.6);
-            globe_addSatellite.call(self,-89,-40,1.6);
-            globe_addSatellite.call(self,89,189,1.6);
-            globe_addSatellite.call(self,45,189,1.6);
-            globe_addSatellite.call(self,10,189,1.6);
-            globe_addSatellite.call(self,-10,189,1.6);
-            globe_addSatellite.call(self,-45,189,1.6);
-            globe_addSatellite.call(self,-89,189,1.6);
-
             if(cb){
                 cb();
             }
@@ -607,6 +535,42 @@
             .start();
     }
 
+    globe.prototype.addSatellite = function(lat, lon, dist){
+
+        var point = globe_mapPoint(lat,lon);
+        point.x *= dist;
+        point.y *= dist;
+        point.z *= dist;
+
+        var satelliteTexture = new THREE.ImageUtils.loadTexture( 'satellite.png' );
+
+        var animator = new TextureAnimator(satelliteTexture,12, 7, 84, 50, 52, 82);
+
+        this.satelliteAnimations.push(animator);
+
+        var material = new THREE.MeshBasicMaterial({
+            map : satelliteTexture,
+            transparent: true
+        });
+
+        var geo = new THREE.PlaneGeometry(200,200,1,1);
+        var mesh = new THREE.Mesh(geo, material);
+
+        mesh.tiltMultiplier = Math.PI/2 * (1 - Math.abs(lat / 90));
+        mesh.tiltDirection = (lat > 0 ? -1 : 1);
+        mesh.lon = lon;
+
+        this.satelliteMeshes.push(mesh);
+
+        mesh.position.set(point.x, point.y, point.z);
+
+        mesh.rotation.z = -1*(lat/90)* Math.PI/2;
+        mesh.rotation.y = (lon/180)* Math.PI
+        this.scene.add(mesh);
+
+    };
+
+
     globe.prototype.tick = function(){
         globe_runPointAnimations.call(this);
         TWEEN.update();
@@ -660,6 +624,7 @@
         globe_updateSatellites.call(this, renderTime);
 
     }
+
 
     return {
         globe: globe,

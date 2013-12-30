@@ -42,9 +42,15 @@
                 globe = new ENCOM.globe();
                 globe.init(function(){
                     animate();
+
+
                     setInterval(function(){
                         globe.addMarker(Math.random()*180 + 90, Math.random()*360+180, "testing");
                     }, 300);
+
+                    setInterval(function(){
+                        globe.addSatellite(Math.random()*180 - 90, Math.random() * 360, 1.2 + .6 * Math.random());
+                    }, 10000);
                 });
             },1500);
 

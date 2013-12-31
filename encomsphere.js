@@ -36,7 +36,7 @@
     }
 
 
-    // from http://stemkoski.github.io/Three.js/Texture-Animation.html
+    // based on from http://stemkoski.github.io/Three.js/Texture-Animation.html
     var TextureAnimator = function(texture, tilesHoriz, tilesVert, numTiles, tileDispDuration, repeatAtTile, endAtTile) 
     {   
         var _this = this;
@@ -220,7 +220,9 @@
 
     }
 
-    var globe_createSatelliteCanvas = function(numFrames, pixels, rows, waveStart, waveEnd, numWaves) {
+    var globe_createSatelliteCanvas = function(numFrames, pixels, rows, waveStart, waveEnd, satEnd, numWaves) {
+
+
 
         var canvas = document.createElement("canvas");
         var context = canvas.getContext("2d");
@@ -252,47 +254,72 @@
             var centerx = offsetx + 25;
             var centery = offsety + Math.floor(pixels/2);
 
-            /* outside white circle */
 
-            /*
-            if(i>0){
-                ctx.strokeStyle="#FFFFFF";
-                ctx.lineWidth=Math.min(2,i/4);
+
+           /* white circle around red core */
+            // i have between 0 and wavestart to fade in
+            // i have between wavestart and  waveend - (time between waves*2) 
+            // to do a full spin close and then back open
+            // i have between waveend-2*(timebetween waves)/2 and waveend to rotate Math.PI/4 degrees
+           
+            ctx.lineWidth=4;
+            ctx.strokeStyle="#FFFFFF";
+            var buffer=Math.PI/16;
+            var start = -Math.PI + Math.PI/4;
+            var radius = 16;
+            var repeatAt = Math.floor(waveEnd-2*(waveEnd-waveStart)/numWaves)+1;
+
+            /* fade in and out */
+            if(i<waveStart){
+                radius = 16*i/waveStart;
+            } else if (i>=satEnd){
+                radius = 16*(1-(i-satEnd)/(numFrames-satEnd));
+            }
+
+            var swirlDone = Math.floor((repeatAt-waveStart) / 2) + waveStart;
+
+            for(var n = 0; n < 4; n++){
                 ctx.beginPath();
-                ctx.arc(centerx,centery,10,0,2*Math.PI);
+
+                if(i < waveStart || i>=waveEnd){
+
+                    ctx.arc(centerx, centery, radius,n* Math.PI/2 + start+buffer, n*Math.PI/2 + start+Math.PI/2-2*buffer);
+
+                } else if(i > waveStart && i < swirlDone){
+                    var totalTimeToComplete = swirlDone - waveStart;
+                    var distToGo = 3*Math.PI/2;
+                    var currentStep = (i-waveStart);
+                    var movementPerStep = distToGo / totalTimeToComplete;
+
+                    var startAngle = -Math.PI + Math.PI/4 + buffer + movementPerStep*currentStep;
+
+                    ctx.arc(centerx, centery, radius,Math.max(n*Math.PI/2 + start,startAngle), Math.max(n*Math.PI/2 + start + Math.PI/2 - 2*buffer, startAngle +Math.PI/2 - 2*buffer));
+
+                } else if(i >= swirlDone && i< repeatAt){
+                    var totalTimeToComplete = repeatAt - swirlDone;
+                    var distToGo = n*2*Math.PI/4;
+                    var currentStep = (i-swirlDone);
+                    var movementPerStep = distToGo / totalTimeToComplete;
+                
+
+                    var startAngle = Math.PI/2 + Math.PI/4 + buffer + movementPerStep*currentStep;
+                    ctx.arc(centerx, centery, radius,startAngle, startAngle + Math.PI/2 - 2*buffer);
+
+                } else if(i >= repeatAt && i < (waveEnd-repeatAt)/2 + repeatAt){
+
+                    var totalTimeToComplete = (waveEnd-repeatAt)/2;
+                    var distToGo = Math.PI/2;
+                    var currentStep = (i-repeatAt);
+                    var movementPerStep = distToGo / totalTimeToComplete;
+                    var startAngle = n*(Math.PI/2)+ Math.PI/4 + buffer + movementPerStep*currentStep;
+
+                    ctx.arc(centerx, centery, radius,startAngle, startAngle + Math.PI/2 - 2*buffer);
+
+                } else{
+                    ctx.arc(centerx, centery, radius,n* Math.PI/2 + start+buffer, n*Math.PI/2 + start+Math.PI/2-2*buffer);
+                }
                 ctx.stroke();
             }
-           */
-
-
-            ctx.strokeStyle="#FFFFFF";
-            ctx.lineWidth=3;
-            ctx.beginPath();
-            if(i<waveStart){
-                ctx.arc(centerx,centery,14*i/waveStart,0,2*Math.PI);
-            } else if (i>=waveEnd){
-                ctx.arc(centerx,centery,14*(1-(i-waveEnd)/(numFrames-waveEnd)),0,2*Math.PI);
-            } else {
-                ctx.arc(centerx,centery,14,0,2*Math.PI);
-            }
-            ctx.stroke();
-
-            /* lines through outside white circle */
-            /* TODO: clean this up */
-
-            ctx.strokeStyle="#000000";
-            ctx.lineWidth=6;
-            ctx.beginPath();
-            ctx.moveTo(centerx+5*Math.sin(i), centery-20);
-            ctx.lineTo(centerx-5*Math.sin(i), centery+20);
-            ctx.stroke();
-
-            ctx.strokeStyle="#000000";
-            ctx.lineWidth=6;
-            ctx.beginPath();
-            ctx.moveTo(centerx-20, centery-5*Math.sin(i));
-            ctx.lineTo(centerx+20, centery+5*Math.sin(i));
-            ctx.stroke();
 
             /* red circle in middle */
 
@@ -413,37 +440,27 @@
                 y : point.y*this.swirlMultiplier,
                 z : point.z*this.swirlMultiplier});
 
-            globe_addPointAnimation.call(this,delay+400, i, {
-                x : point.x*(this.swirlMultiplier - .16),
-                y : point.y*(this.swirlMultiplier - .16),
-                z : point.z*(this.swirlMultiplier - .16)});
+            for(var a = 0; a < 7; a++){
+                globe_addPointAnimation.call(this,delay + 500 + (300/10.0)*a, i, {
+                    x : point.x*(this.swirlMultiplier - (.1 + a/70.0)),
+                    y : point.y*(this.swirlMultiplier - (.1 + a/70.0)),
+                    z : point.z*(this.swirlMultiplier - (.1 + a/70.0))});
+            }
 
-            globe_addPointAnimation.call(this,delay+450, i, {
-                x : point.x*(this.swirlMultiplier - .18),
-                y : point.y*(this.swirlMultiplier - .18),
-                z : point.z*(this.swirlMultiplier - .18)});
-                
-            globe_addPointAnimation.call(this,delay+475, i, {
-                x : point.x*(this.swirlMultiplier - .19),
-                y : point.y*(this.swirlMultiplier - .19),
-                z : point.z*(this.swirlMultiplier - .19)});
-
-            globe_addPointAnimation.call(this,delay + 500, i, {
+            globe_addPointAnimation.call(this,delay + 690, i, {
                 x : point.x,
                 y : point.y,
                 z : point.z});
 
             colors[i] = new THREE.Color( myColors[Math.floor(Math.random() * myColors.length)].hex6());
 
-
         }
 
         geometry.colors = colors;
 
-        material = new THREE.ParticleSystemMaterial( { size: 8 + Math.random()*10, map: sprite, vertexColors: true, transparent: true } );
+        material = new THREE.ParticleSystemMaterial( { size: 10, map: sprite, vertexColors: true, transparent: true } );
 
         this.globe_particles = new THREE.ParticleSystem( geometry, material );
-        this.globe_particles.sortParticles = true;
         this.globe_particles.geometry.dynamic=true;
 
 
@@ -759,14 +776,14 @@
         var numFrames = 100;
         var pixels = 200;
         var rows = 10;
-        var waveStart = Math.floor(numFrames/6);
+        var waveStart = Math.floor(numFrames/8);
         var waveEnd = Math.floor(numFrames/2);
+        var satEnd = Math.floor(7*numFrames/8);
         var numWaves = 6;
-        var repeatAt = Math.floor(waveEnd-(waveEnd-waveStart)/numWaves)+1;
+        var repeatAt = Math.floor(waveEnd-2*(waveEnd-waveStart)/numWaves)+1;
 
-        var satelliteTexture = new THREE.ImageUtils.loadTexture( 'satellite.png' );
         if(!this.satelliteCanvas){
-            this.satelliteCanvas = globe_createSatelliteCanvas.call(this, numFrames, pixels, rows, waveStart, waveEnd, numWaves);
+            this.satelliteCanvas = globe_createSatelliteCanvas.call(this, numFrames, pixels, rows, waveStart, waveEnd, satEnd, numWaves);
         }
         var satelliteTexture = new THREE.Texture(this.satelliteCanvas);
         satelliteTexture.needsUpdate = true;
@@ -775,7 +792,7 @@
 
         console.log(Math.floor(waveEnd-(waveEnd-waveStart)/numWaves));
 
-        var animator = new TextureAnimator(satelliteTexture,rows, numFrames/rows, numFrames, 100, repeatAt, waveEnd);
+        var animator = new TextureAnimator(satelliteTexture,rows, numFrames/rows, numFrames, 80, repeatAt, waveEnd);
 
         this.satelliteAnimations.push(animator);
 

@@ -222,13 +222,9 @@
 
     var globe_createSatelliteCanvas = function(numFrames, pixels, rows, waveStart, waveEnd, satEnd, numWaves) {
 
-
-
         var canvas = document.createElement("canvas");
-        var context = canvas.getContext("2d");
 
         var cols = numFrames / rows;
-
 
         var waveInterval = Math.floor((waveEnd-waveStart)/numWaves);
 
@@ -254,13 +250,12 @@
             var centerx = offsetx + 25;
             var centery = offsety + Math.floor(pixels/2);
 
-
-
            /* white circle around red core */
             // i have between 0 and wavestart to fade in
             // i have between wavestart and  waveend - (time between waves*2) 
             // to do a full spin close and then back open
             // i have between waveend-2*(timebetween waves)/2 and waveend to rotate Math.PI/4 degrees
+            // this is probably the ugliest code in all of here -- basically I just messed arund with stuff until it looked ok
            
             ctx.lineWidth=4;
             ctx.strokeStyle="#FFFFFF";
@@ -345,7 +340,6 @@
                 frameOn = i-(waveInterval*wi)-waveStart;
                 if(frameOn > 0 && frameOn * distPerFrame < pixels - 25){
                     ctx.strokeStyle="rgba(255,255,255," + (.9-frameOn*distPerFrame/(pixels-25)) + ")";
-                    // ctx.strokeStyle=shadeColor("#000000",100*(1-frameOn*distPerFrame/(pixels-25)));
                     ctx.lineWidth=4;
                     ctx.beginPath();
                     ctx.arc(centerx, centery, frameOn * distPerFrame, -Math.PI/12, Math.PI/12);
@@ -353,57 +347,54 @@
                 }
             }
 
-            /*
-            if(i>5){
-                ctx.strokeStyle=fadeToWhite[Math.floor((i/numFrames)*fadeToWhite.length)];
-                ctx.lineWidth=4;
-                ctx.beginPath();
-                ctx.arc(centerx,centery,i*(pixels/1.5/numFrames),-Math.PI/12,Math.PI/12);
-                ctx.stroke();
-            }
-
-            if(i*(pixels/2/numFrames)-(pixels/2/4) > 0) {
-
-                ctx.strokeStyle=fadeToWhite[Math.floor((i/numFrames)*fadeToWhite.length) - 2];
-                ctx.lineWidth=3;
-                ctx.beginPath();
-                ctx.arc(centerx,centery,i*(pixels/1.5/numFrames)-(pixels/2/4),-Math.PI/12,Math.PI/12);
-                ctx.stroke();
-            }
-            if(i*(pixels/2/numFrames)-(pixels/2/2) > 0) {
-                ctx.strokeStyle=fadeToWhite[Math.floor((i/numFrames)*fadeToWhite.length) - 4];
-                ctx.lineWidth=3;
-                ctx.beginPath();
-                ctx.arc(centerx,centery,i*(pixels/1.5/numFrames)-(pixels/2/2),-Math.PI/12,Math.PI/12);
-                ctx.stroke();
-            }
-
-            if(i*(pixels/2/numFrames)-3*(pixels/2/4) > 0) {
-                ctx.strokeStyle=fadeToWhite[Math.floor((i/numFrames)*fadeToWhite.length) - 6];
-                ctx.lineWidth=3;
-                ctx.beginPath();
-                ctx.arc(centerx,centery,i*(pixels/1.5/numFrames)-3*(pixels/2/4),-Math.PI/12,Math.PI/12);
-                ctx.stroke();
-            }
-
-            if(i*(pixels/2/numFrames)-(pixels/2) > 0) {
-                // ctx.strokeStyle=fadeToWhite[Math.floor((i/numFrames)*fadeToWhite.length)];
-                // console.log(fadeToWhite[Math.floor((i/numFrames)*fadeToWhite.length) - 8]);
-                ctx.strokeStyle=fadeToWhite[Math.floor((i/numFrames)*fadeToWhite.length) - 8];
-                ctx.lineWidth=3;
-                ctx.beginPath();
-                ctx.arc(centerx,centery,i*(pixels/1.5/numFrames)-(pixels/2),-Math.PI/12,Math.PI/12);
-                ctx.stroke();
-            }
-
-           */
-
-
             offsetx += pixels;
         }
 
         return canvas;
     };
+
+    var globe_createSpecialPointCanvas = function(numFrames, pixels, rows ) {
+
+        var canvas = document.createElement("canvas");
+
+        var cols = numFrames / rows;
+
+        canvas.width=numFrames*pixels / rows;
+        canvas.height=pixels*rows;
+        console.log(canvas.height);
+
+        var ctx=canvas.getContext("2d");
+
+        var offsetx = 0,
+            offsety = 0;
+        var curRow = 0;
+
+        for(var i = 0; i< numFrames; i++){
+            if(i - curRow * cols >= cols){
+                offsetx = 0;
+                offsety += pixels;
+                curRow++;
+            }
+
+            var centerx = offsetx + 25;
+            var centery = offsety + Math.floor(pixels/2);
+
+            ctx.strokeStyle="#FFCC00";
+            ctx.lineWidth=3;
+            ctx.beginPath();
+            ctx.arc(centerx, centery, (i/numFrames)*(pixels/3), 0, 2* Math.PI);
+            ctx.stroke();
+
+            ctx.fillStyle="#FFCC00";
+            ctx.beginPath();
+            ctx.arc(centerx, centery, (i/numFrames)*(pixels/3)/2, 0, 2* Math.PI);
+            ctx.fill();
+
+            offsetx += pixels;
+        }
+
+        return canvas;
+    }
 
     var globe_mainParticles = function(){
 
@@ -637,6 +628,8 @@
 
         this.markerTopTexture = new THREE.ImageUtils.loadTexture( 'markertop.png' );
 
+        this.specialPointCanvas = globe_createSpecialPointCanvas.call(this, 10, 100, 2);
+
         img.addEventListener('load', function(){
             //image has loaded, may rsume
             projectionCanvas.width = img.width;
@@ -662,6 +655,11 @@
             }
 
             document.body.appendChild( self.container );
+
+            // TEMP
+            // self.container.appendChild( self.specialPointCanvas);
+
+            document.body.appendChild(self.specialPointCanvas);
 
             self.renderer = new THREE.WebGLRenderer( { clearAlpha: 1 } );
             self.renderer.setSize( self.width, self.height);

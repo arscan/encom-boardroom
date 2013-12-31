@@ -49,8 +49,12 @@
                     }, 1000);
 
                     setInterval(function(){
-                        globe.addSatellite(Math.random()*180 - 90, Math.random() * 360, 1.2 + .6 * Math.random());
-                    }, 10000);
+                        var sat = globe.addSatellite(Math.random()*180 - 90, Math.random() * 360, 1.2 + .6 * Math.random());
+                        setTimeout(function(){
+                            globe.removeSatellite(sat);
+
+                        },10000);
+                    }, 5000);
                 });
             },1500);
 

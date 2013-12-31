@@ -24,9 +24,22 @@
         }
     };
 
+    // http://stackoverflow.com/a/13542669
+    var shadeColor = function(color, percent) {   
+        var num = parseInt(color.slice(1),16), 
+            amt = Math.round(2.55 * percent), 
+            R = (num >> 16) + amt, 
+            G = (num >> 8 & 0x00FF) + amt, 
+            B = (num & 0x0000FF) + amt;
+
+        return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
+    }
+
+
     // from http://stemkoski.github.io/Three.js/Texture-Animation.html
     var TextureAnimator = function(texture, tilesHoriz, tilesVert, numTiles, tileDispDuration, repeatAtTile, endAtTile) 
     {   
+        var _this = this;
         // note: texture passed by reference, will be updated by the update function.
         
         if(repeatAtTile == undefined){
@@ -36,6 +49,9 @@
         if(endAtTile == undefined){
             endAtTile=numTiles;
         }
+
+        this.shutDown = false;
+        this.done = false;
 
         this.tilesHorizontal = tilesHoriz;
         this.tilesVertical = tilesVert;
@@ -55,25 +71,32 @@
         // which image is currently being displayed?
         this.currentTile = 0;
         
-        console.log(texture.offset.y);
         texture.offset.y = 1;
 
         this.update = function( milliSec )
         {
             this.currentDisplayTime += milliSec;
-            while (this.currentDisplayTime > this.tileDisplayDuration)
+            while (!this.done && this.currentDisplayTime > this.tileDisplayDuration)
                 {
-                    // console.log(texture.offset.y);
-                    this.currentDisplayTime -= this.tileDisplayDuration;
-                    this.currentTile++;
-                    if (this.currentTile == endAtTile)
-                        this.currentTile = repeatAtTile;
-                    var currentColumn = this.currentTile % this.tilesHorizontal;
-                    texture.offset.x = currentColumn / this.tilesHorizontal;
-                    var currentRow = Math.floor( this.currentTile / this.tilesHorizontal );
-                    texture.offset.y = 1-(currentRow / this.tilesVertical) - 1/this.tilesVertical;
+                    if(this.shutDownFlag && this.currentTile >= numTiles){
+                        this.done = true;
+                        this.shutDownCb();
+                    } else {
+                        this.currentDisplayTime -= this.tileDisplayDuration;
+                        this.currentTile++;
+                        if (this.currentTile == endAtTile && !this.shutDownFlag)
+                            this.currentTile = repeatAtTile;
+                        var currentColumn = this.currentTile % this.tilesHorizontal;
+                        texture.offset.x = currentColumn / this.tilesHorizontal;
+                        var currentRow = Math.floor( this.currentTile / this.tilesHorizontal );
+                        texture.offset.y = 1-(currentRow / this.tilesVertical) - 1/this.tilesVertical;
+                    }
                 }
         };
+        this.shutDown = function(cb){
+            _this.shutDownFlag = true;
+            _this.shutDownCb = cb;
+        }
 
     }   
 
@@ -197,43 +220,27 @@
 
     }
 
-    var globe_createSatelliteCanvas = function() {
+    var globe_createSatelliteCanvas = function(numFrames, pixels, rows, waveStart, waveEnd, numWaves) {
 
-        var numFrames = 84;
-        var pixels = 200;
-        var rows = 7;
         var canvas = document.createElement("canvas");
         var context = canvas.getContext("2d");
 
         var cols = numFrames / rows;
 
+
+        var waveInterval = Math.floor((waveEnd-waveStart)/numWaves);
+
+        var waveDist = pixels - 25; // width - center of satellite
+        var distPerFrame = waveDist / (waveEnd-waveStart)
+
         canvas.width=numFrames*pixels / rows;
         canvas.height=pixels*rows;
-
-        // draw black background)
 
         var ctx=canvas.getContext("2d");
 
         var offsetx = 0,
             offsety = 0;
         var curRow = 0;
-
-        var fadeToWhite = [
-            "#FFFFFF",
-            "#EEEEEE",
-            "#DDDDDD",
-            "#BBBBBB",
-            "#AAAAAA",
-            "#999999",
-            "#888888",
-            "#777777",
-            "#666666",
-            "#555555",
-            "#444444",
-            "#333333",
-            "#222222",
-            "#111111",
-            "#000000"];
 
         for(var i = 0; i< numFrames; i++){
             if(i - curRow * cols >= cols){
@@ -245,7 +252,9 @@
             var centerx = offsetx + 25;
             var centery = offsety + Math.floor(pixels/2);
 
+            /* outside white circle */
 
+            /*
             if(i>0){
                 ctx.strokeStyle="#FFFFFF";
                 ctx.lineWidth=Math.min(2,i/4);
@@ -253,30 +262,71 @@
                 ctx.arc(centerx,centery,10,0,2*Math.PI);
                 ctx.stroke();
             }
+           */
 
-            ctx.strokeStyle="#000000";
-            ctx.lineWidth=6;
-            ctx.beginPath();
-            ctx.moveTo(centerx+5*Math.sin(i/5), centery-20);
-            ctx.lineTo(centerx-5*Math.sin(i/5), centery+20);
-            ctx.stroke();
 
-            ctx.strokeStyle="#000000";
-            ctx.lineWidth=6;
-            ctx.beginPath();
-            ctx.moveTo(centerx-20, centery-5*Math.sin(i/5));
-            ctx.lineTo(centerx+20, centery+5*Math.sin(i/5));
-            ctx.stroke();
-           
-
-            ctx.strokeStyle="#FF0000";
+            ctx.strokeStyle="#FFFFFF";
             ctx.lineWidth=3;
             ctx.beginPath();
-            ctx.arc(centerx,centery,4,0,2*Math.PI);
+            if(i<waveStart){
+                ctx.arc(centerx,centery,14*i/waveStart,0,2*Math.PI);
+            } else if (i>=waveEnd){
+                ctx.arc(centerx,centery,14*(1-(i-waveEnd)/(numFrames-waveEnd)),0,2*Math.PI);
+            } else {
+                ctx.arc(centerx,centery,14,0,2*Math.PI);
+            }
+            ctx.stroke();
+
+            /* lines through outside white circle */
+            /* TODO: clean this up */
+
+            ctx.strokeStyle="#000000";
+            ctx.lineWidth=6;
+            ctx.beginPath();
+            ctx.moveTo(centerx+5*Math.sin(i), centery-20);
+            ctx.lineTo(centerx-5*Math.sin(i), centery+20);
+            ctx.stroke();
+
+            ctx.strokeStyle="#000000";
+            ctx.lineWidth=6;
+            ctx.beginPath();
+            ctx.moveTo(centerx-20, centery-5*Math.sin(i));
+            ctx.lineTo(centerx+20, centery+5*Math.sin(i));
+            ctx.stroke();
+
+            /* red circle in middle */
+
+            ctx.strokeStyle="#FF0000";
+            ctx.lineWidth=4;
+            ctx.beginPath();
+            if(i<waveStart){
+                ctx.arc(centerx,centery,7*i/waveStart,0,2*Math.PI);
+            } else if (i>=waveEnd){
+                ctx.arc(centerx,centery,7*(1-(i-waveEnd)/(numFrames-waveEnd)),0,2*Math.PI);
+            } else {
+                ctx.arc(centerx,centery,7,0,2*Math.PI);
+            }
             ctx.stroke();
 
 
+            // frame i'm on * distance per frame
 
+            /* waves going out */
+            var frameOn;
+
+            for(var wi = 0; wi<numWaves; wi++){
+                frameOn = i-(waveInterval*wi)-waveStart;
+                if(frameOn > 0 && frameOn * distPerFrame < pixels - 25){
+                    ctx.strokeStyle="rgba(255,255,255," + (.9-frameOn*distPerFrame/(pixels-25)) + ")";
+                    // ctx.strokeStyle=shadeColor("#000000",100*(1-frameOn*distPerFrame/(pixels-25)));
+                    ctx.lineWidth=4;
+                    ctx.beginPath();
+                    ctx.arc(centerx, centery, frameOn * distPerFrame, -Math.PI/12, Math.PI/12);
+                    ctx.stroke();
+                }
+            }
+
+            /*
             if(i>5){
                 ctx.strokeStyle=fadeToWhite[Math.floor((i/numFrames)*fadeToWhite.length)];
                 ctx.lineWidth=4;
@@ -318,6 +368,8 @@
                 ctx.arc(centerx,centery,i*(pixels/1.5/numFrames)-(pixels/2),-Math.PI/12,Math.PI/12);
                 ctx.stroke();
             }
+
+           */
 
 
             offsetx += pixels;
@@ -704,16 +756,26 @@
         point.y *= dist;
         point.z *= dist;
 
+        var numFrames = 100;
+        var pixels = 200;
+        var rows = 10;
+        var waveStart = Math.floor(numFrames/6);
+        var waveEnd = Math.floor(numFrames/2);
+        var numWaves = 6;
+        var repeatAt = Math.floor(waveEnd-(waveEnd-waveStart)/numWaves)+1;
+
         var satelliteTexture = new THREE.ImageUtils.loadTexture( 'satellite.png' );
         if(!this.satelliteCanvas){
-            this.satelliteCanvas = globe_createSatelliteCanvas.call(this);
+            this.satelliteCanvas = globe_createSatelliteCanvas.call(this, numFrames, pixels, rows, waveStart, waveEnd, numWaves);
         }
         var satelliteTexture = new THREE.Texture(this.satelliteCanvas);
         satelliteTexture.needsUpdate = true;
 
         // this.container.appendChild( this.satelliteCanvas);
 
-        var animator = new TextureAnimator(satelliteTexture,12, 7, 84, 50, 52, 82);
+        console.log(Math.floor(waveEnd-(waveEnd-waveStart)/numWaves));
+
+        var animator = new TextureAnimator(satelliteTexture,rows, numFrames/rows, numFrames, 100, repeatAt, waveEnd);
 
         this.satelliteAnimations.push(animator);
 
@@ -722,7 +784,7 @@
             transparent: true
         });
 
-        var geo = new THREE.PlaneGeometry(200,200,1,1);
+        var geo = new THREE.PlaneGeometry(150,150,1,1);
         var mesh = new THREE.Mesh(geo, material);
 
         mesh.tiltMultiplier = Math.PI/2 * (1 - Math.abs(lat / 90));
@@ -736,6 +798,26 @@
         mesh.rotation.z = -1*(lat/90)* Math.PI/2;
         mesh.rotation.y = (lon/180)* Math.PI
         this.scene.add(mesh);
+        return {mesh: mesh, shutDownFunc: animator.shutDown};
+
+    };
+
+    globe.prototype.removeSatellite = function(sat){
+        var _this = this;
+
+        sat.shutDownFunc(function(){
+            var pos = -1;
+            for(var i = 0; i < _this.satelliteMeshes.length; i++){
+                if(sat.mesh == _this.satelliteMeshes[i]){
+                    pos = i;
+                }
+            }
+
+            if(pos >= 0){
+                _this.scene.remove(sat.mesh);
+                _this.satelliteMeshes.splice(pos,1);
+            }
+        });
 
     };
 

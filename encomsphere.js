@@ -43,14 +43,14 @@
         // note: texture passed by reference, will be updated by the update function.
         
         if(repeatAtTile == undefined){
-            repeatAtTile=0;
+            repeatAtTile=-1;
         }
 
         if(endAtTile == undefined){
             endAtTile=numTiles;
         }
 
-        this.shutDown = false;
+        this.shutDownFlag = (this.repeatAtTile < 0);
         this.done = false;
 
         this.tilesHorizontal = tilesHoriz;
@@ -353,6 +353,33 @@
         return canvas;
     };
 
+    var globe_createSpecialMarkerCanvas = function() {
+
+        var canvas = document.createElement("canvas");
+
+        canvas.width=100;
+        canvas.height=100;
+
+        var ctx=canvas.getContext("2d");
+
+        ctx.strokeStyle="#FFCC00";
+        ctx.lineWidth=3;
+        ctx.beginPath();
+        ctx.arc(canvas.width/2, canvas.height/2, canvas.width/3+10, 0, 2* Math.PI);
+        ctx.stroke();
+
+        ctx.fillStyle="#FFCC00";
+        ctx.beginPath();
+        ctx.arc(canvas.width/2, canvas.height/2, canvas.width/4, 0, 2* Math.PI);
+        ctx.fill();
+
+        return canvas;
+
+    }
+
+    /*
+     *
+    // turns out i can just scale the texture, so I don't need nthis
     var globe_createSpecialPointCanvas = function(numFrames, pixels, rows ) {
 
         var canvas = document.createElement("canvas");
@@ -395,6 +422,7 @@
 
         return canvas;
     }
+   */
 
     var globe_mainParticles = function(){
 
@@ -628,7 +656,11 @@
 
         this.markerTopTexture = new THREE.ImageUtils.loadTexture( 'markertop.png' );
 
-        this.specialPointCanvas = globe_createSpecialPointCanvas.call(this, 10, 100, 2);
+        this.specialMarkerTexture = new THREE.Texture(globe_createSpecialMarkerCanvas.call(this));
+        this.specialMarkerTexture.needsUpdate = true;
+
+        //old call
+        //this.specialPointCanvas = globe_createSpecialPointCanvas.call(this, 10, 100, 2);
 
         img.addEventListener('load', function(){
             //image has loaded, may rsume
@@ -658,8 +690,6 @@
 
             // TEMP
             // self.container.appendChild( self.specialPointCanvas);
-
-            document.body.appendChild(self.specialPointCanvas);
 
             self.renderer = new THREE.WebGLRenderer( { clearAlpha: 1 } );
             self.renderer.setSize( self.width, self.height);
@@ -763,6 +793,54 @@
             })
             .start();
     }
+
+    globe.prototype.addConnectedPoints = function(lat1, lng1, text1, lat2, lng2, text2){
+
+        var _this = this;
+
+        var point1 = globe_mapPoint(lat1,lng1);
+        var point2 = globe_mapPoint(lat2,lng2);
+
+        var markerMaterial = new THREE.SpriteMaterial({map: _this.specialMarkerTexture});
+        // var markerMaterial = new THREE.SpriteMaterial({map: _this.markerTopTexture});
+
+        var marker1 = new THREE.Sprite(markerMaterial);
+        var marker2 = new THREE.Sprite(markerMaterial);
+
+        marker1.scale.set(0, 0);
+        marker2.scale.set(65, 65);
+
+        marker1.position.set(point1.x*1.2, point1.y*1.2, point1.z*1.2);
+        marker2.position.set(point2.x*1.2, point2.y*1.2, point2.z*1.2);
+
+
+        this.scene.add(marker1);
+        this.scene.add(marker2);
+
+
+
+        console.log(marker1.scale);
+
+        new TWEEN.Tween({x: 0, y: 0})
+            .to({x: 65, y: 65}, 2000)
+            .easing( TWEEN.Easing.Elastic.InOut )
+            .onUpdate(function(){
+                marker1.scale.set(this.x, this.y);
+                marker2.scale.set(this.x, this.y);
+            })
+            // .onUpdate(function(){
+            //     markerGeometry.vertices[1].x = this.x;
+            //     markerGeometry.vertices[1].y = this.y;
+            //     markerGeometry.vertices[1].z = this.z;
+            //     markerGeometry.verticesNeedUpdate = true;
+            // })
+            // .onComplete(function(){
+            //     _this.scene.add(markerTop);
+
+            // })
+            .start();
+    }
+
 
     globe.prototype.addSatellite = function(lat, lon, dist){
 

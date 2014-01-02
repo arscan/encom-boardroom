@@ -173,9 +173,7 @@
 
     };
 
-    var globe_createLabel = function(text, x, y, z, size, color, backGroundColor, backgroundMargin) {
-        if(!backgroundMargin)
-            backgroundMargin = 50;
+    var globe_createLabel = function(text, x, y, z, size, color, underlineColor) {
 
         var canvas = document.createElement("canvas");
 
@@ -186,6 +184,9 @@
 
         canvas.width = textWidth;
         canvas.height = size;
+        if(underlineColor){
+            canvas.height += 30;
+        }
         context = canvas.getContext("2d");
         context.font = size + "pt Arial";
 
@@ -193,6 +194,16 @@
         context.textBaseline = "middle";
         context.fillStyle = color;
         context.fillText(text, canvas.width / 2, canvas.height / 2);
+
+        if(underlineColor){
+            console.log('underline color' + underlineColor);
+            context.strokeStyle=underlineColor;
+            context.lineWidth=2;
+            context.beginPath();
+            context.moveTo(0, canvas.height-5);
+            context.lineTo(canvas.width-1, canvas.height-10);
+            context.stroke();
+        }
 
         // context.strokeStyle = "black";
         // context.strokeRect(0, 0, canvas.width, canvas.height);
@@ -554,33 +565,10 @@
                 marker.top.position.set(this.posx, this.posy, this.posz);
             })
             .onComplete(function(){
-                _this.scene.remove(marker.label);
-                _this.scene.remove(marker.top);
+                _this.scene_sprite.remove(marker.label);
+                _this.scene_sprite.remove(marker.top);
             })
             .start();
-
-        /* old way
-        this.scene.remove(marker.line);
-        this.scene.remove(marker.label);
-
-        new TWEEN.Tween({posx: pos.x, posy: pos.y, posz: pos.z, opacity: 1})
-            .to( {posx: pos.x/1.2, posy: pos.y/1.2, posz: pos.z/1.2, opacity: 0}, 1000 )
-            .easing( TWEEN.Easing.Bounce.Out)
-            .onUpdate(function(){
-
-                //marker.line.geometry.vertices[1].set(this.posx, this.posy, this.posz);
-                //marker.line.geometry.verticesNeedUpdate = true;
-                //marker.label.material.opacity = this.opacity;
-                marker.top.position.set(this.posx, this.posy, this.posz);
-            })
-            .onComplete(function(){
-            })
-            .start();
-
-       */
-    };
-
-    var globe_removeMarkerLabel = function(marker){
 
     };
 
@@ -693,6 +681,7 @@
 
             self.renderer = new THREE.WebGLRenderer( { clearAlpha: 1 } );
             self.renderer.setSize( self.width, self.height);
+            self.renderer.autoClear = false;
             self.container.appendChild( self.renderer.domElement );
 
             // create the camera
@@ -704,6 +693,8 @@
             // create the scene
 
             self.scene = new THREE.Scene();
+            self.scene_sprite = new THREE.Scene();
+
             self.scene.fog = new THREE.Fog( 0x000000, self.cameraDistance-200, self.cameraDistance+550 );
 
             // create the stats thing
@@ -749,7 +740,7 @@
         // textMesh.rotateY(Math.PI/2 - cameraAngle);
 
         this.scene.add(line);
-        this.scene.add(textSprite);
+        this.scene_sprite.add(textSprite);
 
 
         var markerMaterial = new THREE.SpriteMaterial({map: _this.markerTopTexture, color: 0xFD7D8});
@@ -768,9 +759,9 @@
             labelKey = Math.floor(lat/10);
         }
 
-        if(this.markerCoords[labelKey]){
-            this.markerCoords[labelKey].material.opacity = 0;
-        }
+        // if(this.markerCoords[labelKey]){
+        //     this.markerCoords[labelKey].material.opacity = 0;
+        // }
 
         this.markerCoords[labelKey] = textSprite;
 
@@ -788,7 +779,7 @@
                 markerGeometry.verticesNeedUpdate = true;
             })
             .onComplete(function(){
-                _this.scene.add(markerTop);
+                _this.scene_sprite.add(markerTop);
 
             })
             .start();
@@ -814,9 +805,14 @@
         marker2.position.set(point2.x*1.2, point2.y*1.2, point2.z*1.2);
 
 
-        this.scene.add(marker1);
-        this.scene.add(marker2);
+        this.scene_sprite.add(marker1);
+        this.scene_sprite.add(marker2);
 
+        var textSprite1 = globe_createLabel(text1.toUpperCase(), point1.x*1.25, point1.y*1.25, point1.z*1.25, 25, "white", "#FFCC00");
+        var textSprite2 = globe_createLabel(text2.toUpperCase(), point2.x*1.25, point2.y*1.25, point2.z*1.25, 25, "white", "#FFCC00");
+
+        this.scene_sprite.add(textSprite1);
+        this.scene_sprite.add(textSprite2);
 
         new TWEEN.Tween({x: 0, y: 0})
             .to({x: 55, y: 55}, 2000)
@@ -832,7 +828,7 @@
             .onUpdate(function(){
                 marker2.scale.set(this.x, this.y);
             })
-            .delay(3000)
+            .delay(2200)
             .start();
 
         var geometrySpline = new THREE.Geometry();
@@ -843,17 +839,17 @@
             opacity: .5
         });
 
-        var latdist = (lat2 - lat1)/30;
-        var londist = (lng2 - lng1)/30;
+        var latdist = (lat2 - lat1)/39;
+        var londist = (lng2 - lng1)/39;
         var startPoint = globe_mapPoint(lat1, lng1);
         var pointList = [];
 
-        for(var j = 0; j< 30; j++){
+        for(var j = 0; j< 40; j++){
             // var nextlat = ((90 + lat1 + j*1)%180)-90;
             // var nextlon = ((180 + lng1 + j*1)%360)-180;
 
             
-            var nextlat = ((90 + lat1 + j*latdist)%180)-90;
+            var nextlat = (((90 + lat1 + j*latdist)%180)-90) * (.5 + Math.cos(j*(5*Math.PI/2)/39)/2) + (j*lat2/39/2);
             var nextlon = ((180 + lng1 + j*londist)%360)-180;
             pointList.push({lat: nextlat, lon: nextlon, index: j});
             // var thisPoint = globe_mapPoint(nextlat, nextlon);
@@ -884,7 +880,7 @@
                 geometrySpline.verticesNeedUpdate = true;
             }
             if(pointList.length > 0){
-                setTimeout(update,50);
+                setTimeout(update,30);
             }
 
         };
@@ -1020,6 +1016,7 @@
         this.camera.lookAt( this.scene.position );
 
         this.swirl.rotateY((2 * Math.PI)/(this.swirlTime/renderTime));
+        this.renderer.render( this.scene_sprite, this.camera );
         this.renderer.render( this.scene, this.camera );
         globe_updateSatellites.call(this, renderTime);
 

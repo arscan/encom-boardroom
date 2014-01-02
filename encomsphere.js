@@ -493,7 +493,7 @@
             color: 0x8FD8D8,
             transparent: true,
             linewidth: 2,
-            opacity: 1
+            opacity: .8
         });
         var sPoint;
         var _this = this;
@@ -801,14 +801,14 @@
         var point1 = globe_mapPoint(lat1,lng1);
         var point2 = globe_mapPoint(lat2,lng2);
 
-        var markerMaterial = new THREE.SpriteMaterial({map: _this.specialMarkerTexture});
+        var markerMaterial = new THREE.SpriteMaterial({map: _this.specialMarkerTexture, opacity: .7});
         // var markerMaterial = new THREE.SpriteMaterial({map: _this.markerTopTexture});
 
         var marker1 = new THREE.Sprite(markerMaterial);
         var marker2 = new THREE.Sprite(markerMaterial);
 
         marker1.scale.set(0, 0);
-        marker2.scale.set(65, 65);
+        marker2.scale.set(0, 0);
 
         marker1.position.set(point1.x*1.2, point1.y*1.2, point1.z*1.2);
         marker2.position.set(point2.x*1.2, point2.y*1.2, point2.z*1.2);
@@ -818,27 +818,83 @@
         this.scene.add(marker2);
 
 
-
-        console.log(marker1.scale);
-
         new TWEEN.Tween({x: 0, y: 0})
-            .to({x: 65, y: 65}, 2000)
+            .to({x: 55, y: 55}, 2000)
             .easing( TWEEN.Easing.Elastic.InOut )
             .onUpdate(function(){
                 marker1.scale.set(this.x, this.y);
+            })
+            .start();
+
+        new TWEEN.Tween({x: 0, y: 0})
+            .to({x: 55, y: 55}, 2000)
+            .easing( TWEEN.Easing.Elastic.InOut )
+            .onUpdate(function(){
                 marker2.scale.set(this.x, this.y);
             })
-            // .onUpdate(function(){
-            //     markerGeometry.vertices[1].x = this.x;
-            //     markerGeometry.vertices[1].y = this.y;
-            //     markerGeometry.vertices[1].z = this.z;
-            //     markerGeometry.verticesNeedUpdate = true;
-            // })
-            // .onComplete(function(){
-            //     _this.scene.add(markerTop);
-
-            // })
+            .delay(3000)
             .start();
+
+        var geometrySpline = new THREE.Geometry();
+        var materialSpline = new THREE.LineBasicMaterial({
+            color: 0xFFCC00,
+            transparent: true,
+            linewidth: 4,
+            opacity: .5
+        });
+
+        var latdist = (lat2 - lat1)/30;
+        var londist = (lng2 - lng1)/30;
+        var startPoint = globe_mapPoint(lat1, lng1);
+        var pointList = [];
+
+        for(var j = 0; j< 30; j++){
+            // var nextlat = ((90 + lat1 + j*1)%180)-90;
+            // var nextlon = ((180 + lng1 + j*1)%360)-180;
+
+            
+            var nextlat = ((90 + lat1 + j*latdist)%180)-90;
+            var nextlon = ((180 + lng1 + j*londist)%360)-180;
+            pointList.push({lat: nextlat, lon: nextlon, index: j});
+            // var thisPoint = globe_mapPoint(nextlat, nextlon);
+            sPoint = new THREE.Vector3(startPoint.x*1.2, startPoint.y*1.2, startPoint.z*1.2);
+            // sPoint = new THREE.Vector3(thisPoint.x*1.2, thisPoint.y*1.2, thisPoint.z*1.2);
+
+            sPoint.globe_index = j;
+
+            geometrySpline.vertices.push(sPoint);  
+        }
+
+        var currentLat = lat1;
+        var currentLon = lng1;
+        var currentPoint;
+        var currentVert;
+
+        var update = function(){
+            var nextSpot = pointList.shift();
+            
+            for(var x = 0; x< geometrySpline.vertices.length; x++){
+                
+                currentVert = geometrySpline.vertices[x];
+                currentPoint = globe_mapPoint(nextSpot.lat, nextSpot.lon);
+
+                if(x >= nextSpot.index){
+                    currentVert.set(currentPoint.x*1.2, currentPoint.y*1.2, currentPoint.z*1.2);
+                }
+                geometrySpline.verticesNeedUpdate = true;
+            }
+            if(pointList.length > 0){
+                setTimeout(update,50);
+            }
+
+        };
+        setTimeout(function(){
+            update();
+        }, 2000);
+
+
+        this.scene.add(new THREE.Line(geometrySpline, materialSpline));
+            
     }
 
 

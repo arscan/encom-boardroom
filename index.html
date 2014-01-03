@@ -9,9 +9,25 @@
             }
 
             #splash {
-                
+            
+                width:100%;
+                height:100%;
+                position:fixed;
+                margin: 0em;
+                left: 0em;
+                top: 0em;
+                background-color:#000000;
+                color: #FFFFFF;
 
             }
+
+            .center {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+            }
+
+            
 
         </style>
 
@@ -26,8 +42,11 @@
         <script>
             function ready(){
                 globe = new ENCOM.globe();
+
                 globe.init(function(){
+
                     animate();
+                    document.getElementById('splash').style.display='none';
 
 
                     setInterval(function(){
@@ -63,7 +82,7 @@
     <body>
 
         <div id="splash">
-            ENCOM
+            <div class="center">ENCOM</div>
         </div>
 
         <script>

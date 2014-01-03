@@ -6,25 +6,11 @@
         <style>
             body {
                 background-color: #000000;
-                margin: 0px;
-                overflow: hidden;
-                font-family:Monospace;
-                font-size:13px;
-                text-align:center;
-                font-weight: bold;
-                text-align:center;
             }
 
-            a {
-                color:#0078ff;
-            }
+            #splash {
+                
 
-            #info {
-                color:#fff;
-                position: absolute;
-                top: 0px; width: 100%;
-                padding: 5px;
-                z-index:100;
             }
 
         </style>
@@ -38,7 +24,7 @@
         <script src="encomsphere.js"></script>
 
         <script>
-            setTimeout(function(){
+            function ready(){
                 globe = new ENCOM.globe();
                 globe.init(function(){
                     animate();
@@ -53,14 +39,14 @@
                         setTimeout(function(){
                             globe.removeSatellite(sat);
 
-                        },10000);
-                    }, 5000);
+                        },20000);
+                    },10000);
                     setTimeout(function(){
                         globe.addConnectedPoints(49.25, -123.1, "Vancouver", 35.68, 129.69, "Tokyo");
 
                     }, 2000);
                 });
-            },1500);
+            }
 
 
             function animate(){
@@ -75,6 +61,14 @@
 
     </head>
     <body>
+
+        <div id="splash">
+            ENCOM
+        </div>
+
+        <script>
+            ready();
+        </script>
 
     <body>
 </html>

@@ -196,7 +196,6 @@
         context.fillText(text, canvas.width / 2, canvas.height / 2);
 
         if(underlineColor){
-            console.log('underline color' + underlineColor);
             context.strokeStyle=underlineColor;
             context.lineWidth=2;
             context.beginPath();
@@ -388,60 +387,13 @@
 
     }
 
-    /*
-     *
-    // turns out i can just scale the texture, so I don't need nthis
-    var globe_createSpecialPointCanvas = function(numFrames, pixels, rows ) {
-
-        var canvas = document.createElement("canvas");
-
-        var cols = numFrames / rows;
-
-        canvas.width=numFrames*pixels / rows;
-        canvas.height=pixels*rows;
-        console.log(canvas.height);
-
-        var ctx=canvas.getContext("2d");
-
-        var offsetx = 0,
-            offsety = 0;
-        var curRow = 0;
-
-        for(var i = 0; i< numFrames; i++){
-            if(i - curRow * cols >= cols){
-                offsetx = 0;
-                offsety += pixels;
-                curRow++;
-            }
-
-            var centerx = offsetx + 25;
-            var centery = offsety + Math.floor(pixels/2);
-
-            ctx.strokeStyle="#FFCC00";
-            ctx.lineWidth=3;
-            ctx.beginPath();
-            ctx.arc(centerx, centery, (i/numFrames)*(pixels/3), 0, 2* Math.PI);
-            ctx.stroke();
-
-            ctx.fillStyle="#FFCC00";
-            ctx.beginPath();
-            ctx.arc(centerx, centery, (i/numFrames)*(pixels/3)/2, 0, 2* Math.PI);
-            ctx.fill();
-
-            offsetx += pixels;
-        }
-
-        return canvas;
-    }
-   */
-
     var globe_mainParticles = function(){
 
         var material, geometry;
 
         var colors = [];
 
-        var sprite = THREE.ImageUtils.loadTexture( "hex.png" );
+        var sprite = this.hexTexture;
         var myColors1 = pusher.color('orange').hueSet();
         var myColors = [];
         for(var i = 0; i< myColors1.length; i++){
@@ -637,90 +589,100 @@
         var  projectionContext,
             img = document.createElement('img'),
             projectionCanvas = document.createElement('canvas'),
-            self = this;
+            _this = this;
             
         document.body.appendChild(projectionCanvas);
         projectionContext = projectionCanvas.getContext('2d');
 
-        this.markerTopTexture = new THREE.ImageUtils.loadTexture( 'markertop.png' );
+        var numRegistered = 0;
 
+        var registerCallback = function(){
+            numRegistered++;
+            return function(){
+
+                numRegistered--;
+                console.log(numRegistered);
+
+                if(numRegistered == 0){
+                    //image has loaded, may rsume
+                    projectionCanvas.width = img.width;
+                    projectionCanvas.height = img.height;
+                    projectionContext.drawImage(img, 0, 0, img.width, img.height);
+                    for (var i = 0; i< _this.samples.length; i++){
+                        
+                        globe_samplePoints(projectionContext,img.width, img.height, _this.samples[i].offsetLat, _this.samples[i].offsetLon, _this.samples[i].incLat, _this.samples[i].incLon, function(point){
+                            _this.points.push(point);
+                        });
+                    }
+                    document.body.removeChild(projectionCanvas);
+
+                    // create the webgl context, renderer and camera
+                    if(_this.containerId){
+                        _this.container = document.getElementById(_this.containerId);
+                        _this.width = _this.container.width;
+                        _this.height = _this.container.height;
+                    } else {
+                        _this.container = document.createElement( 'div' );
+                        _this.container.width = _this.width;
+                        _this.container.height = _this.height;
+                    }
+
+                    document.body.appendChild( _this.container );
+
+                    // TEMP
+                    // _this.container.appendChild( _this.specialPointCanvas);
+
+                    _this.renderer = new THREE.WebGLRenderer( { clearAlpha: 1 } );
+                    // _this.renderer = new THREE.CanvasRenderer( { clearAlpha: 1 } );
+                    _this.renderer.setSize( _this.width, _this.height);
+                    _this.renderer.autoClear = false;
+                    _this.container.appendChild( _this.renderer.domElement );
+
+                    // create the camera
+
+                    _this.camera = new THREE.PerspectiveCamera( 50, _this.width / _this.height, 1, 3000 );
+                    _this.camera.position.z = this.cameraDistance;
+                    _this.cameraAngle=(Math.PI * 2) * .5;
+
+                    // create the scene
+
+                    _this.scene = new THREE.Scene();
+                    _this.scene_sprite = new THREE.Scene();
+
+                    _this.scene.fog = new THREE.Fog( 0x000000, _this.cameraDistance-200, _this.cameraDistance+550 );
+
+                    // create the stats thing
+                    
+                    if(Stats){
+                        _this.stats = new Stats();
+                        _this.stats.domElement.style.position = 'absolute';
+                        _this.stats.domElement.style.top = '0px';
+                        _this.container.appendChild( _this.stats.domElement );
+                    }
+
+                    // add the globe particles
+                    
+                    globe_mainParticles.call(_this);
+
+                    // add the swirls
+                    globe_swirls.call(_this);
+
+                    cb();
+                }
+
+            }
+        };
+
+        this.markerTopTexture = new THREE.ImageUtils.loadTexture( 'markertop.png', undefined, registerCallback());
+        this.hexTexture = THREE.ImageUtils.loadTexture( "hex.png", undefined, registerCallback());
+        
         this.specialMarkerTexture = new THREE.Texture(globe_createSpecialMarkerCanvas.call(this));
         this.specialMarkerTexture.needsUpdate = true;
 
-        //old call
-        //this.specialPointCanvas = globe_createSpecialPointCanvas.call(this, 10, 100, 2);
-
-        img.addEventListener('load', function(){
-            //image has loaded, may rsume
-            projectionCanvas.width = img.width;
-            projectionCanvas.height = img.height;
-            projectionContext.drawImage(img, 0, 0, img.width, img.height);
-            for (var i = 0; i< self.samples.length; i++){
-                
-                globe_samplePoints(projectionContext,img.width, img.height, self.samples[i].offsetLat, self.samples[i].offsetLon, self.samples[i].incLat, self.samples[i].incLon, function(point){
-                    self.points.push(point);
-                });
-            }
-            document.body.removeChild(projectionCanvas);
-
-            // create the webgl context, renderer and camera
-            if(self.containerId){
-                self.container = document.getElementById(self.containerId);
-                self.width = self.container.width;
-                self.height = self.container.height;
-            } else {
-                self.container = document.createElement( 'div' );
-                self.container.width = self.width;
-                self.container.height = self.height;
-            }
-
-            document.body.appendChild( self.container );
-
-            // TEMP
-            // self.container.appendChild( self.specialPointCanvas);
-
-            self.renderer = new THREE.WebGLRenderer( { clearAlpha: 1 } );
-            self.renderer.setSize( self.width, self.height);
-            self.renderer.autoClear = false;
-            self.container.appendChild( self.renderer.domElement );
-
-            // create the camera
-
-            self.camera = new THREE.PerspectiveCamera( 50, self.width / self.height, 1, 3000 );
-            self.camera.position.z = this.cameraDistance;
-            self.cameraAngle=(Math.PI * 2) * .5;
-
-            // create the scene
-
-            self.scene = new THREE.Scene();
-            self.scene_sprite = new THREE.Scene();
-
-            self.scene.fog = new THREE.Fog( 0x000000, self.cameraDistance-200, self.cameraDistance+550 );
-
-            // create the stats thing
-            
-            if(Stats){
-                self.stats = new Stats();
-                self.stats.domElement.style.position = 'absolute';
-                self.stats.domElement.style.top = '0px';
-                self.container.appendChild( self.stats.domElement );
-            }
-
-            // add the globe particles
-            
-            globe_mainParticles.call(self);
-
-            // add the swirls
-            globe_swirls.call(self);
-
-            if(cb){
-                cb();
-            }
-        });
-
+        img.addEventListener('load', registerCallback());
 
         img.src = this.mapUrl;
-    }
+    };
 
     globe.prototype.addMarker = function(lat, lng, text){
 
@@ -918,8 +880,6 @@
 
         // this.container.appendChild( this.satelliteCanvas);
 
-        console.log(Math.floor(waveEnd-(waveEnd-waveStart)/numWaves));
-
         var animator = new TextureAnimator(satelliteTexture,rows, numFrames/rows, numFrames, 80, repeatAt, waveEnd);
 
         this.satelliteAnimations.push(animator);
@@ -999,16 +959,6 @@
             mesh.rotateZ(mesh.tiltDirection * Math.PI/2);
             mesh.rotateZ(Math.sin(this.cameraAngle + (mesh.lon / 180) * Math.PI) * mesh.tiltMultiplier * mesh.tiltDirection * -1);
 
-            // console.log(1-Math.abs(this.satelliteMeshes[i].lat/90.0))
-            // console.log(this.satelliteMeshes[i].theta);
-            // console.log(this.cameraAngle);
-            // console.log(Math.sin(this.cameraAngle));
-            //     this.satelliteMeshes[i].rotateZ(.66*Math.PI+1*(-3* Math.PI/2 - Math.cos(1*this.cameraAngle)));
-            // if(this.satelliteMeshes[i].lat > 0){
-            //     this.satelliteMeshes[i].rotateZ(.66*Math.PI+1*(-3* Math.PI/2 - Math.cos(1*this.cameraAngle)));
-            // } else {
-            //     this.satelliteMeshes[i].rotateZ(-3* Math.PI/2 - Math.cos(1*this.cameraAngle));
-            // }
             
         }
 

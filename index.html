@@ -18,13 +18,13 @@
                 top: 0em;
                 background-color:#000000;
                 color: #FFFFFF;
-
+                font-size: 59px;
             }
 
-            .center {
+            #logo {
                 position: absolute;
-                top: 50%;
-                left: 50%;
+                top: 45%;
+                left: 45%;
             }
 
             
@@ -38,43 +38,58 @@
         <script src="stats.min.js"></script>
         <script src="pusher.color.js"></script>
         <script src="encomsphere.js"></script>
+        <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
 
         <script>
-            function ready(){
-                globe = new ENCOM.globe();
 
-                globe.init(function(){
-
-                    animate();
-                    document.getElementById('splash').style.display='none';
-
-
-                    setInterval(function(){
-                        globe.addMarker(Math.random()*180 + 90, Math.random()*360+180, "testing");
-                    }, 1000);
-
-                    setInterval(function(){
-                        var sat = globe.addSatellite(Math.random()*180 - 90, Math.random() * 360, 1.2 + .6 * Math.random());
-                        setTimeout(function(){
-                            globe.removeSatellite(sat);
-
-                        },20000);
-                    },10000);
-                    setTimeout(function(){
-                        globe.addConnectedPoints(49.25, -123.1, "Vancouver", 35.68, 129.69, "Tokyo");
-
-                    }, 2000);
-                });
-            }
-
+            var globe;
 
             function animate(){
 
                 globe.tick();
-
                 requestAnimationFrame(animate);
 
             }
+
+            function start(){
+                $("#splash").css("display","none");
+                
+                animate();
+
+                setInterval(function(){
+                    globe.addMarker(Math.random()*180 + 90, Math.random()*360+180, "testing");
+                }, 1000);
+
+                setInterval(function(){
+                    var sat = globe.addSatellite(Math.random()*180 - 90, Math.random() * 360, 1.2 + .6 * Math.random());
+                    setTimeout(function(){
+                        globe.removeSatellite(sat);
+                    },20000);
+                },10000);
+
+                setTimeout(function(){
+                    globe.addConnectedPoints(49.25, -123.1, "Vancouver", 35.68, 129.69, "Tokyo");
+                }, 2000);
+
+
+            }
+
+            $(function() {
+                globe = new ENCOM.globe();
+
+                globe.init(function(){
+
+                    $("#logo").animate({
+                        fontSize: "40px",
+                        opacity: 0
+                        }, 2000, "easeInOutBack", start
+                    );
+
+                });
+            });
+
+
 
         </script>
 
@@ -82,12 +97,8 @@
     <body>
 
         <div id="splash">
-            <div class="center">ENCOM</div>
+            <div id="logo">ENCOM</div>
         </div>
-
-        <script>
-            ready();
-        </script>
 
     <body>
 </html>

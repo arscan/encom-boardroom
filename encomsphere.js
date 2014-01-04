@@ -9,21 +9,6 @@
         }
     };
 
-    var waitForAll = function(waits, cb){
-        this.waitfor_count = waits.length;
-
-        var finished = function(){
-            this.waitfor_count--;
-            if(!this.waitfor_count){
-                cb();
-            }
-        }
-
-        for(var i = 0; i< waits.length; i++){
-            waits[i](finished);
-        }
-    };
-
     // http://stackoverflow.com/a/13542669
     var shadeColor = function(color, percent) {   
         var num = parseInt(color.slice(1),16), 
@@ -199,7 +184,7 @@
             context.strokeStyle=underlineColor;
             context.lineWidth=2;
             context.beginPath();
-            context.moveTo(0, canvas.height-5);
+            context.moveTo(0, canvas.height-10);
             context.lineTo(canvas.width-1, canvas.height-10);
             context.stroke();
         }
@@ -618,16 +603,17 @@
 
                     // create the webgl context, renderer and camera
                     if(_this.containerId){
+                        console.log("doing a container");
                         _this.container = document.getElementById(_this.containerId);
-                        _this.width = _this.container.width;
-                        _this.height = _this.container.height;
+                        _this.width = _this.container.clientWidth;
+                        _this.height = _this.container.clientHeight;
                     } else {
                         _this.container = document.createElement( 'div' );
                         _this.container.width = _this.width;
                         _this.container.height = _this.height;
+                        document.body.appendChild( _this.container );
                     }
 
-                    document.body.appendChild( _this.container );
 
                     // TEMP
                     // _this.container.appendChild( _this.specialPointCanvas);
@@ -650,15 +636,6 @@
                     _this.scene_sprite = new THREE.Scene();
 
                     _this.scene.fog = new THREE.Fog( 0x000000, _this.cameraDistance-200, _this.cameraDistance+550 );
-
-                    // create the stats thing
-                    
-                    if(Stats){
-                        _this.stats = new Stats();
-                        _this.stats.domElement.style.position = 'absolute';
-                        _this.stats.domElement.style.top = '0px';
-                        _this.container.appendChild( _this.stats.domElement );
-                    }
 
                     // add the globe particles
                     
@@ -931,10 +908,6 @@
         globe_runPointAnimations.call(this);
         TWEEN.update();
 
-        if(this.stats){
-            this.stats.update();
-        }
-
         if(!this.lastRenderDate){
             this.lastRenderDate = new Date();
         }
@@ -972,10 +945,55 @@
 
     }
 
+    /* Satbar */
+
+    var Satbar = function(canvasId){
+        this.canvas = document.getElementById(canvasId);
+        this.width = this.canvas.width;
+        this.height = this.canvas.height;
+
+        this.context = this.canvas.getContext("2d");
+
+
+    };
+
+    Satbar.prototype.tick = function(){
+        if(!this.firstTick){
+            this.firstTick = new Date();
+        }
+        
+        var timeSinceStarted = new Date() - this.firstTick;
+        var finishTime = 3000;
+
+
+        if(timeSinceStarted > 3000){
+            // we've finished rendereding
+
+
+            return;
+        }
+
+        var percentComplete = timeSinceStarted/finishTime;
+        // console.log(percentComplete);
+
+        this.context.strokeStyle="#FFCC00";
+        this.context.lineWidth=2;
+        this.context.beginPath();
+        this.context.moveTo(20, 5);
+        this.context.lineTo((this.width-1) * percentComplete, 5);
+
+        // this.context.moveTo(30, 45);
+        // this.context.lineTo((this.width-1) * percentComplete, 45);
+        this.context.stroke();
+
+        
+
+
+    }
 
     return {
         globe: globe,
-        waitForAll: waitForAll
+        Satbar: Satbar
     };
 
 })();

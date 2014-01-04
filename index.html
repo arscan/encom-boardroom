@@ -4,8 +4,15 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
         <style>
+            /* 775 by 363 */
+
             body {
                 background-color: #000000;
+            }
+
+            div {
+                /*border: 1px solid #333333;*/
+
             }
 
             #splash {
@@ -21,13 +28,204 @@
                 font-size: 59px;
             }
 
+            #container {
+                width: 1900px;
+                height: 700px;
+                margin: auto;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                position:absolute;
+                /*border: 1px solid #00EEEE;*/
+                border-bottom: 1px solid #333;
+                
+            }
+
             #logo {
                 position: absolute;
                 top: 45%;
                 left: 45%;
             }
 
+            #globalization{
+                position: absolute;
+                top: -10px;
+                left: -10px;
+                width: 0px;
+                overflow: hidden;
+
+            }
+
+            #globalizationHeader {
+                color: #fff;
+                text-transform:capitalize;
+                border-top: 3px solid #FFCC00;
+                border-bottom: 1px solid #FFCC00;
+                margin-bottom: 3px;
+                padding: 3px;
+            }
+
+            #satbar {
+                border-top: 3px solid #FFCC00;
+                width:100%;
+                height:50px;
+
+
+            }
+
+
+            #globe{
+                position:absolute;
+                width:600px;
+                height:650px;
+                left: 190px;
+                top: 0;
+            }
+
+            #globe-footer{
+                position:absolute;
+                width:600px;
+                height:35px;
+                top: 665px;
+                left: 190px;
+                overflow: hidden;
+            }
+
+            /*
+            #globe-footer-reveal{
+                position:absolute;
+                width:600px;
+                height:35px;
+                top: 665px;
+                left: 190px;
+            }
+            */
+
+
+            #fps {
+                position: absolute;
+                left: 0;
+                bottom: 0px;
+                padding:0 0 3px 3px;
+                text-align:left;
+                background-color:#000;
+                /*width: 180px;*/
+                width: 0px;
+                height: 0px;
+                overflow:hidden;
+
+                border-left: 1px solid #aaa;
+            }
+
+            #fpsDescription {
+
+                position: absolute;
+                top: 0px;
+                left: 10px;
+                width:100px;
+
+                color:#fff;
+                font-family:Helvetica,Arial,sans-serif;
+                font-size:7px;
+                font-weight:bold;
+                line-height:15px;
+
+            }
+            #fpsText {
+                position: absolute;
+                top: 12px;
+                left: 10px;
+                width:100px;
+
+                color:#FFCC00;
+                font-family:Helvetica,Arial,sans-serif;
+                font-size:7px;
+                font-weight:bold;
+                line-height:15px;
+
+            }
+            #fpsGraph {
+                position: absolute;
+                bottom: 4px;
+                left: 90px;
+
+                width:74px;
+                height:26px;
+                background-color:#aaa;
+                border-bottom: 1px solid #666;
+
+            }
+            #fpsGraph span {
+
+                width:1px;
+                height:26px;
+                float:right;
+                background-color:#000;
+            }
+
+            #ms {
+                position: absolute;
+                left: 200px;
+                bottom: 0px;
+
+                padding:0 0 3px 3px;
+                text-align:left;
+                background-color:#000;
+                /*width: 200px;*/
+                /*height: 31px;*/
+                width: 0px;
+                height: 0px;
+                overflow:hidden;
+
+                border-left: 1px solid #aaa;
+            }
+            #msDescription {
+                position: absolute;
+                top: 0px;
+                left: 10px;
+                width:100px;
+
+                color:#fff;
+                font-family:Helvetica,Arial,sans-serif;
+                font-size:7px;
+                font-weight:bold;
+                line-height:15px;
+            }
+
+            #msText {
+                position: absolute;
+                top: 12px;
+                left: 10px;
+                width:100px;
+
+                color:#00EEEE;
+                font-family:Helvetica,Arial,sans-serif;
+                font-size:7px;
+                font-weight:bold;
+                line-height:15px;
+            }
             
+            #msGraph {
+                position: absolute;
+                bottom: 4px;
+                left: 80px;
+
+                width:74px;
+                height:26px;
+                background-color:#aaa;
+                order: 1px solid #666;
+                border-bottom: 1px solid #666;
+
+            }
+
+            #msGraph span {
+
+                width:1px;
+                height:26px;
+                float:right;
+                background-color:#000; 
+            }
 
         </style>
 
@@ -35,7 +233,7 @@
         <!-- <script src="http://threejs.org/build/three.min.js"></script> -->
         <script src="tween.min.js"></script>
 
-        <script src="stats.min.js"></script>
+        <script src="stats.js"></script>
         <script src="pusher.color.js"></script>
         <script src="encomsphere.js"></script>
         <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
@@ -43,19 +241,43 @@
 
         <script>
 
-            var globe;
+            var globe, stats, satbar;
 
             function animate(){
 
                 globe.tick();
+                satbar.tick();
                 requestAnimationFrame(animate);
+                stats.update();
 
             }
 
             function start(){
                 $("#splash").css("display","none");
                 
+                // the globe and other canvas-based renders will render their intros automatically
+                // so start the render loop
                 animate();
+
+
+                // render the other elements intro animations
+
+                $("#fps").delay(100).animate({
+                    height: "25px"
+                    }, 500).animate({
+                    width: "180px"}, 800);
+
+                $("#ms").delay(600).animate({
+                    height: "25px"
+                }, 500).animate({
+                width: "180px"}, 800);
+
+                $("#globalization").delay(600).animate({
+                    top: "0px",
+                    left: "0px",
+                    width: "180px"
+                }, 500);
+
 
                 setInterval(function(){
                     globe.addMarker(Math.random()*180 + 90, Math.random()*360+180, "testing");
@@ -72,13 +294,15 @@
                     globe.addConnectedPoints(49.25, -123.1, "Vancouver", 35.68, 129.69, "Tokyo");
                 }, 2000);
 
-
             }
 
             $(function() {
-                globe = new ENCOM.globe();
+                globe = new ENCOM.globe({containerId: "globe"});
+                stats = new Stats(document.getElementById("fps-stats"), document.getElementById("ms-stats"));
+                satbar = new ENCOM.Satbar("satbar");
 
                 globe.init(function(){
+                    // called after the globe is complete
 
                     $("#logo").animate({
                         fontSize: "40px",
@@ -96,8 +320,23 @@
     </head>
     <body>
 
-        <div id="splash">
-            <div id="logo">ENCOM</div>
+        <div id="container">
+
+            <div id="globalization">
+                <div id="globalizationHeader">GLOBALIZATION</div>
+                <canvas id="satbar"></canvas>
+        
+            </div>
+
+            <div id="globe"></div>
+            <div id="globe-footer">
+                <div id="footer-reveal"></div>
+                <div id="ms-stats"></div>
+                <div id="fps-stats"></div>
+            <div id="splash">
+                <div id="logo">ENCOM</div>
+            </div>
+
         </div>
 
     <body>

@@ -953,6 +953,8 @@
         this.height = this.canvas.height;
 
         this.context = this.canvas.getContext("2d");
+        console.log(this.width);
+        console.log(this.height);
 
 
     };
@@ -963,30 +965,43 @@
         }
         
         var timeSinceStarted = new Date() - this.firstTick;
-        var finishTime = 3000;
+        var finishTime = 2000;
 
 
-        if(timeSinceStarted > 3000){
+        if(timeSinceStarted > 2000){
+
             // we've finished rendereding
+            
+            console.log("done");
 
 
             return;
         }
 
         var percentComplete = timeSinceStarted/finishTime;
-        // console.log(percentComplete);
 
-        this.context.strokeStyle="#FFCC00";
+        this.context.clearRect(0,0,this.width, this.height);
+
+        /* draw lines */
+
+        this.context.strokeStyle="#00EEEE";
         this.context.lineWidth=2;
         this.context.beginPath();
-        this.context.moveTo(20, 5);
-        this.context.lineTo((this.width-1) * percentComplete, 5);
-
-        // this.context.moveTo(30, 45);
-        // this.context.lineTo((this.width-1) * percentComplete, 45);
+        this.context.moveTo(35, 15);
+        this.context.lineTo((this.width) * percentComplete, 15);
         this.context.stroke();
 
-        
+        this.context.beginPath();
+        this.context.moveTo(35, 35);
+        this.context.lineTo((this.width) * percentComplete, 35);
+        this.context.stroke();
+
+        /* draw insignia
+         */
+
+
+        this.context.rect(5,15,20,20);
+        this.context.stroke();
 
 
     }

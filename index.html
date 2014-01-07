@@ -279,9 +279,11 @@
                 }, 500);
 
 
-                setInterval(function(){
-                    globe.addMarker(Math.random()*180 + 90, Math.random()*360+180, "testing");
-                }, 1000);
+                setTimeout(function(){
+                    setInterval(function(){
+                        globe.addMarker(Math.random()*180 + 90, Math.random()*360+180, "testing");
+                    }, 1000);
+                },2000);
 
                 setInterval(function(){
                     var sat = globe.addSatellite(Math.random()*180 - 90, Math.random() * 360, 1.2 + .6 * Math.random());
@@ -289,6 +291,10 @@
                         globe.removeSatellite(sat);
                     },20000);
                 },10000);
+
+                setInterval(function(){
+                    satbar.setZone(Math.floor(Math.random()*4-1));
+                }, 7000);
 
                 setTimeout(function(){
                     globe.addConnectedPoints(49.25, -123.1, "Vancouver", 35.68, 129.69, "Tokyo");

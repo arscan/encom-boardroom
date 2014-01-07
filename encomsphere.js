@@ -407,11 +407,11 @@
                 y : point.y*this.swirlMultiplier,
                 z : point.z*this.swirlMultiplier});
 
-            for(var a = 0; a < 7; a++){
-                globe_addPointAnimation.call(this,delay + 500 + (300/10.0)*a, i, {
-                    x : point.x*(this.swirlMultiplier - (.1 + a/70.0)),
-                    y : point.y*(this.swirlMultiplier - (.1 + a/70.0)),
-                    z : point.z*(this.swirlMultiplier - (.1 + a/70.0))});
+            for(var a = 0; a < 4; a++){
+                globe_addPointAnimation.call(this,delay + 500 + (60)*a, i, {
+                    x : point.x*(this.swirlMultiplier - (.1 + a/40.0)),
+                    y : point.y*(this.swirlMultiplier - (.1 + a/40.0)),
+                    z : point.z*(this.swirlMultiplier - (.1 + a/40.0))});
             }
 
             globe_addPointAnimation.call(this,delay + 690, i, {
@@ -436,29 +436,30 @@
     };
 
     var globe_swirls = function(){
-        var geometrySpline,
-            materialSpline = new THREE.LineBasicMaterial({
-            color: 0x8FD8D8,
-            transparent: true,
-            linewidth: 2,
-            opacity: .8
-        });
+        var geometrySpline;
         var sPoint;
         var _this = this;
 
-        new TWEEN.Tween( {opacity: 1})
-            .to( {opacity: 0}, 500 )
-            .delay(this.swirlTime-500)
-            .onUpdate(function(){
-                materialSpline.opacity = this.opacity;
+        this.swirlMaterial = new THREE.LineBasicMaterial({
+                color: 0x8FD8D8,
+                transparent: true,
+                linewidth: 2,
+                opacity: .8
+            });
 
-            })
-            .start();
+        // new TWEEN.Tween( {opacity: 1})
+        //     .to( {opacity: 0}, 500 )
+        //     .delay(this.swirlTime-500)
+        //     .onUpdate(function(){
+        //         materialSpline.opacity = this.opacity;
 
-        setTimeout(function(){
-            _this.scene.remove(_this.swirl);
-        }, this.swirlTime);
+        //     })
+        //     .start();
 
+
+        // setTimeout(function(){
+        //     _this.scene.remove(_this.swirl);
+        // }, this.swirlTime);
 
         for(var i = 0; i<75; i++){
             geometrySpline = new THREE.Geometry();
@@ -479,7 +480,7 @@
                 geometrySpline.vertices.push(sPoint);  
             }
 
-            this.swirl.add(new THREE.Line(geometrySpline, materialSpline));
+            this.swirl.add(new THREE.Line(geometrySpline, this.swirlMaterial));
             
         }
         this.scene.add(this.swirl);
@@ -912,7 +913,11 @@
             this.lastRenderDate = new Date();
         }
 
+        if(!this.firstRenderDate){
+            this.firstRenderDate = new Date();
+        }
 
+        var totalRunTime = new Date() - this.firstRenderDate;
 
         var renderTime = new Date() - this.lastRenderDate;
         this.lastRenderDate = new Date();
@@ -935,10 +940,23 @@
             
         }
 
+        if(this.swirlTime > totalRunTime){
+            if(totalRunTime/this.swirlTime < .1){
+                this.swirlMaterial.opacity = (totalRunTime/this.swirlTime)*10 - .2;
+            } else if(totalRunTime/this.swirlTime < .9){
+                this.swirlMaterial.opacity = .8;
+            }if(totalRunTime/this.swirlTime > .9){
+                this.swirlMaterial.opacity = Math.max(1-totalRunTime/this.swirlTime,0);
+            }
+            this.swirl.rotateY((2 * Math.PI)/(this.swirlTime/renderTime));
+        } else if(this.swirl){
+            this.scene.remove(this.swirl);
+            delete[this.swirl];
+
+        }
+
 
         this.camera.lookAt( this.scene.position );
-
-        this.swirl.rotateY((2 * Math.PI)/(this.swirlTime/renderTime));
         this.renderer.render( this.scene_sprite, this.camera );
         this.renderer.render( this.scene, this.camera );
         globe_updateSatellites.call(this, renderTime);
@@ -953,9 +971,82 @@
         this.height = this.canvas.height;
 
         this.context = this.canvas.getContext("2d");
-        console.log(this.width);
-        console.log(this.height);
 
+        this.context.font = "8pt Arial";
+        this.context.textAlign = "center";
+        this.context.textBaseline = "middle";
+
+    };
+
+    var satbar_drawBox = function(context,x,y,size, zone, percent){
+        if(!percent){
+            percent = 1;
+        }
+
+        context.strokeStyle="#00EEEE";
+        context.fillStyle="#00EEEE";
+
+        context.beginPath();
+        context.moveTo(x, y-size*percent/2);
+        context.lineTo(x, y+size*percent/2);
+        context.stroke();
+
+        context.beginPath();
+        context.moveTo(x-size*percent/2, y);
+        context.lineTo(x+size*percent/2, y);
+        context.stroke();
+
+
+        if(zone !== undefined && zone>-1){
+            context.fillRect(x-size*percent/2 + (zone%2)*size*percent/2, y-size*percent/2 + Math.floor(zone/2)*size*percent/2, size*percent/2,size*percent/2);
+        }
+
+        context.beginPath();
+        context.arc(x,y,size*percent/4,0,Math.PI*2);
+        context.fillStyle="#000";
+        context.fill();
+
+
+
+        context.fillStyle="#00EEEE";
+
+        context.rect(x-size*percent/2,y-size*percent/2,size*percent,size*percent);
+        context.stroke();
+
+        // this.context.rect(5,15,20,20);
+
+
+    };
+
+    var satbar_drawLines = function(context,x,width, percent){
+
+        context.strokeStyle="#00EEEE";
+        context.lineWidth=2;
+        context.moveTo(x, 15);
+        context.lineTo(x+width * percent, 15);
+
+        context.moveTo(x, 35);
+        context.lineTo(x+width * percent, 35);
+
+        context.moveTo(35 + percent*(width-35)/3, 15);
+        context.lineTo(35 + percent*(width-35)/3, 20);
+
+        context.moveTo(35 + 2*percent*(width-35)/3, 15);
+        context.lineTo(35 + 2*percent*(width-35)/3, 20);
+        
+        context.moveTo(35 + percent*(width-35)/3, 30);
+        context.lineTo(35 + percent*(width-35)/3, 35);
+
+        context.moveTo(35 + 2*percent*(width-35)/3, 30);
+        context.lineTo(35 + 2*percent*(width-35)/3, 35);
+        context.stroke();
+
+        if(percent >.6){
+            context.fillStyle=shadeColor("#000000",100*percent);
+            context.fillText("satellite", 35 + (width-35)/6, 25);
+            context.fillText("data", 35+percent*(width-35)/2, 25);
+            context.fillText("uplink", 35+percent*5*(width-35)/6, 25);
+        }
 
     };
 
@@ -967,42 +1058,35 @@
         var timeSinceStarted = new Date() - this.firstTick;
         var finishTime = 2000;
 
-
-        if(timeSinceStarted > 2000){
+        if(timeSinceStarted > 2200){
 
             // we've finished rendereding
-            
-            console.log("done");
-
 
             return;
         }
 
-        var percentComplete = timeSinceStarted/finishTime;
+        var percentComplete = Math.min(1,timeSinceStarted/finishTime);
 
         this.context.clearRect(0,0,this.width, this.height);
 
         /* draw lines */
 
-        this.context.strokeStyle="#00EEEE";
-        this.context.lineWidth=2;
-        this.context.beginPath();
-        this.context.moveTo(35, 15);
-        this.context.lineTo((this.width) * percentComplete, 15);
-        this.context.stroke();
-
-        this.context.beginPath();
-        this.context.moveTo(35, 35);
-        this.context.lineTo((this.width) * percentComplete, 35);
-        this.context.stroke();
+        satbar_drawLines(this.context, 35, this.width, percentComplete);
 
         /* draw insignia
          */
 
+        satbar_drawBox(this.context, 15, 25, 20, 1, Math.min(1,percentComplete*2));
 
-        this.context.rect(5,15,20,20);
-        this.context.stroke();
+    }
 
+    Satbar.prototype.setZone = function(zone){
+        zone = Math.max(-1,zone);
+        zone = Math.min(3,zone);
+
+        this.context.clearRect(0,0,35, 35);
+
+        satbar_drawBox(this.context, 15, 25, 20, zone, 1);
 
     }
 

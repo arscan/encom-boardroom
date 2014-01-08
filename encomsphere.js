@@ -587,7 +587,6 @@
             return function(){
 
                 numRegistered--;
-                console.log(numRegistered);
 
                 if(numRegistered == 0){
                     //image has loaded, may rsume
@@ -597,14 +596,15 @@
                     for (var i = 0; i< _this.samples.length; i++){
                         
                         globe_samplePoints(projectionContext,img.width, img.height, _this.samples[i].offsetLat, _this.samples[i].offsetLon, _this.samples[i].incLat, _this.samples[i].incLon, function(point){
-                            _this.points.push(point);
+                            if((point.lat > -60 || Math.random() > .9) && Math.random()>.2){ // thin it out (especially antartica)
+                                _this.points.push(point);
+                            }
                         });
                     }
                     document.body.removeChild(projectionCanvas);
 
                     // create the webgl context, renderer and camera
                     if(_this.containerId){
-                        console.log("doing a container");
                         _this.container = document.getElementById(_this.containerId);
                         _this.width = _this.container.clientWidth;
                         _this.height = _this.container.clientHeight;
@@ -965,7 +965,7 @@
 
     /* Satbar */
 
-    var Satbar = function(canvasId){
+    var SatBar = function(canvasId){
         this.canvas = document.getElementById(canvasId);
         this.width = this.canvas.width;
         this.height = this.canvas.height;
@@ -1050,7 +1050,7 @@
 
     };
 
-    Satbar.prototype.tick = function(){
+    SatBar.prototype.tick = function(){
         if(!this.firstTick){
             this.firstTick = new Date();
         }
@@ -1080,7 +1080,7 @@
 
     }
 
-    Satbar.prototype.setZone = function(zone){
+    SatBar.prototype.setZone = function(zone){
         zone = Math.max(-1,zone);
         zone = Math.min(3,zone);
 
@@ -1090,9 +1090,110 @@
 
     }
 
+    var LocationBar = function(canvasId, loclist){
+
+
+        this.canvas = document.getElementById(canvasId);
+        this.width = this.canvas.width;
+        this.height = this.canvas.height;
+
+        this.locations = {};
+
+        this.locations = loclist;
+
+        this.context = this.canvas.getContext("2d");
+
+        this.context.font = "8pt Arial";
+        this.context.textAlign = "top";
+        this.context.textBaseline = "left";
+
+    };
+
+    var locationbar_drawLocation = function(key, y, percentage){
+
+        this.context.strokeStyle="#00EEEE";
+        this.context.lineWidth=1;
+        this.context.beginPath();
+        this.context.moveTo(0, y+22);
+        this.context.lineTo(this.width * percentage, y+22);
+        this.context.stroke();
+        this.context.closePath()
+        
+        this.context.strokeStyle="#666";
+        this.context.beginPath();
+        this.context.moveTo(0, y+30);
+        this.context.lineTo(this.width * percentage, y+30);
+        this.context.stroke();
+        this.context.closePath()
+
+        if(this.locations[key].color == undefined){
+            this.locations[key].color = Math.floor(Math.random()*2)
+        }
+
+        var labelWidth = this.context.measureText(this.locations[key].label1).width;
+
+        if(this.locations[key].color){
+            this.context.fillStyle = "#00EEEE";
+        } else {
+            this.context.fillStyle = "#FFCC00";
+        }
+
+        this.context.fillRect(0, y+2,labelWidth+8,10);
+
+        this.context.fillStyle = "#000";
+        this.context.fillText(this.locations[key].label1, 4, y+11);
+
+        this.context.fillStyle = "#FFF";
+        this.context.fillText(this.locations[key].label2, 14 + labelWidth, y+11);
+
+        this.context.fillStyle = "#00EEEE";
+
+        for(var i = 0; i<this.locations[key].points.length; i++){
+
+            this.context.arc(this.width * percentage * this.locations[key].points[i], y+22,2,0,Math.PI*2);
+            this.context.fill();
+
+        }
+
+
+
+    };
+
+
+    LocationBar.prototype.tick = function(){
+        if(!this.firstTick){
+            this.firstTick = new Date();
+        }
+        
+        var timeSinceStarted = new Date() - this.firstTick;
+        var finishTime = 2000;
+
+        // if(timeSinceStarted > 2200){
+
+        //     // we've finished rendereding
+
+        //     return;
+        // }
+
+        var percentComplete = Math.min(1,timeSinceStarted/finishTime);
+
+        this.context.clearRect(0,0,this.width, this.height);
+
+
+        var count = 0;
+        for(var i in this.locations){
+            if(!this.locations[i].blank){
+                locationbar_drawLocation.call(this, i, count*45+10, percentComplete);
+            }
+            count++;
+        }
+
+    }
+
     return {
         globe: globe,
-        Satbar: Satbar
+        SatBar: SatBar,
+        LocationBar: LocationBar
     };
 
 })();

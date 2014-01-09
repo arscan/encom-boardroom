@@ -2,12 +2,13 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
         <style>
             /* 775 by 363 */
 
             body {
                 background-color: #000000;
+                font-family: 'Inconsolata', sans-serif;
+
             }
 
             div {
@@ -41,12 +42,48 @@
                 border-bottom: 1px solid #333;
                 
             }
+            .header{
+                color: #fff;
+                text-transform:capitalize;
+                margin-bottom: 3px;
+                padding: 3px;
+                border-top: 3px solid #FFCC00;
+                border-bottom: 1px solid #FFCC00;
+            }
+
+            .header:before{
+                content: "";
+                display: block;
+                position: absolute;
+                left: 0px;
+                top: 33px;
+                width: 100%;
+                height: 3px;
+                background: #FFCC00;
+
+            }
+
+            .header-other{
+                border-color: #00EEEE;
+            }
+            .header-other:after{
+                content: "";
+                display: block;
+                position: absolute;
+                left: 0px;
+                top: 33px;
+                width: 100%;
+                height: 3px;
+                background: #00EEEE;
+
+            }
 
             #logo {
                 position: absolute;
                 top: 45%;
                 left: 45%;
             }
+
 
             #globalization{
                 position: absolute;
@@ -57,23 +94,13 @@
 
             }
 
-            #globalizationHeader {
-                color: #fff;
-                text-transform:capitalize;
-                border-top: 3px solid #FFCC00;
-                border-bottom: 1px solid #FFCC00;
-                margin-bottom: 3px;
-                padding: 3px;
-            }
-
             #satbar {
-                border-top: 3px solid #FFCC00;
             }
 
 
             #globe{
                 position:absolute;
-                width:600px;
+                width:650px;
                 height:650px;
                 left: 190px;
                 top: 0;
@@ -81,11 +108,52 @@
 
             #globe-footer{
                 position:absolute;
-                width:600px;
+                width:650px;
                 height:35px;
                 top: 665px;
                 left: 190px;
                 overflow: hidden;
+            }
+
+            #user-interaction{
+                position: absolute;
+                top: 0px;
+                left: 830px;
+                width: 0px;
+                height: 450px;
+                overflow: hidden;
+            }
+
+            #growth{
+                position: absolute;
+                top: 455px;
+                left: 830px;
+                width: 0px;
+                height: 195px;
+                overflow: hidden;
+            }
+
+            #media{
+                position: absolute;
+                top: 0px;
+                left: 1440px;
+                width: 0px;
+                height: 450px;
+                overflow: hidden;
+            }
+
+            #timer{
+                position: absolute;
+                top: 455px;
+                left: 1440px;
+                width: 0px;
+                height: 195px;
+                overflow: hidden;
+            }
+
+            #clock {
+                font-size: 80px;
+                color: #AAA;
             }
 
             /*
@@ -237,15 +305,30 @@
 
         <script>
 
-            var globe, stats, satbar, locationbar;
+            var globe, stats, satbar, locationbar, startDate;
+
+            startDate = new Date();
 
             function animate(){
 
                 globe.tick();
                 satbar.tick();
                 locationbar.tick();
+                $("#clock").text(getTime());
                 requestAnimationFrame(animate);
                 stats.update();
+
+            }
+
+            function getTime(){
+
+                var elapsed = new Date() - startDate;
+
+                var mili = Math.floor((elapsed/10) % 100);
+                var seconds = Math.floor((elapsed / 1000) % 60); 
+                var minutes = Math.floor((elapsed / 60000) % 100); 
+
+                return "" + (minutes < 10 ? "0":"") + minutes + ":" + (seconds< 10? "0": "") + seconds + ":" + (mili < 10? "0" : "") + mili;
 
             }
 
@@ -274,6 +357,23 @@
                     left: "0px",
                     width: "180px"
                 }, 500);
+
+                $("#user-interaction").delay(600).animate({
+                    width: "600px"
+                }, 500);
+
+                $("#growth").delay(500).animate({
+                    width: "600px"
+                }, 500);
+
+                $("#media").delay(1000).animate({
+                    width: "400px"
+                }, 500);
+
+                $("#timer").delay(1000).animate({
+                    width: "400px"
+                }, 500);
+
 
 
                 setTimeout(function(){
@@ -351,7 +451,15 @@
                         "label1": "Germany",
                         "label2": "Great Britian",
                         "points": [.2,.25,.4,.8,.9]
-                    }
+                    },
+                    "blank2": {
+                        "blank": true
+                    },
+                    "Everywhere": {
+                        "label1": "Everywhere",
+                        "label2": "United States",
+                        "points": [.1,.2,.5,.7,.9]
+                    },
                 });
 
                 globe.init(function(){
@@ -369,14 +477,14 @@
 
 
         </script>
-
+       <link href='http://fonts.googleapis.com/css?family=Inconsolata&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     </head>
     <body>
 
         <div id="container">
 
             <div id="globalization">
-                <div id="globalizationHeader">GLOBALIZATION</div>
+                <div class="header" id="globalization-header">GLOBALIZATION</div>
                 <canvas id="satbar" width="180px" height="36px"></canvas>
                 <canvas id="locationbar" width="180px" height="700px"></canvas>
         
@@ -387,8 +495,35 @@
                 <div id="footer-reveal"></div>
                 <div id="ms-stats"></div>
                 <div id="fps-stats"></div>
+            </div>
+
+            <div id="user-interaction">
+                <div class="header header-other" id="user-interaction-header">
+                    USER INTERACTION SCIENCE
+                </div>
+            </div>
+            <div id="growth">
+                <div class="header header-other" id="growth-header">
+                    GROWTH PROJECTION
+                </div>
+            </div>
+
+            <div id="media">
+                <div class="header" id="media-header">
+                    USER SNAPSHOTS
+                </div>
+            </div>
+            <div id="timer">
+                <div class="header" id="timer-header">
+                    TIME SINCE START
+                </div>
+                <div id="clock">
+                    00:00:00
+                </div>
+            </div>
+
             <div id="splash">
-                <div id="logo">ENCOM</div>
+                <div id="logo">encom</div>
             </div>
 
         </div>

@@ -163,7 +163,8 @@
         var canvas = document.createElement("canvas");
 
         var context = canvas.getContext("2d");
-        context.font = size + "pt Arial";
+        // context.font = size + "pt Arial";
+        context.font = size + "pt Inconsolata";
 
         var textWidth = context.measureText(text).width;
 
@@ -173,7 +174,8 @@
             canvas.height += 30;
         }
         context = canvas.getContext("2d");
-        context.font = size + "pt Arial";
+        // context.font = size + "pt Arial";
+        context.font = size + "pt Inconsolata";
 
         context.textAlign = "center";
         context.textBaseline = "middle";
@@ -531,7 +533,7 @@
             height: document.height,
             swirlMultiplier: 1.20,
             swirlTime: 3500,
-            cameraDistance: 2000,
+            cameraDistance: 1700,
             samples: [
                 { 
                     offsetLat: 0,
@@ -972,7 +974,8 @@
 
         this.context = this.canvas.getContext("2d");
 
-        this.context.font = "8pt Arial";
+        // this.context.font = "8pt Arial";
+        this.context.font = "8pt Inconsolata";
         this.context.textAlign = "center";
         this.context.textBaseline = "middle";
 
@@ -1103,7 +1106,8 @@
 
         this.context = this.canvas.getContext("2d");
 
-        this.context.font = "8pt Arial";
+        // this.context.font = "8pt Arial";
+        this.context.font = "8pt Inconsolata";
         this.context.textAlign = "top";
         this.context.textBaseline = "left";
 

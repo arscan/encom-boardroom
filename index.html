@@ -45,7 +45,7 @@
             .header{
                 color: #fff;
                 text-transform:capitalize;
-                margin-bottom: 3px;
+                margin-bottom: 10px;
                 padding: 3px;
                 border-top: 3px solid #FFCC00;
                 border-bottom: 1px solid #FFCC00;
@@ -152,7 +152,7 @@
             }
 
             #clock {
-                font-size: 80px;
+                font-size: 75px;
                 color: #AAA;
             }
 
@@ -291,6 +291,13 @@
                 background-color:#000; 
             }
 
+            #clock {
+                float: left;
+            }
+            #simpleclock {
+                float: right;
+            }
+
         </style>
 
         <script src="three.min.js"></script>
@@ -305,7 +312,7 @@
 
         <script>
 
-            var globe, stats, satbar, locationbar, startDate;
+            var globe, stats, satbar, locationbar, simpleclock, startDate;
 
             startDate = new Date();
 
@@ -315,6 +322,7 @@
                 satbar.tick();
                 locationbar.tick();
                 $("#clock").text(getTime());
+                simpleclock.tick();
                 requestAnimationFrame(animate);
                 stats.update();
 
@@ -403,6 +411,7 @@
                 globe = new ENCOM.globe({containerId: "globe"});
                 stats = new Stats(document.getElementById("fps-stats"), document.getElementById("ms-stats"));
                 satbar = new ENCOM.SatBar("satbar");
+                
                 locationbar = new ENCOM.LocationBar("locationbar", {
                     "North America": {
                         "label1": "North Ameria",
@@ -461,6 +470,8 @@
                         "points": [.1,.2,.5,.7,.9]
                     },
                 });
+                
+                simpleclock = new ENCOM.SimpleClock("simpleclock");
 
                 globe.init(function(){
                     // called after the globe is complete
@@ -520,6 +531,7 @@
                 <div id="clock">
                     00:00:00
                 </div>
+                <canvas id="simpleclock" width="80px" height="80px"></canvas>
             </div>
 
             <div id="splash">

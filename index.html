@@ -120,13 +120,13 @@
                 top: 0px;
                 left: 830px;
                 width: 0px;
-                height: 450px;
+                height: 495px;
                 overflow: hidden;
             }
 
             #growth{
                 position: absolute;
-                top: 455px;
+                top: 500px;
                 left: 830px;
                 width: 0px;
                 height: 195px;
@@ -138,13 +138,13 @@
                 top: 0px;
                 left: 1440px;
                 width: 0px;
-                height: 450px;
+                height: 495px;
                 overflow: hidden;
             }
 
             #timer{
                 position: absolute;
-                top: 455px;
+                top: 500px;
                 left: 1440px;
                 width: 0px;
                 height: 195px;
@@ -152,8 +152,10 @@
             }
 
             #clock {
+                float: left;
                 font-size: 75px;
                 color: #AAA;
+                overflow: hidden;
             }
 
             /*
@@ -291,11 +293,43 @@
                 background-color:#000; 
             }
 
-            #clock {
-                float: left;
+            #clockbar {
+                overflow: hidden;
+                height: 80px;
             }
             #simpleclock {
-                float: right;
+                float: left;
+            }
+
+            #timerbar {
+               clear: both;
+               margin:10px;
+               overflow: hidden;
+               margin-left: 0px;
+               height: 27px;
+            }
+
+            .section-timerbar{
+               width: 67px;
+               border: 1px solid #00EEEE; 
+               float:left;
+               color: #FFFFFF;
+               font-size: 8px;
+               padding:4px;
+               margin-bottom: 10px;
+            }
+
+            .buffer-timerbar{
+               margin-left: -5px;
+               background-color: #000;
+               padding-left:5px;
+               width: 110%;
+            }
+
+            .buffer-timerbar > small {
+                font-size: 8px;
+                display: block;
+                color: #aaa;
             }
 
         </style>
@@ -528,10 +562,44 @@
                 <div class="header" id="timer-header">
                     TIME SINCE START
                 </div>
-                <div id="clock">
-                    00:00:00
+                <div id="clockbar">
+                    <div id="clock">
+                        00:00:00
+                    </div>
+                    <canvas id="simpleclock" width="80px" height="80px"></canvas>
                 </div>
-                <canvas id="simpleclock" width="80px" height="80px"></canvas>
+                <div id="timerbar">
+                    <div class="section-timerbar">
+                        <div class="buffer-timerbar">
+                            <small>Top Section</small>
+                            Bottom Section
+                        </div>
+                    </div>
+                    <div class="section-timerbar">
+                        <div class="buffer-timerbar">
+                            <small>Top Section</small>
+                            Bottom Section
+                        </div>
+                    </div>
+                    <div class="section-timerbar">
+                        <div class="buffer-timerbar">
+                            <small>Top Section</small>
+                            Bottom Section
+                        </div>
+                    </div>
+                    <div class="section-timerbar">
+                        <div class="buffer-timerbar">
+                            <small>Top Section</small>
+                            Bottom Section
+                        </div>
+                    </div>
+                    <div class="section-timerbar">
+                        <div class="buffer-timerbar">
+                            <small>Top Section</small>
+                            Bottom Section
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div id="splash">

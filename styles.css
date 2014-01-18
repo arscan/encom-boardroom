@@ -1,0 +1,347 @@
+
+/* 775 by 363 */
+
+body {
+    background-color: #000000;
+    font-family: 'Inconsolata', sans-serif;
+
+}
+
+div {
+    /*border: 1px solid #333333;*/
+
+}
+
+#splash {
+
+    width:100%;
+    height:100%;
+    position:fixed;
+    margin: 0em;
+    left: 0em;
+    top: 0em;
+    background-color:#000000;
+    color: #FFFFFF;
+    font-size: 59px;
+}
+
+#container {
+    width: 1900px;
+    height: 700px;
+    margin: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position:absolute;
+    /*border: 1px solid #00EEEE;*/
+    border-bottom: 1px solid #333;
+
+}
+.header{
+    color: #fff;
+    text-transform:capitalize;
+    margin-bottom: 10px;
+    padding: 3px;
+    border-top: 3px solid #FFCC00;
+    border-bottom: 1px solid #FFCC00;
+}
+
+.header:before{
+    content: "";
+    display: block;
+    position: absolute;
+    left: 0px;
+    top: 33px;
+    width: 100%;
+    height: 3px;
+    background: #FFCC00;
+
+}
+
+.header-other{
+    border-color: #00EEEE;
+}
+
+.header-other:before{
+    content: "";
+    display: block;
+    position: absolute;
+    left: 0px;
+    top: 33px;
+    width: 100%;
+    height: 3px;
+    background: #00EEEE;
+
+}
+
+.header-other2{
+    border-color: #FF9933;
+}
+
+.header-other2:before{
+    content: "";
+    display: block;
+    position: absolute;
+    left: 0px;
+    top: 33px;
+    width: 100%;
+    height: 3px;
+    background: #FF9933;
+
+}
+
+#logo {
+    position: absolute;
+    top: 45%;
+    left: 45%;
+}
+
+
+#globalization{
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 0px;
+    overflow: hidden;
+
+}
+
+#satbar {
+}
+
+
+#globe{
+    position:absolute;
+    width:650px;
+    height:650px;
+    left: 190px;
+    top: 0;
+}
+
+#globe-footer{
+    position:absolute;
+    width:650px;
+    height:35px;
+    top: 665px;
+    left: 190px;
+    overflow: hidden;
+}
+
+#user-interaction{
+    position: absolute;
+    top: 0px;
+    left: 830px;
+    width: 0px;
+    height: 495px;
+    overflow: hidden;
+}
+
+#growth{
+    position: absolute;
+    top: 500px;
+    left: 830px;
+    width: 0px;
+    height: 195px;
+    overflow: hidden;
+}
+
+#media{
+    position: absolute;
+    top: 0px;
+    left: 1440px;
+    width: 0px;
+    height: 495px;
+    overflow: hidden;
+}
+
+#timer{
+    position: absolute;
+    top: 500px;
+    left: 1440px;
+    width: 0px;
+    height: 195px;
+    overflow: hidden;
+}
+
+#clock {
+    float: left;
+    font-size: 75px;
+    color: #AAA;
+    overflow: hidden;
+}
+
+/*
+#globe-footer-reveal{
+position:absolute;
+width:600px;
+height:35px;
+top: 665px;
+left: 190px;
+}
+ */
+
+
+#fps {
+    position: absolute;
+    left: 0;
+    bottom: 0px;
+    padding:0 0 3px 3px;
+    text-align:left;
+    background-color:#000;
+    /*width: 180px;*/
+    width: 0px;
+    height: 0px;
+    overflow:hidden;
+
+    border-left: 1px solid #aaa;
+}
+
+#fpsDescription {
+
+    position: absolute;
+    top: 0px;
+    left: 10px;
+    width:100px;
+
+    color:#fff;
+    font-family:Helvetica,Arial,sans-serif;
+    font-size:7px;
+    font-weight:bold;
+    line-height:15px;
+
+}
+#fpsText {
+    position: absolute;
+    top: 12px;
+    left: 10px;
+    width:100px;
+
+    color:#FFCC00;
+    font-family:Helvetica,Arial,sans-serif;
+    font-size:7px;
+    font-weight:bold;
+    line-height:15px;
+
+}
+#fpsGraph {
+    position: absolute;
+    bottom: 4px;
+    left: 90px;
+
+    width:74px;
+    height:26px;
+    background-color:#aaa;
+    border-bottom: 1px solid #666;
+
+}
+#fpsGraph span {
+
+    width:1px;
+    height:26px;
+    float:right;
+    background-color:#000;
+}
+
+#ms {
+    position: absolute;
+    left: 200px;
+    bottom: 0px;
+
+    padding:0 0 3px 3px;
+    text-align:left;
+    background-color:#000;
+    /*width: 200px;*/
+    /*height: 31px;*/
+    width: 0px;
+    height: 0px;
+    overflow:hidden;
+
+    border-left: 1px solid #aaa;
+}
+#msDescription {
+    position: absolute;
+    top: 0px;
+    left: 10px;
+    width:100px;
+
+    color:#fff;
+    font-family:Helvetica,Arial,sans-serif;
+    font-size:7px;
+    font-weight:bold;
+    line-height:15px;
+}
+
+#msText {
+    position: absolute;
+    top: 12px;
+    left: 10px;
+    width:100px;
+
+    color:#00EEEE;
+    font-family:Helvetica,Arial,sans-serif;
+    font-size:7px;
+    font-weight:bold;
+    line-height:15px;
+}
+
+#msGraph {
+    position: absolute;
+    bottom: 4px;
+    left: 80px;
+
+    width:74px;
+    height:26px;
+    background-color:#aaa;
+    order: 1px solid #666;
+    border-bottom: 1px solid #666;
+
+}
+
+#msGraph span {
+
+    width:1px;
+    height:26px;
+    float:right;
+    background-color:#000; 
+}
+
+#clockbar {
+    overflow: hidden;
+    height: 80px;
+}
+#simpleclock {
+    float: left;
+}
+
+#timerbar {
+    clear: both;
+    margin:10px;
+    overflow: hidden;
+    margin-left: 0px;
+    height: 27px;
+}
+
+.section-timerbar{
+    width: 67px;
+    border: 1px solid #00EEEE; 
+    float:left;
+    color: #FFFFFF;
+    font-size: 8px;
+    padding:4px;
+    margin-bottom: 10px;
+}
+
+.buffer-timerbar{
+    margin-left: -5px;
+    background-color: #000;
+    padding-left:5px;
+    width: 110%;
+}
+
+.buffer-timerbar > small {
+    font-size: 8px;
+    display: block;
+    color: #aaa;
+}
+

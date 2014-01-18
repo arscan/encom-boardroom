@@ -91,6 +91,17 @@ function start(){
                 globe.addConnectedPoints(49.25, -123.1, "Vancouver", 35.68, 129.69, "Tokyo");
             }, 2000);
 
+            setInterval(function(){
+                $("#san-francisco-time").text(moment().tz("America/Los_Angeles").format("HH:mm:ss"));
+                $("#new-york-time").text(moment().tz("America/New_York").format("HH:mm:ss"));
+                $("#berlin-time").text(moment().tz("Europe/Berlin").format("HH:mm:ss"));
+                $("#bangalore-time").text(moment().tz("Asia/Colombo").format("HH:mm:ss"));
+                $("#sydney-time").text(moment().tz("Australia/Sydney").format("HH:mm:ss"));
+            }, 1000);
+
+
+          
+
 }
 
 $(function() {

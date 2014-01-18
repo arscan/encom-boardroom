@@ -97,6 +97,7 @@ $(function() {
     globe = new ENCOM.globe({containerId: "globe"});
     stats = new Stats(document.getElementById("fps-stats"), document.getElementById("ms-stats"));
     satbar = new ENCOM.SatBar("satbar");
+    timertrees = new ENCOM.TimerTrees("timer-trees");
 
     locationbar = new ENCOM.LocationBar("locationbar", {
         "North America": {

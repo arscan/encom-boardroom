@@ -1275,11 +1275,95 @@
 
    };
 
+   var timertrees_render = function(){
+
+       var i = 0,
+           lineLocation = 0,
+           prevLocations = [];
+
+
+       var locationOk = function(loc){
+           var j = 0;
+           for( ; j< prevLocations.length; j++){
+               if(Math.abs(loc-prevLocations[j]) < 5){
+                   console.log("location not ok!");
+                   return false;
+               }
+           }
+           return true;
+       }
+
+       this.context.beginPath();
+       this.context.lineWidth=1;
+       this.context.strokeStyle="#666";
+       this.context.moveTo(0, this.height-5);
+       this.context.lineTo(this.width-1,this.height-5);
+       this.context.stroke();
+       this.context.closePath();
+
+       this.context.beginPath();
+       this.context.strokeStyle="#FFCC00";
+       this.context.lineWidth=2;
+       this.context.moveTo(this.width/5 - Math.random()*10, this.height-5);
+       this.context.lineTo(2*this.width/5 + Math.random()*10,this.height-5);
+       this.context.stroke();
+       this.context.closePath();
+
+       this.context.beginPath();
+       this.context.strokeStyle="#FFCC00";
+       this.context.lineWidth=2;
+       this.context.moveTo(3*this.width/5 - Math.random()*10, this.height-5);
+       this.context.lineTo(4*this.width/5 + Math.random()*10,this.height-5);
+       this.context.stroke();
+       this.context.closePath();
+
+       this.context.lineWidth=1;
+       this.context.strokeStyle="#00EEEE";
+       this.context.fillStyle="#00EEEE";
+       for( ; i< 20; i++){
+           lineLocation = Math.random() * this.width 
+           this.context.beginPath();
+           while(!locationOk(lineLocation)){
+               lineLocation = Math.random() * this.width;
+           }
+           prevLocations.push(lineLocation);
+
+           var endLocation = Math.random() * (this.height - 10);
+
+           this.context.lineWidth=1;
+           this.context.moveTo(lineLocation, this.height-5);
+           this.context.lineTo(lineLocation, endLocation);
+           this.context.stroke();
+           this.context.closePath();
+           this.context.beginPath();
+           this.context.arc(lineLocation, endLocation,  2, 0, Math.PI*2);
+           this.context.fill();
+           this.context.closePath();
+       }
+
+   }
+   var TimerTrees = function(canvasId){
+
+        if(this.firstTick == undefined){
+            this.firstTick = new Date();
+        }
+
+        var canvas = document.getElementById(canvasId);
+        this.context = canvas.getContext("2d");
+
+        this.width = canvas.width;
+        this.height = canvas.height;
+
+        timertrees_render.call(this);
+
+    }
+
     return {
         globe: globe,
         SatBar: SatBar,
         LocationBar: LocationBar,
-        SimpleClock: SimpleClock
+        SimpleClock: SimpleClock,
+        TimerTrees: TimerTrees
     };
 
 })();

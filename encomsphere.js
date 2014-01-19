@@ -28,6 +28,25 @@
         return buffer;
     };
 
+    var drawCurvedRectangle = function(ctx, left, top, width, height, radius){
+
+       ctx.beginPath();
+       ctx.moveTo(left + radius, top);
+       ctx.lineTo(left + width - radius, top);
+       ctx.quadraticCurveTo(left + width, top, left + width, top + radius);
+       ctx.lineTo(left + width, top + height - radius);
+       ctx.quadraticCurveTo(left + width, top + height, left + width - radius, top + height);
+       ctx.lineTo(left + radius, top + height);
+       ctx.quadraticCurveTo(left, top + height, left, top + height - radius);
+       ctx.lineTo(left, top + radius);
+       ctx.quadraticCurveTo(left, top, left + radius, top);
+       ctx.stroke();
+       ctx.fill();
+       ctx.closePath();
+    }
+
+
+
 
     // based on from http://stemkoski.github.io/Three.js/Texture-Animation.html
     var TextureAnimator = function(texture, tilesHoriz, tilesVert, numTiles, tileDispDuration, repeatAtTile, endAtTile) 
@@ -1388,7 +1407,7 @@
        this.context.beginPath();
        this.context.lineWidth=2;
        this.context.strokeStyle="#666";
-       this.context.moveTo(20, this.height-1);
+       this.context.moveTo(30, this.height-1);
        this.context.lineTo(this.width-1,this.height-1);
        this.context.stroke();
        this.context.closePath();
@@ -1402,13 +1421,13 @@
            this.context.beginPath();
            this.context.lineWidth=1;
            this.context.strokeStyle="#666";
-           this.context.moveTo(20, y);
+           this.context.moveTo(30, y);
            this.context.lineTo(this.width-1,y);
            this.context.stroke();
            this.context.closePath();
        }
 
-       newX = 20;
+       newX = 30;
        while(newX < this.width){
            this.context.beginPath();
            this.context.lineWidth=1;
@@ -1453,23 +1472,85 @@
 
         stockchart_render.call(this);
 
-        this.addFrame("First", {});
+        var data = [];
 
+        for(var i = 0; i< 20; i++){
+            data.push(Math.random()*100);
+        }
+        setTimeout(function(){
+            this.addFrame("First Quarter", data);
+        }.bind(this), 3000);
 
     };
 
     StockChart.prototype.addFrame = function(label, data) {
 
-       this.context.font = "12pt Inconsolata";
-       var textDimensions = this.context.measureText(label);
-       var x = textDimensions.width/2 + 30;
-       var y = 16;
 
-       this.context.textAlign = "center";
+
+       // get bounds of the data
+       
+       var max, min;
+
+       for(var i = 0; i< data.length; i++){
+           if(max == undefined || max < data[i]){
+               max = data[i];
+           }
+           if(min == undefined || min > data[i]){
+               min = data[i];
+           }
+       }
+
+       var increment = (max - min) / this.opts.ticks; 
+       var heightIncrement  = (this.height) / this.opts.ticks; 
+
+
+       // draw the y ticks
+
+       this.context.font = "5pt Inconsolata";
        this.context.fillStyle="#fff";
-       this.context.textBaseline = "middle";
-       this.context.fillText(label, x, y);
 
+       for(var i = 0; i < this.opts.ticks; i++){
+
+           this.context.fillText(('' + (min + (this.opts.ticks - i -1)* increment)).substring(0,6), 0, heightIncrement*i+10);
+           this.context.beginPath();
+           this.context.lineWidth="1";
+           this.context.strokeStyle="#666";
+           this.context.moveTo(0, heightIncrement * (i + 1));
+           this.context.lineTo(30,heightIncrement * (i + 1));
+           this.context.stroke();
+           this.context.closePath();
+       }
+
+       var xIncrement = (this.width - 30)/(data.length-1);
+
+       this.context.beginPath();
+       this.context.moveTo(30,this.height-1);
+
+       for(var i = 0; i < data.length; i++){
+           this.context.lineWidth = "1px";
+           this.context.lineTo(30 + i*xIncrement, data[i]);
+       }
+       this.context.lineTo(this.width, this.height-1);
+       this.context.stroke();
+       var gradient = this.context.createLinearGradient(0, 0, 0, this.height);
+       gradient.addColorStop(0, shadeColor("#00eeee",-60));
+       gradient.addColorStop(1, "black");
+       this.context.fillStyle = gradient;
+       this.context.fill();
+
+       // draw the label
+       this.context.font = "7pt Inconsolata";
+       var textWidth = this.context.measureText(label).width;
+
+       this.context.textAlign = "left";
+       this.context.fillStyle="#000";
+       this.context.strokeStyle="#00eeee";
+       this.context.textBaseline = "top";
+
+       drawCurvedRectangle(this.context, 40, 1, textWidth + 10, 16, 2);
+       this.context.strokeStyle="#fff";
+       this.context.fillStyle="#fff";
+       this.context.fillText(label, 45, 3);
     };
 
     return {

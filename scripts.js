@@ -109,6 +109,7 @@ $(function() {
     stats = new Stats(document.getElementById("fps-stats"), document.getElementById("ms-stats"));
     satbar = new ENCOM.SatBar("satbar");
     timertrees = new ENCOM.TimerTrees("timer-trees");
+    stockchart = new ENCOM.StockChart("stock-chart");
 
     locationbar = new ENCOM.LocationBar("locationbar", {
         "North America": {

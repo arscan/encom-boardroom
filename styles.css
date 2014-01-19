@@ -146,6 +146,26 @@ div {
     overflow: hidden;
 }
 
+#ticker {
+    float: left;
+    width: 100px;
+    height: 105px;
+    margin-top: 10px;
+}
+
+#stock-chart
+{
+    float: left;
+    margin-top: 10px;
+}
+
+#stock-subcharts
+{
+    color: #fff;
+    clear: both;
+
+}
+
 #media{
     position: absolute;
     top: 0px;

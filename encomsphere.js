@@ -1318,8 +1318,7 @@
 
        } else {
            lines.push({left: start * this.width, right: end * this.width})
-       }
-
+       } 
        this.context.beginPath();
        this.context.lineWidth=1;
        this.context.strokeStyle="#666";
@@ -1366,7 +1365,8 @@
 
        }
 
-   }
+   };
+
    var TimerTrees = function(canvasId){
 
         if(this.firstTick == undefined){
@@ -1381,14 +1381,104 @@
 
         timertrees_render.call(this);
 
-    }
+    };
+
+    var stockchart_render = function(){
+
+       this.context.beginPath();
+       this.context.lineWidth=2;
+       this.context.strokeStyle="#666";
+       this.context.moveTo(20, this.height-1);
+       this.context.lineTo(this.width-1,this.height-1);
+       this.context.stroke();
+       this.context.closePath();
+
+
+       /* draw the grid */
+       var newY = 0;
+
+       for(var i = 0; i< this.opts.ticks; i++){
+           var y = i*(this.height/this.opts.ticks);
+           this.context.beginPath();
+           this.context.lineWidth=1;
+           this.context.strokeStyle="#666";
+           this.context.moveTo(20, y);
+           this.context.lineTo(this.width-1,y);
+           this.context.stroke();
+           this.context.closePath();
+       }
+
+       newX = 20;
+       while(newX < this.width){
+           this.context.beginPath();
+           this.context.lineWidth=1;
+           this.context.strokeStyle="#666";
+           this.context.moveTo(newX, 0);
+           this.context.lineTo(newX,this.height);
+           this.context.stroke();
+           this.context.closePath();
+           newX += this.height/this.opts.ticks;
+       }
+
+       // draw the far right line.
+       // this might be a bit hokey
+       
+       this.context.beginPath();
+       this.context.lineWidth=1;
+       this.context.strokeStyle="#666";
+       this.context.moveTo(this.width-1, 0);
+       this.context.lineTo(this.width-1,this.height);
+       this.context.stroke();
+       this.context.closePath();
+    };
+
+    var StockChart = function(canvasId, opts){
+
+        var defaults = {
+            ticks: 7
+        }
+
+        extend(opts, defaults);
+        this.opts = defaults;
+
+        if(this.firstTick == null){
+            this.firstTick = new Date();
+        }
+
+        var canvas = document.getElementById(canvasId);
+        this.context = canvas.getContext("2d");
+
+        this.width = canvas.width;
+        this.height = canvas.height;
+
+        stockchart_render.call(this);
+
+        this.addFrame("First", {});
+
+
+    };
+
+    StockChart.prototype.addFrame = function(label, data) {
+
+       this.context.font = "12pt Inconsolata";
+       var textDimensions = this.context.measureText(label);
+       var x = textDimensions.width/2 + 30;
+       var y = 16;
+
+       this.context.textAlign = "center";
+       this.context.fillStyle="#fff";
+       this.context.textBaseline = "middle";
+       this.context.fillText(label, x, y);
+
+    };
 
     return {
         globe: globe,
         SatBar: SatBar,
         LocationBar: LocationBar,
         SimpleClock: SimpleClock,
-        TimerTrees: TimerTrees
+        TimerTrees: TimerTrees,
+        StockChart: StockChart
     };
 
 })();

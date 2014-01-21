@@ -61,11 +61,11 @@ function start(){
             }, 500);
 
             $("#media").delay(1000).animate({
-                width: "400px"
+                width: "450px"
             }, 500);
 
             $("#timer").delay(1000).animate({
-                width: "400px"
+                width: "450px"
             }, 500);
 
 

@@ -352,9 +352,10 @@ div {
 
 #clock {
     float: left;
-    font-size: 75px;
+    font-size: 66px;
     color: #AAA;
     overflow: hidden;
+    margin-top:8px;
 }
 
 /*
@@ -498,18 +499,19 @@ left: 190px;
 }
 #simpleclock {
     float: left;
+    margin-top: 5px;
+    margin-left: 5px;
 }
 
 #timerbar {
     clear: both;
-    margin:10px;
+    margin:10px 0;
     overflow: hidden;
-    margin-left: 0px;
     height: 27px;
 }
 
 .section-timerbar{
-    width: 67px;
+    width: 65px;
     border: 1px solid #00EEEE; 
     float:left;
     color: #FFFFFF;

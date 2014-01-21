@@ -21,8 +21,9 @@ function getTime(){
     var mili = Math.floor((elapsed/10) % 100);
     var seconds = Math.floor((elapsed / 1000) % 60); 
     var minutes = Math.floor((elapsed / 60000) % 100); 
+    var hours = Math.floor((elapsed / 3600000) % 100); 
 
-    return "" + (minutes < 10 ? "0":"") + minutes + ":" + (seconds< 10? "0": "") + seconds + ":" + (mili < 10? "0" : "") + mili;
+    return (hours < 10 ? "0":"") + hours + ":" + (minutes < 10 ? "0":"") + minutes + ":" + (seconds< 10? "0": "") + seconds + ":" + (mili < 10? "0" : "") + mili;
 
 }
 
@@ -94,6 +95,7 @@ function start(){
             setInterval(function(){
                 $("#san-francisco-time").text(moment().tz("America/Los_Angeles").format("HH:mm:ss"));
                 $("#new-york-time").text(moment().tz("America/New_York").format("HH:mm:ss"));
+                $("#london-time").text(moment().tz("Europe/London").format("HH:mm:ss"));
                 $("#berlin-time").text(moment().tz("Europe/Berlin").format("HH:mm:ss"));
                 $("#bangalore-time").text(moment().tz("Asia/Colombo").format("HH:mm:ss"));
                 $("#sydney-time").text(moment().tz("Australia/Sydney").format("HH:mm:ss"));

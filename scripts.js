@@ -112,6 +112,7 @@ $(function() {
     satbar = new ENCOM.SatBar("satbar");
     timertrees = new ENCOM.TimerTrees("timer-trees");
     stockchart = new ENCOM.StockChart("stock-chart");
+    stockchartsmall = new ENCOM.StockChartSmall("stock-chart-small");
 
     locationbar = new ENCOM.LocationBar("locationbar", {
         "North America": {

@@ -112,6 +112,7 @@ div {
     left: -10px;
     width: 0px;
     overflow: hidden;
+    background: hsla(0, 0%, 0%, 0.45);
 
 }
 
@@ -143,6 +144,11 @@ div {
     width: 0px;
     height: 495px;
     overflow: hidden;
+    background: hsla(0, 0%, 0%, 0.45);
+}
+#user-interaction-container{
+    width: 600px;
+    height: 100%;
 }
 #user-interaction h3{
     padding: 4px;
@@ -178,10 +184,11 @@ div {
     width: 0px;
     height: 195px;
     overflow: hidden;
+    background: hsla(0, 0%, 0%, 0.45);
 }
 #growth-container{
     width: 600px;
-    height: 150px;
+    height: 100%;
 }
 
 #ticker {
@@ -335,8 +342,7 @@ div {
 }
 #media-container{
     width: 450px;
-    height: 150px;
-
+    height: 100%;
 }
 
 .media-box{

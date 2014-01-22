@@ -4,6 +4,7 @@
 body {
     background-color: #000000;
     font-family: 'Inconsolata', sans-serif;
+    color: #fff;
 
 }
 
@@ -50,6 +51,8 @@ div {
     padding: 3px;
     border-top: 3px solid #FFCC00;
     border-bottom: 1px solid #FFCC00;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .header:before{
@@ -141,6 +144,32 @@ div {
     height: 495px;
     overflow: hidden;
 }
+#user-interaction h3{
+    padding: 4px;
+    font-size: 3pt;
+    margin: 0px;
+}
+#interaction {
+    padding: 2px;
+    margin-top:6px;
+    float: left;
+    border-right: 1px solid #333;
+    width: 296px;
+    height: 450px;
+}
+#cube {
+    padding: 2px;
+    margin-top:6px;
+    float: left;
+    width: 290px;
+    height: 225px;
+    border-bottom: 1px solid #333;
+}
+#swirls {
+    float: left;
+    width: 290px;
+    height: 225px;
+}
 
 #growth{
     position: absolute;
@@ -148,6 +177,11 @@ div {
     left: 820px;
     width: 0px;
     height: 195px;
+    overflow: hidden;
+}
+#growth-container{
+    width: 600px;
+    height: 150px;
     overflow: hidden;
 }
 

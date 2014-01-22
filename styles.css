@@ -136,7 +136,7 @@ div {
 #user-interaction{
     position: absolute;
     top: 0px;
-    left: 830px;
+    left: 820px;
     width: 0px;
     height: 495px;
     overflow: hidden;
@@ -145,7 +145,7 @@ div {
 #growth{
     position: absolute;
     top: 500px;
-    left: 830px;
+    left: 820px;
     width: 0px;
     height: 195px;
     overflow: hidden;
@@ -153,9 +153,63 @@ div {
 
 #ticker {
     float: left;
-    width: 100px;
+    width: 90px;
     height: 105px;
     margin-top: 10px;
+    margin-left: 10px;
+    color: #fff;
+}
+
+#ticker-text{
+    margin: 0px;
+    padding: 0px;
+    font-weight:bold;
+    font-size: 20pt;
+    line-height: 17pt;
+}
+#ticker-subtext{
+    margin: 0px;
+    vertical-align: top;
+    padding: 0px;
+    font-size: 8pt;
+    display: inline-block;
+    width: 30px;
+}
+
+#ticker-lines{
+    display: inline-block;
+    vertical-align: top;
+    width: 38px;
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+    margin-top: 2px;
+    margin-left: -5px;
+}
+.ticker-line{
+    margin: 0;
+    padding: 0;
+    font-size: 3px;
+    border-left: 20px solid #00eeee;
+    background-color: #666;
+}
+
+#ticker-value{
+    font-size: 18pt;
+    font-weight: bold;
+}
+#ticker-ytd{
+    font-size: 8pt;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+    margin-right: 18px;
+    margin-bottom: 10px;
+}
+
+#ticker-line-1{
+    border-left: 8px solid #00eeee;
+    margin-bottom: 2px;
+    
 }
 
 #stock-chart
@@ -166,9 +220,76 @@ div {
 
 #stock-subcharts
 {
+    border: 0px;
     color: #fff;
-    clear: both;
+    float: right;
+    width: 500px;
+    height: 28px;
+    margin: 8px 0;
 
+}
+
+.stock-subchart{
+    display: block;
+    float: left;
+    width: 100px;
+    height: 25px;
+    overflow: hidden;
+}
+
+.stock-subchart-label{
+    display: inline-block;
+    font-size: 5pt;
+
+}
+
+.stock-subchart-chart{
+    display: inline-block;
+    width: 60px;
+    height: 25px;
+    opacity: .3;
+
+}
+
+.stock-subchart-chart:hover{
+    opacity: 1;
+
+}
+
+.stock-subchart-bar{
+
+    float: left;
+    background-color: #000;
+    width: 3px;
+    margin-left: 1px;
+    height: 20px;
+    border-bottom: 10px solid #00eeee;
+}
+
+.stock-subchart-bar.subchart-5{
+    height: 20px;
+    border-bottom: 5px solid #00eeee;
+
+
+}
+.stock-subchart-bar.subchart-10{
+    height: 15px;
+    border-bottom: 10px solid #00eeee;
+}
+.stock-subchart-bar.subchart-15{
+    height: 10px;
+    border-bottom: 15px solid #00eeee;
+}
+.stock-subchart-bar.subchart-20{
+    height: 5px;
+    border-bottom: 20px solid #00eeee;
+}
+
+.stock-subchart-bar.subchart-yellow{
+    border-color: #ffcc00;
+}
+.stock-subchart-bar.subchart-white{
+    border-color: #aaa;
 }
 
 #media{

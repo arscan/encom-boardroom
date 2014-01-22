@@ -182,7 +182,6 @@ div {
 #growth-container{
     width: 600px;
     height: 150px;
-    overflow: hidden;
 }
 
 #ticker {
@@ -333,6 +332,11 @@ div {
     width: 0px;
     height: 495px;
     overflow: hidden;
+}
+#media-container{
+    width: 450px;
+    height: 150px;
+
 }
 
 .media-box{

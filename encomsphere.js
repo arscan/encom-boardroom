@@ -124,8 +124,13 @@
         return {x: x, y:y};
     };
 
-    var globe_isPixelBlack = function(context, x, y){
-        return context.getImageData(x,y,1,1).data[0] === 0;
+    var globe_pixelData;
+
+    var globe_isPixelBlack = function(context, x, y, width, height){
+        if(globe_pixelData == undefined){
+            globe_pixelData = context.getImageData(0,0,width, height);
+        }
+        return globe_pixelData.data[(y * globe_pixelData.width + x) * 4] === 0;
     };
 
     var globe_samplePoints = function(projectionContext, width, height, latoffset, lonoffset, latinc, loninc, cb){
@@ -133,7 +138,7 @@
         for(var lat = 90-latoffset; lat > -90; lat -= latinc){
             for(var lon = -180+lonoffset; lon < 180; lon += loninc){
                 var point = globe_latLonToXY(width, height, lat, lon);
-                if(globe_isPixelBlack(projectionContext,point.x, point.y)){
+                if(globe_isPixelBlack(projectionContext,point.x, point.y, width, height)){
                     cb({lat: lat, lon: lon});
                     points.push({lat: lat, lon: lon});
                 }

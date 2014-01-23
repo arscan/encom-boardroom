@@ -1,4 +1,4 @@
-var globe, stats, satbar, locationbar, simpleclock, startDate;
+var globe, stats, satbar, locationbar, simpleclock, startDate, box;
 
 startDate = new Date();
 
@@ -9,6 +9,7 @@ function animate(){
     locationbar.tick();
     $("#clock").text(getTime());
     simpleclock.tick();
+    box.tick();
     requestAnimationFrame(animate);
     stats.update();
 
@@ -113,6 +114,7 @@ $(function() {
     timertrees = new ENCOM.TimerTrees("timer-trees");
     stockchart = new ENCOM.StockChart("stock-chart");
     stockchartsmall = new ENCOM.StockChartSmall("stock-chart-small");
+    box = new ENCOM.Box({containerId: "cube"});
 
     locationbar = new ENCOM.LocationBar("locationbar", {
         "North America": {

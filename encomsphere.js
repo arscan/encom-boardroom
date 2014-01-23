@@ -997,6 +997,85 @@
 
     }
 
+    /* Box */
+
+    var Box = function(opts){
+
+        // create the webgl context, renderer and camera
+        if(opts.containerId){
+            this.container = document.getElementById(opts.containerId);
+            this.width = this.container.clientWidth;
+            this.height = this.container.clientHeight;
+        } else {
+            this.container = document.createElement( 'div' );
+            this.container.width = this.width;
+            this.container.height = this.height;
+            document.body.appendChild( this.container );
+        }
+
+        this.cameraDistance = 75;
+
+        // TEMP
+        // _this.container.appendChild( _this.specialPointCanvas);
+
+        this.renderer = new THREE.WebGLRenderer( { clearAlpha: 1 } );
+        // this.renderer = new THREE.CanvasRenderer( { clearAlpha: 1 } );
+        this.renderer.setSize( this.width, this.height);
+        // this.renderer.autoClear = false;
+        this.container.appendChild( this.renderer.domElement );
+
+        // create the camera
+
+        this.camera = new THREE.PerspectiveCamera( 50, this.width / this.height, 1, 500 );
+        // this.camera = new THREE.OrthographicCamera( this.width/-2, this.width /2, this.height /2, this.height/-2, 1, 1000 );
+        this.camera.position.z = this.cameraDistance;
+
+        this.cameraAngle=(Math.PI * 2) * .5;
+
+        // create the scene
+
+        this.scene = new THREE.Scene();
+
+        this.scene.fog = new THREE.Fog( 0x000000, this.cameraDistance-200, this.cameraDistance+550 );
+
+        cube = new THREE.Mesh( new THREE.CubeGeometry( 50, 25, 50 ), new THREE.MeshNormalMaterial({transparent: true, opacity: .5, wireframe: true}) );
+        cube2 = new THREE.Mesh( new THREE.CubeGeometry( 10, 10, 10 ), new THREE.MeshNormalMaterial({transparent: true, opacity: .5}) );
+
+        cube.position.y = 5;
+
+        this.scene.add(cube);
+        this.scene.add(cube2);
+
+
+        
+
+
+    };
+
+    Box.prototype.tick = function(){
+        if(!this.lastRenderDate){
+            this.lastRenderDate = new Date();
+        }
+
+        if(!this.firstRenderDate){
+            this.firstRenderDate = new Date();
+        }
+
+        var totalRunTime = new Date() - this.firstRenderDate;
+
+        var renderTime = new Date() - this.lastRenderDate;
+        this.lastRenderDate = new Date();
+        var rotateCameraBy = (2 * Math.PI)/(20000/renderTime);
+
+        this.cameraAngle += rotateCameraBy;
+
+        this.camera.position.x = this.cameraDistance * Math.cos(this.cameraAngle);
+        this.camera.position.y = this.cameraDistance/2;
+        this.camera.position.z = this.cameraDistance * Math.sin(this.cameraAngle);
+        this.camera.lookAt( this.scene.position );
+        this.renderer.render( this.scene, this.camera );
+    };
+
     /* Satbar */
 
     var SatBar = function(canvasId){
@@ -1660,7 +1739,8 @@
         SimpleClock: SimpleClock,
         TimerTrees: TimerTrees,
         StockChart: StockChart,
-        StockChartSmall: StockChartSmall
+        StockChartSmall: StockChartSmall,
+        Box: Box
     };
 
 })();

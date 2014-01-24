@@ -999,6 +999,25 @@
 
     /* Box */
 
+    var box_createSideCanvas = function(){
+
+        var sideCanvas =  renderToCanvas(200, 100, function(ctx){
+
+
+            var gradient = ctx.createLinearGradient(0, 0, 0, 100);
+            gradient.addColorStop(0, "#fff");
+            gradient.addColorStop(1, "transparent");
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0,0,200, 100);
+
+        }.bind(this));
+
+        // this.container.appendChild( sideCanvas );
+        
+        return sideCanvas;
+
+    };
+
     var Box = function(opts){
 
         // create the webgl context, renderer and camera
@@ -1012,6 +1031,7 @@
             this.container.height = this.height;
             document.body.appendChild( this.container );
         }
+
 
         this.cameraDistance = 75;
 
@@ -1038,16 +1058,39 @@
 
         this.scene.fog = new THREE.Fog( 0x000000, this.cameraDistance-200, this.cameraDistance+550 );
 
-        cube = new THREE.Mesh( new THREE.CubeGeometry( 50, 25, 50 ), new THREE.MeshNormalMaterial({transparent: true, opacity: .5, wireframe: true}) );
+        var boxTexture = new THREE.Texture(box_createSideCanvas.call(this));
+        boxTexture.needsUpdate = true;
+
+        var boxMaterial = new THREE.MeshBasicMaterial({
+            map : boxTexture,
+            transparent: true
+        });
+        boxMaterial.side = THREE.DoubleSide;
+
+        var transparent = new THREE.MeshBasicMaterial({ 
+            opacity: 0,
+            transparent: true
+        });
+
+
+        var materials = [
+            boxMaterial,
+            boxMaterial,
+            transparent,
+            boxMaterial,
+            boxMaterial,
+            boxMaterial];
+
+        //cube = new THREE.Mesh( new THREE.CubeGeometry( 50, 25, 50 ), new THREE.MeshNormalMaterial({transparent: true, opacity: .5, wireframe: true}) );
+        cube = new THREE.Mesh( new THREE.CubeGeometry( 50, 25, 50 ), new THREE.MeshFaceMaterial(materials));
         cube2 = new THREE.Mesh( new THREE.CubeGeometry( 10, 10, 10 ), new THREE.MeshNormalMaterial({transparent: true, opacity: .5}) );
+    
 
         cube.position.y = 5;
 
         this.scene.add(cube);
         this.scene.add(cube2);
 
-
-        
 
 
     };

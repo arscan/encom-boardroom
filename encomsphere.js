@@ -1004,7 +1004,7 @@
         var sideCanvas =  renderToCanvas(200, 100, function(ctx){
 
 
-            var gradient = ctx.createLinearGradient(0, 0, 0, 100);
+            var gradient = ctx.createLinearGradient(0, -25, 0, 50);
             gradient.addColorStop(0, "#fff");
             gradient.addColorStop(1, "transparent");
             ctx.fillStyle = gradient;
@@ -1045,6 +1045,8 @@
         this.container.appendChild( this.renderer.domElement );
 
         // create the camera
+        
+        console.log(this.width);
 
         this.camera = new THREE.PerspectiveCamera( 50, this.width / this.height, 1, 500 );
         // this.camera = new THREE.OrthographicCamera( this.width/-2, this.width /2, this.height /2, this.height/-2, 1, 1000 );
@@ -1052,7 +1054,7 @@
 
         this.cameraAngle=(Math.PI * 2) * .5;
 
-        // create the scene
+
 
         this.scene = new THREE.Scene();
 
@@ -1061,35 +1063,65 @@
         var boxTexture = new THREE.Texture(box_createSideCanvas.call(this));
         boxTexture.needsUpdate = true;
 
-        var boxMaterial = new THREE.MeshBasicMaterial({
+        // this.container.appendChild( this.satelliteCanvas);
+        var material = new THREE.MeshBasicMaterial({
             map : boxTexture,
-            transparent: true
-        });
-        boxMaterial.side = THREE.DoubleSide;
-
-        var transparent = new THREE.MeshBasicMaterial({ 
-            opacity: 0,
-            transparent: true
+            transparent: true,
+            // wireframe: true
         });
 
+        material.side = THREE.DoubleSide;
 
-        var materials = [
-            boxMaterial,
-            boxMaterial,
-            transparent,
-            boxMaterial,
-            boxMaterial,
-            boxMaterial];
+        var face1 = new THREE.PlaneGeometry(50,25,1,1);
+        var face2 = new THREE.PlaneGeometry(50,25,1,1);
+        var face3 = new THREE.PlaneGeometry(50,25,1,1);
+        var face4 = new THREE.PlaneGeometry(50,25,1,1);
+
+
+        var mesh1 = new THREE.Mesh(face1, material);
+        var mesh2 = new THREE.Mesh(face2, material);
+        var mesh3 = new THREE.Mesh(face3, material);
+        var mesh4 = new THREE.Mesh(face4, material);
+    
+        mesh1.position = {x: 0, y: 10, z: 25};
+        mesh2.position = {x: 0, y: 10, z: -25};
+        mesh3.position = {x: -25, y: 10, z: 0};
+        mesh4.position = {x: 25, y: 10, z: 0};
+        mesh3.rotateY(Math.PI/2);
+        mesh4.rotateY(Math.PI/2);
+
+        this.scene.add(mesh1);
+        this.scene.add(mesh2);
+        this.scene.add(mesh3);
+        this.scene.add(mesh4);
 
         //cube = new THREE.Mesh( new THREE.CubeGeometry( 50, 25, 50 ), new THREE.MeshNormalMaterial({transparent: true, opacity: .5, wireframe: true}) );
-        cube = new THREE.Mesh( new THREE.CubeGeometry( 50, 25, 50 ), new THREE.MeshFaceMaterial(materials));
-        cube2 = new THREE.Mesh( new THREE.CubeGeometry( 10, 10, 10 ), new THREE.MeshNormalMaterial({transparent: true, opacity: .5}) );
-    
+        // cube = new THREE.Mesh( new THREE.CubeGeometry( 50, 25, 50 ), new THREE.MeshFaceMaterial(materials));
+        // cube = new THREE.Mesh( new THREE.CubeGeometry( 10, 10, 10 ), new THREE.MeshNormalMaterial({transparent: true, opacity: .5}) );
 
-        cube.position.y = 5;
+        // this.scene.add(cube);
 
-        this.scene.add(cube);
-        this.scene.add(cube2);
+        // create particle system
+        var particleMaterial = new THREE.ParticleSystemMaterial( { size: 1, transparent: true, opacity: .5} );
+        var particleGeometry = new THREE.Geometry();
+
+        for(var i = 0; i< 2500; i++){
+            var x = i %50 - 25;
+            var z = Math.floor(i / 50) -25;
+            var vertex = new THREE.Vector3();
+            vertex.x = x;
+            vertex.y = 10*Math.sin(x/8)*Math.cos(z/8);
+            vertex.z = z;
+            particleGeometry.vertices.push( vertex );
+        }
+
+
+        var particleSystem = new THREE.ParticleSystem( particleGeometry, particleMaterial);
+        // this.globe_particles.geometry.dynamic=true;
+
+
+        this.scene.add( particleSystem);
+        
 
 
 

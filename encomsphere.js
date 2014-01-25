@@ -1032,7 +1032,6 @@
             document.body.appendChild( this.container );
         }
 
-
         this.cameraDistance = 75;
 
         // TEMP
@@ -1133,42 +1132,60 @@
 
         this.frameSegments = [];
 
-        for(var i = 0; i < 2; i++){
-            this.frameGeometry.vertices.push(new THREE.Vector3(25, i*2, 25));
-            this.frameGeometry.vertices.push(new THREE.Vector3(25, i*2, -25));
-
+        var addFrameAnimation = function(point, start, end, startTime, endTime){
+            
             this.frameSegments.push({
-                point: this.frameGeometry.vertices[this.frameGeometry.vertices.length-1],
+                point: point,
+                startTime: startTime + start[1] * 200,
+                endTime: endTime + start[1] * 200,
                 func: function(t){
-                    return {x: 25+ t,
-                        y: 25 + t,
-                        t: 25 + t
+                    return {x: start[0] + (end[0]-start[0])*(t/(endTime-startTime)),
+                        y: start[1] + (end[1]-start[1])*(t/(endTime-startTime)),
+                        z: start[2] + (end[2]-start[2])*(t/(endTime-startTime))
                     };
                 }
             });
 
-            this.frameGeometry.vertices.push(new THREE.Vector3(25, i*2, -25));
-            this.frameGeometry.vertices.push(new THREE.Vector3(-25, i*2, -25));
+        }
 
-            this.frameGeometry.vertices.push(new THREE.Vector3(-25, i*2, -25));
-            this.frameGeometry.vertices.push(new THREE.Vector3(-25, i*2, 25));
-
-            this.frameGeometry.vertices.push(new THREE.Vector3(-25, i*2, 25));
+        for(var i = 0; i < 2; i++){
             this.frameGeometry.vertices.push(new THREE.Vector3(25, i*2, 25));
+            this.frameGeometry.vertices.push(new THREE.Vector3(25, i*2, 25));
+
+            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [25, i*2, 25], [25, i*2, -25], 0, 1000);
+
+            this.frameGeometry.vertices.push(new THREE.Vector3(25, i*2, -25));
+            this.frameGeometry.vertices.push(new THREE.Vector3(25, i*2, -25));
+
+            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [25, i*2, -25], [-25, i*2, -25], 500, 1500);
+
+            this.frameGeometry.vertices.push(new THREE.Vector3(-25, i*2, -25));
+            this.frameGeometry.vertices.push(new THREE.Vector3(-25, i*2, -25));
+
+            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-25, i*2, -25], [-25, i*2, 25], 1000, 2000);
+
+            this.frameGeometry.vertices.push(new THREE.Vector3(-25, i*2, 25));
+            this.frameGeometry.vertices.push(new THREE.Vector3(-25, i*2, 25));
+
+            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-25, i*2, 25], [25, i*2, 25], 1500, 2500);
 
         }
 
         this.frameGeometry.vertices.push(new THREE.Vector3(25, 0, 25));
-        this.frameGeometry.vertices.push(new THREE.Vector3(25, 2, 25));
+        this.frameGeometry.vertices.push(new THREE.Vector3(25, 0, 25));
+        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [25, 0, 25], [25, 2, 25], 0, 500);
 
         this.frameGeometry.vertices.push(new THREE.Vector3(25, 0, -25));
-        this.frameGeometry.vertices.push(new THREE.Vector3(25, 2, -25));
+        this.frameGeometry.vertices.push(new THREE.Vector3(25, 0, -25));
+        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [25, 0, -25], [25, 2, -25], 500, 1000);
 
         this.frameGeometry.vertices.push(new THREE.Vector3(-25, 0, -25));
-        this.frameGeometry.vertices.push(new THREE.Vector3(-25, 2, -25));
+        this.frameGeometry.vertices.push(new THREE.Vector3(-25, 0, -25));
+        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-25, 0, -25], [-25, 2, -25], 1000, 1500);
 
         this.frameGeometry.vertices.push(new THREE.Vector3(-25, 0, 25));
-        this.frameGeometry.vertices.push(new THREE.Vector3(-25, 2, 25));
+        this.frameGeometry.vertices.push(new THREE.Vector3(-25, 0, 25));
+        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-25, 0, 25], [-25, 2, 25], 1500, 2000);
 
         var line = new THREE.Line(this.frameGeometry, frameMaterial, THREE.LinePieces);
 
@@ -1180,6 +1197,9 @@
     };
 
     Box.prototype.tick = function(){
+
+        var maxTime = 3000;
+
         if(!this.lastRenderDate){
             this.lastRenderDate = new Date();
         }
@@ -1193,19 +1213,40 @@
         var renderTime = new Date() - this.lastRenderDate;
         this.lastRenderDate = new Date();
 
-        /* TODO: figure this out */
 
-        for(var i = 0; i<this.frameSegments.length; i++){
-            var point = this.frameSegments[i].point;
-            var func = this.frameSegments[i].func;
+        /* run frame animations */
 
-            var newPoint = func(totalRunTime);
-            point.x = newPoint.x;
-            point.y = newPoint.y;
-            point.z = newPoint.z;
+        if(!this.animationsDone){
 
-            this.frameGeometry.verticesNeedUpdate = true;
-        } 
+            if(totalRunTime > maxTime){
+                this.animationsDone = true;
+                totalRunTime = maxTime;
+                console.log('done');
+            }
+
+            for(var i = 0; i<this.frameSegments.length; i++){
+                var startTime = this.frameSegments[i].startTime;
+                var endTime = this.frameSegments[i].endTime;
+
+                if(totalRunTime > startTime){
+                    var point = this.frameSegments[i].point;
+                    var func = this.frameSegments[i].func;
+
+                    var newPoint = func(Math.min(totalRunTime,endTime) - startTime);
+
+                    if(point.x !== newPoint.y || point.y !== newPoint.y || point.z !== newPoint.z){
+                        point.x = newPoint.x;
+                        point.y = newPoint.y;
+                        point.z = newPoint.z;
+
+                        this.frameGeometry.verticesNeedUpdate = true;
+                    }
+
+                }
+            } 
+
+        }
+
 
 
         var rotateCameraBy = (2 * Math.PI)/(20000/renderTime);

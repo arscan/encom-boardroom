@@ -109,12 +109,6 @@ function start(){
 
 $(function() {
     globe = new ENCOM.globe({containerId: "globe"});
-    stats = new Stats(document.getElementById("fps-stats"), document.getElementById("ms-stats"));
-    satbar = new ENCOM.SatBar("satbar");
-    timertrees = new ENCOM.TimerTrees("timer-trees");
-    stockchart = new ENCOM.StockChart("stock-chart");
-    stockchartsmall = new ENCOM.StockChartSmall("stock-chart-small");
-    box = new ENCOM.Box({containerId: "cube"});
 
     locationbar = new ENCOM.LocationBar("locationbar", {
         "North America": {
@@ -179,6 +173,13 @@ $(function() {
 
     globe.init(function(){
         // called after the globe is complete
+
+        box = new ENCOM.Box({containerId: "cube"});
+        stats = new Stats(document.getElementById("fps-stats"), document.getElementById("ms-stats"));
+        satbar = new ENCOM.SatBar("satbar");
+        timertrees = new ENCOM.TimerTrees("timer-trees");
+        stockchart = new ENCOM.StockChart("stock-chart");
+        stockchartsmall = new ENCOM.StockChartSmall("stock-chart-small");
 
         $("#logo").animate({
             fontSize: "40px",

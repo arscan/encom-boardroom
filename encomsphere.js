@@ -1122,6 +1122,58 @@
 
         this.scene.add( particleSystem);
         
+        this.frameGeometry = new THREE.Geometry();
+        var frameMaterial = new THREE.LineBasicMaterial({
+            color: 0xFFFFFF,
+            opacity: .8,
+            transparent: true
+            });
+
+        var maxTime = 2000;
+
+        this.frameSegments = [];
+
+        for(var i = 0; i < 2; i++){
+            this.frameGeometry.vertices.push(new THREE.Vector3(25, i*2, 25));
+            this.frameGeometry.vertices.push(new THREE.Vector3(25, i*2, -25));
+
+            this.frameSegments.push({
+                point: this.frameGeometry.vertices[this.frameGeometry.vertices.length-1],
+                func: function(t){
+                    return {x: 25+ t,
+                        y: 25 + t,
+                        t: 25 + t
+                    };
+                }
+            });
+
+            this.frameGeometry.vertices.push(new THREE.Vector3(25, i*2, -25));
+            this.frameGeometry.vertices.push(new THREE.Vector3(-25, i*2, -25));
+
+            this.frameGeometry.vertices.push(new THREE.Vector3(-25, i*2, -25));
+            this.frameGeometry.vertices.push(new THREE.Vector3(-25, i*2, 25));
+
+            this.frameGeometry.vertices.push(new THREE.Vector3(-25, i*2, 25));
+            this.frameGeometry.vertices.push(new THREE.Vector3(25, i*2, 25));
+
+        }
+
+        this.frameGeometry.vertices.push(new THREE.Vector3(25, 0, 25));
+        this.frameGeometry.vertices.push(new THREE.Vector3(25, 2, 25));
+
+        this.frameGeometry.vertices.push(new THREE.Vector3(25, 0, -25));
+        this.frameGeometry.vertices.push(new THREE.Vector3(25, 2, -25));
+
+        this.frameGeometry.vertices.push(new THREE.Vector3(-25, 0, -25));
+        this.frameGeometry.vertices.push(new THREE.Vector3(-25, 2, -25));
+
+        this.frameGeometry.vertices.push(new THREE.Vector3(-25, 0, 25));
+        this.frameGeometry.vertices.push(new THREE.Vector3(-25, 2, 25));
+
+        var line = new THREE.Line(this.frameGeometry, frameMaterial, THREE.LinePieces);
+
+
+        this.scene.add(line);
 
 
 
@@ -1140,6 +1192,22 @@
 
         var renderTime = new Date() - this.lastRenderDate;
         this.lastRenderDate = new Date();
+
+        /* TODO: figure this out */
+
+        for(var i = 0; i<this.frameSegments.length; i++){
+            var point = this.frameSegments[i].point;
+            var func = this.frameSegments[i].func;
+
+            var newPoint = func(totalRunTime);
+            point.x = newPoint.x;
+            point.y = newPoint.y;
+            point.z = newPoint.z;
+
+            this.frameGeometry.verticesNeedUpdate = true;
+        } 
+
+
         var rotateCameraBy = (2 * Math.PI)/(20000/renderTime);
 
         this.cameraAngle += rotateCameraBy;

@@ -459,7 +459,7 @@
 
         geometry.colors = colors;
 
-        material = new THREE.ParticleSystemMaterial( { size: 10, map: sprite, vertexColors: true, transparent: true } );
+        material = new THREE.ParticleSystemMaterial( { size: 12, map: sprite, vertexColors: true, transparent: true } );
 
         this.globe_particles = new THREE.ParticleSystem( geometry, material );
         this.globe_particles.geometry.dynamic=true;

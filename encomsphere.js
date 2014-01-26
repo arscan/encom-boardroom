@@ -1018,6 +1018,12 @@
 
     };
 
+
+    var box_addTracker = function(){
+
+
+    }
+
     var Box = function(opts){
 
         // create the webgl context, renderer and camera
@@ -1050,7 +1056,9 @@
 
         this.cameraAngle=(Math.PI * 2) * .5;
 
-
+        this.boxWidth = 50;
+        this.boxHeight = 20;
+        this.boxDepth = 50;
 
         this.scene = new THREE.Scene();
 
@@ -1069,10 +1077,10 @@
 
         this.sideMaterial.side = THREE.DoubleSide;
 
-        var face1 = new THREE.PlaneGeometry(50,25,1,1);
-        var face2 = new THREE.PlaneGeometry(50,25,1,1);
-        var face3 = new THREE.PlaneGeometry(50,25,1,1);
-        var face4 = new THREE.PlaneGeometry(50,25,1,1);
+        var face1 = new THREE.PlaneGeometry(this.boxWidth,this.boxHeight,1,1);
+        var face2 = new THREE.PlaneGeometry(this.boxWidth,this.boxHeight,1,1);
+        var face3 = new THREE.PlaneGeometry(this.boxDepth,this.boxHeight,1,1);
+        var face4 = new THREE.PlaneGeometry(this.boxDepth,this.boxHeight,1,1);
 
 
         var mesh1 = new THREE.Mesh(face1, this.sideMaterial);
@@ -1080,10 +1088,10 @@
         var mesh3 = new THREE.Mesh(face3, this.sideMaterial);
         var mesh4 = new THREE.Mesh(face4, this.sideMaterial);
     
-        mesh1.position = {x: 0, y: 10, z: 25};
-        mesh2.position = {x: 0, y: 10, z: -25};
-        mesh3.position = {x: -25, y: 10, z: 0};
-        mesh4.position = {x: 25, y: 10, z: 0};
+        mesh1.position = {x: 0, y: this.boxHeight/2, z: this.boxDepth/2};
+        mesh2.position = {x: 0, y: this.boxHeight/2, z: -this.boxDepth/2};
+        mesh3.position = {x: -this.boxWidth/2, y: this.boxHeight/2, z: 0};
+        mesh4.position = {x: this.boxWidth/2, y: this.boxHeight/2, z: 0};
         mesh3.rotateY(Math.PI/2);
         mesh4.rotateY(Math.PI/2);
 
@@ -1093,22 +1101,63 @@
         this.scene.add(mesh4);
 
         // create particle system
-        this.particleMaterial = new THREE.ParticleSystemMaterial( { size: 1, color: 0x00eeee, transparent: true, opacity: .5} );
+        this.particleMaterial = new THREE.ParticleSystemMaterial( { size: 1, color: "#00eeee", transparent: true} );
         this.particleGeometry = new THREE.Geometry();
 
-        for(var i = 0; i< 2500; i++){
-            var x = i %50 - 25;
-            var z = (Math.floor(i / 50) -25 );
+       this.particleVertexShader = [
+           "attribute vec3 color;",
+           "attribute float opacity;",
+           "varying vec4 vColor;",
+            "void main()",
+            "{",
+               "vColor = vec4( color, opacity );", //     set color associated to vertex; use later in fragment shader.
+               "vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );",
+               "gl_PointSize = 1.0;",
+                "gl_Position = projectionMatrix * mvPosition;",
+            "}"
+           ].join("\n");
+
+       this.particleFragmentShader = [
+           "varying vec4 vColor;",     
+            "void main()", 
+            "{",
+           "gl_FragColor = vColor;",
+            "}"
+        ].join("\n");
+
+        this.shaderAttributes = {
+            color: { type: 'c', value: []},
+            opacity: {type: 'f', value: []}
+        };
+
+        this.shaderMaterial = new THREE.ShaderMaterial( {
+            uniforms:       {},
+            attributes:     this.shaderAttributes,
+            vertexShader:   this.particleVertexShader,
+            fragmentShader: this.particleFragmentShader,
+            transparent:    true
+        });
+
+
+        for(var i = 0; i< this.boxWidth * this.boxDepth; i++){
+            var x = i % this.boxWidth - this.boxWidth/2;
+            var z = (Math.floor(i / this.boxDepth) -this.boxDepth/2 );
             var vertex = new THREE.Vector3();
             vertex.x = x;
-            vertex.y = 25*Math.sin(x/8)*Math.cos(z/8) * ((25-Math.abs(x))/25) * ((25-Math.abs(z))/25);
+            vertex.y = (this.boxHeight)*Math.sin(x/8)*Math.cos(z/8) * (((this.boxDepth/2)-Math.abs(x))/this.boxWidth/2) * ((this.boxDepth/2-Math.abs(z))/this.boxDepth/2);
             vertex.z = z;
             this.particleGeometry.vertices.push( vertex );
+            this.shaderAttributes.color.value[i] = new THREE.Color(0x00eeee);
+            this.shaderAttributes.opacity.value[i] = 0.0;
         }
 
-        this.particleGeometry.dynamic = true;
+        this.particleColors = [];
+        
+        for(var i = 0; i< 5; i++){
+            this.particleColors.push(new THREE.Color(pusher.color("#00eeee").blend("#ffcc00", i/4).hex6()));
+        }
 
-        var particleSystem = new THREE.ParticleSystem( this.particleGeometry, this.particleMaterial);
+        var particleSystem = new THREE.ParticleSystem( this.particleGeometry, this.shaderMaterial);
 
         this.scene.add( particleSystem);
         
@@ -1140,43 +1189,43 @@
         }
 
         for(var i = 0; i < 2; i++){
-            this.frameGeometry.vertices.push(new THREE.Vector3(25, i*2 - 5, 25));
-            this.frameGeometry.vertices.push(new THREE.Vector3(25, i*2 - 5, 25));
+            this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, i*2 - 5, this.boxDepth/2));
+            this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, i*2 - 5, this.boxDepth/2));
 
-            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [25, i*2 - 5, 25], [25, i*2 - 5, -25], 0, 1000);
+            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [this.boxWidth/2, i*2 - 5, this.boxDepth/2], [this.boxWidth/2, i*2 - 5, -this.boxDepth/2], 0, 1000);
 
-            this.frameGeometry.vertices.push(new THREE.Vector3(25, i*2 -5, -25));
-            this.frameGeometry.vertices.push(new THREE.Vector3(25, i*2 - 5, -25));
+            this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, i*2 -5, -this.boxDepth/2));
+            this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, i*2 - 5, -this.boxDepth/2));
 
-            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [25, i*2 - 5, -25], [-25, i*2 - 5, -25], 500, 1500);
+            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [this.boxWidth/2, i*2 - 5, -this.boxDepth/2], [-this.boxWidth/2, i*2 - 5, -this.boxDepth/2], 500, 1500);
 
-            this.frameGeometry.vertices.push(new THREE.Vector3(-25, i*2 - 5, -25));
-            this.frameGeometry.vertices.push(new THREE.Vector3(-25, i*2 - 5, -25));
+            this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, i*2 - 5, -this.boxDepth/2));
+            this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, i*2 - 5, -this.boxDepth/2));
 
-            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-25, i*2 - 5, -25], [-25, i*2 - 5, 25], 1000, 2000);
+            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-this.boxWidth/2, i*2 - 5, -this.boxDepth/2], [-this.boxWidth/2, i*2 - 5, this.boxDepth/2], 1000, 2000);
 
-            this.frameGeometry.vertices.push(new THREE.Vector3(-25, i*2 - 5, 25));
-            this.frameGeometry.vertices.push(new THREE.Vector3(-25, i*2 - 5, 25));
+            this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, i*2 - 5, this.boxDepth/2));
+            this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, i*2 - 5, this.boxDepth/2));
 
-            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-25, i*2 - 5, 25], [25, i*2 - 5, 25], 1500, 2500);
+            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-this.boxWidth/2, i*2 - 5, this.boxDepth/2], [this.boxWidth/2, i*2 - 5, this.boxDepth/2], 1500, 2500);
 
         }
 
-        this.frameGeometry.vertices.push(new THREE.Vector3(25, -5, 25));
-        this.frameGeometry.vertices.push(new THREE.Vector3(25, -5, 25));
-        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [25, -5, 25], [25, -3, 25], 0, 500);
+        this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, -5, this.boxDepth/2));
+        this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, -5, this.boxDepth/2));
+        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [this.boxWidth/2, -5, this.boxDepth/2], [this.boxWidth/2, -3, this.boxDepth/2], 0, 500);
 
-        this.frameGeometry.vertices.push(new THREE.Vector3(25, -5, -25));
-        this.frameGeometry.vertices.push(new THREE.Vector3(25, -5, -25));
-        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [25, -5, -25], [25, -3, -25], 500, 1000);
+        this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, -5, -this.boxDepth/2));
+        this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, -5, -this.boxDepth/2));
+        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [this.boxWidth/2, -5, -this.boxDepth/2], [this.boxWidth/2, -3, -this.boxDepth/2], 500, 1000);
 
-        this.frameGeometry.vertices.push(new THREE.Vector3(-25, -5, -25));
-        this.frameGeometry.vertices.push(new THREE.Vector3(-25, -5, -25));
-        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-25, -5, -25], [-25, -3, -25], 1000, 1500);
+        this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, -5, -this.boxDepth/2));
+        this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, -5, -this.boxDepth/2));
+        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-this.boxWidth/2, -5, -this.boxDepth/2], [-this.boxWidth/2, -3, -this.boxDepth/2], 1000, 1500);
 
-        this.frameGeometry.vertices.push(new THREE.Vector3(-25, -5, 25));
-        this.frameGeometry.vertices.push(new THREE.Vector3(-25, -5, 25));
-        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-25, -5, 25], [-25, -3, 25], 1500, 2000);
+        this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, -5, this.boxDepth/2));
+        this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, -5, this.boxDepth/2));
+        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-this.boxWidth/2, -5, this.boxDepth/2], [-this.boxWidth/2, -3, this.boxDepth/2], 1500, 2000);
 
         var line = new THREE.Line(this.frameGeometry, frameMaterial, THREE.LinePieces);
 
@@ -1207,6 +1256,7 @@
 
 
         /* run intro animations */
+        var percentComplete = Math.min(totalRunTime, maxTime - startTime) / (maxTime - startTime);
 
         if(!this.animationsDone){
 
@@ -1216,7 +1266,6 @@
                 console.log('done with box animations');
             }
 
-            var percentComplete = Math.min(totalRunTime, maxTime) / maxTime;
 
             /* do the frame */
 
@@ -1243,7 +1292,7 @@
 
             /* do the particles */
 
-            this.particleMaterial.opacity = Math.pow(percentComplete, 2) / 2;
+            // this.particleMaterial.opacity = Math.pow(percentComplete, 2) / 2;
 
             /* do the sides */
 
@@ -1252,17 +1301,27 @@
             }
         }
 
-
         /* move the particles inside */
 
         for(var i = 0; i< this.particleGeometry.vertices.length; i++){
-            var x = i %50 - 25;
-            var z = (Math.floor(i / 50) -25 );
+            var x = (i %this.boxWidth) - this.boxWidth/2;
+            var z = (Math.floor(i / this.boxDepth) -this.boxDepth/2 );
+            var y = Math.sin(Math.PI * 2 * (((totalRunTime / 100) % this.boxHeight)/this.boxHeight)) * this.boxHeight * Math.sin(x/8)*Math.cos(z/8) * (((this.boxWidth/2)-Math.abs(x))/(this.boxWidth/2)) * (((this.boxDepth/2)-Math.abs(z))/(this.boxDepth/2));
+
+            var maxColors = this.particleColors.length - 1;
+
             this.particleGeometry.vertices[i].x = x;
-            this.particleGeometry.vertices[i].y = Math.sin(Math.PI * 2 * (((totalRunTime / 100) % 25)/25)) * 25 * Math.sin(x/8)*Math.cos(z/8) * ((25-Math.abs(x))/25) * ((25-Math.abs(z))/25);
+            this.particleGeometry.vertices[i].y = y
             this.particleGeometry.vertices[i].z = z;
-            this.particleGeometry.verticesNeedUpdate = true;
+
+            // fix that 36...
+            this.shaderAttributes.opacity.value[i] = Math.min(1,(36 - Math.sqrt(Math.pow(x,2) + Math.pow(z,2)))/36 * percentComplete + Math.max(y,0)/10);
+            this.shaderAttributes.color.value[i] = this.particleColors[Math.min(maxColors,Math.max(0,Math.floor(y)))];
         }
+        
+        this.shaderAttributes.opacity.needsUpdate = true;
+        this.shaderAttributes.color.needsUpdate = true;
+        this.particleGeometry.verticesNeedUpdate = true;
 
 
 
@@ -1463,12 +1522,11 @@
 
         for(var i = 0; i<this.locations[key].points.length; i++){
 
+            this.context.beginPath();
             this.context.arc(this.width * percentage * this.locations[key].points[i], y+22,2,0,Math.PI*2);
             this.context.fill();
 
         }
-
-
 
     };
 

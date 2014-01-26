@@ -1043,9 +1043,6 @@
         // this.renderer.autoClear = false;
         this.container.appendChild( this.renderer.domElement );
 
-        // create the camera
-        
-        console.log(this.width);
 
         this.camera = new THREE.PerspectiveCamera( 50, this.width / this.height, 1, 500 );
         // this.camera = new THREE.OrthographicCamera( this.width/-2, this.width /2, this.height /2, this.height/-2, 1, 1000 );
@@ -1189,7 +1186,8 @@
 
     Box.prototype.tick = function(){
 
-        var maxTime = 3000;
+        var startTime = 2000;
+        var maxTime = 5000;
 
         if(!this.lastRenderDate){
             this.lastRenderDate = new Date();
@@ -1199,7 +1197,10 @@
             this.firstRenderDate = new Date();
         }
 
-        var totalRunTime = new Date() - this.firstRenderDate;
+        var totalRunTime = new Date() - this.firstRenderDate - startTime;
+
+        if(totalRunTime < 0)
+            return;
 
         var renderTime = new Date() - this.lastRenderDate;
         this.lastRenderDate = new Date();

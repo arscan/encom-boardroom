@@ -1,0 +1,22 @@
+{
+  "name": "webgl-encom-globe",
+  "version": "0.0.0",
+  "description": "webgl-encom-globe =================",
+  "main": "encomsphere.js",
+  "dependencies": {
+    "grunt": "~0.4.2"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-watch": "~0.5.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com//arscan/webgl-encom-globe.git"
+  },
+  "author": "rscanlon@mit.edu",
+  "license": "MIT"
+}

@@ -1040,6 +1040,8 @@
 
         this.cameraDistance = 75;
 
+        this.trackers = [];
+
         // TEMP
         // _this.container.appendChild( _this.specialPointCanvas);
 
@@ -1063,6 +1065,59 @@
         this.scene = new THREE.Scene();
 
         this.scene.fog = new THREE.Fog( 0x000000, this.cameraDistance-200, this.cameraDistance+550 );
+
+        /* tracker */
+        var tracker = {};
+        this.trackerGeometry = new THREE.Geometry();
+        var trackerMaterial = new THREE.LineBasicMaterial({
+            color: 0xFFFFFF,
+            opacity: .5,
+            transparent: true
+            });
+
+        for(var i = 0; i< 5; i++){
+            var trackerX = Math.random() * this.boxWidth - this.boxWidth/2;
+            var trackerY = Math.random() * this.boxDepth - this.boxDepth/2;
+            if(Math.random() < .5){
+
+                // x axis
+                this.trackerGeometry.vertices.push(new THREE.Vector3(trackerX, this.boxHeight, this.boxDepth/2));
+                this.trackerGeometry.vertices.push(new THREE.Vector3(trackerX, this.boxHeight, -this.boxDepth/2));
+
+                if(Math.random() < .3){
+                    this.trackerGeometry.vertices.push(new THREE.Vector3(trackerX, this.boxHeight, this.boxDepth/2));
+                    this.trackerGeometry.vertices.push(new THREE.Vector3(trackerX, 0, this.boxDepth/2));
+                }  else if(Math.random() > .7){
+                    this.trackerGeometry.vertices.push(new THREE.Vector3(trackerX, this.boxHeight, -this.boxDepth/2));
+                    this.trackerGeometry.vertices.push(new THREE.Vector3(trackerX, 0, -this.boxDepth/2));
+                }
+            } else {
+                // y axis
+                this.trackerGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, this.boxHeight, trackerY));
+                this.trackerGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, this.boxHeight, trackerY));
+
+                if(Math.random() < .5){
+                    this.trackerGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, this.boxHeight, trackerY));
+                    this.trackerGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, 0, trackerY));
+                }  else if(Math.random() > .7){
+                    this.trackerGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, this.boxHeight, trackerY));
+                    this.trackerGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, 0, trackerY));
+
+                }
+            }
+
+
+
+
+        }
+        
+
+
+
+
+        this.scene.add(new THREE.Line(this.trackerGeometry, trackerMaterial, THREE.LinePieces));
+
+        /* sides of box */
 
         var boxTexture = new THREE.Texture(box_createSideCanvas.call(this));
         boxTexture.needsUpdate = true;

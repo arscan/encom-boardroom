@@ -1075,39 +1075,105 @@
             transparent: true
             });
 
+
         for(var i = 0; i< 5; i++){
             var trackerX = Math.random() * this.boxWidth - this.boxWidth/2;
             var trackerY = Math.random() * this.boxDepth - this.boxDepth/2;
+            var verts = [];
+            var count = 0;
             if(Math.random() < .5){
-
                 // x axis
-                this.trackerGeometry.vertices.push(new THREE.Vector3(trackerX, this.boxHeight, this.boxDepth/2));
-                this.trackerGeometry.vertices.push(new THREE.Vector3(trackerX, this.boxHeight, -this.boxDepth/2));
+                
+                var vert0 =  new THREE.Vector3(trackerX, this.boxHeight, this.boxDepth/2);
+                var vert1 = new THREE.Vector3(trackerX, this.boxHeight, -this.boxDepth/2);
+
+                this.trackerGeometry.vertices.push(vert0);
+                this.trackerGeometry.vertices.push(vert1);
+
+                this.trackers.push({
+                    update: function(time){
+                        vert0.x = time/100;
+                        vert1.x = time/100;
+                        this.trackerGeometry.verticesNeedUpdate = true;
+                    }.bind(this)
+                });
 
                 if(Math.random() < .3){
-                    this.trackerGeometry.vertices.push(new THREE.Vector3(trackerX, this.boxHeight, this.boxDepth/2));
-                    this.trackerGeometry.vertices.push(new THREE.Vector3(trackerX, 0, this.boxDepth/2));
+
+                    var vert2 = new THREE.Vector3(trackerX, this.boxHeight, this.boxDepth/2);
+                    var vert3 = new THREE.Vector3(trackerX, 0, this.boxDepth/2);
+                    this.trackerGeometry.vertices.push(vert2);
+                    this.trackerGeometry.vertices.push(vert3);
+
+                    this.trackers.push({
+                        update: function(time){
+                            vert2.x = time/100;
+                            vert3.x = time/100;
+                            this.trackerGeometry.verticesNeedUpdate = true;
+                        }.bind(this)
+                    });
+
                 }  else if(Math.random() > .7){
-                    this.trackerGeometry.vertices.push(new THREE.Vector3(trackerX, this.boxHeight, -this.boxDepth/2));
-                    this.trackerGeometry.vertices.push(new THREE.Vector3(trackerX, 0, -this.boxDepth/2));
+                    var vert2 = new THREE.Vector3(trackerX, this.boxHeight, -this.boxDepth/2);
+                    var vert3 = new THREE.Vector3(trackerX, 0, -this.boxDepth/2);
+                    this.trackerGeometry.vertices.push(vert2);
+                    this.trackerGeometry.vertices.push(vert3);
+
+                    this.trackers.push({
+                        update: function(time){
+                            vert2.x = time/100;
+                            vert3.x = time/100;
+                            this.trackerGeometry.verticesNeedUpdate = true;
+                        }.bind(this)
+                    });
                 }
             } else {
                 // y axis
-                this.trackerGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, this.boxHeight, trackerY));
-                this.trackerGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, this.boxHeight, trackerY));
+                var vert0 = new THREE.Vector3(this.boxWidth/2, this.boxHeight, trackerY);
+                var vert1 = new THREE.Vector3(-this.boxWidth/2, this.boxHeight, trackerY);
+
+                this.trackerGeometry.vertices.push(vert0);
+                this.trackerGeometry.vertices.push(vert1);
+
+                this.trackers.push({
+                    update: function(time){
+                        vert0.z = time/100;
+                        vert1.z = time/100;
+                        this.trackerGeometry.verticesNeedUpdate = true;
+                    }.bind(this)
+                });
 
                 if(Math.random() < .5){
-                    this.trackerGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, this.boxHeight, trackerY));
-                    this.trackerGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, 0, trackerY));
+                    var vert2 = new THREE.Vector3(this.boxWidth/2, this.boxHeight, trackerY);
+                    var vert3 = new THREE.Vector3(this.boxWidth/2, 0, trackerY);
+
+                    this.trackerGeometry.vertices.push(vert2);
+                    this.trackerGeometry.vertices.push(vert3);
+
+                    this.trackers.push({
+                        update: function(time){
+                            vert2.z = time/100;
+                            vert3.z = time/100;
+                            this.trackerGeometry.verticesNeedUpdate = true;
+                        }.bind(this)
+                    });
                 }  else if(Math.random() > .7){
-                    this.trackerGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, this.boxHeight, trackerY));
-                    this.trackerGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, 0, trackerY));
+                    var vert2 = new THREE.Vector3(-this.boxWidth/2, this.boxHeight, trackerY);
+                    var vert3 = new THREE.Vector3(-this.boxWidth/2, 0, trackerY);
+
+                    this.trackerGeometry.vertices.push(vert2);
+                    this.trackerGeometry.vertices.push(vert3);
+
+                    this.trackers.push({
+                        update: function(time){
+                            vert2.z = time/100;
+                            vert3.z = time/100;
+                            this.trackerGeometry.verticesNeedUpdate = true;
+                        }.bind(this)
+                    });
 
                 }
             }
-
-
-
 
         }
         
@@ -1231,8 +1297,8 @@
             
             this.frameSegments.push({
                 point: point,
-                startTime: startTime + start[1] * 200,
-                endTime: endTime + start[1] * 200,
+                startTime: 1000 + startTime + start[1] * 200,
+                endTime: 1000 + endTime + start[1] * 200,
                 func: function(t){
                     return {x: start[0] + (end[0]-start[0])*(t/(endTime-startTime)),
                         y: start[1] + (end[1]-start[1])*(t/(endTime-startTime)),
@@ -1354,6 +1420,12 @@
             if(totalRunTime > 1000){
                 this.sideMaterial.opacity = Math.pow((Math.min(totalRunTime, maxTime)-1000) / (maxTime-1000), 2);
             }
+        }
+
+        /* move the lines */
+
+        for(var i = 0; i< this.trackers.length; i++){
+            this.trackers[i].update(totalRunTime);
         }
 
         /* move the particles inside */

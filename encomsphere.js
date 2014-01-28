@@ -1105,9 +1105,9 @@
                         return function(time){
                             var posTime = Math.max(time, 3000);
                             geo.vertices[a-2].x = Math.max(-w*rand3/2,Math.min(w*rand3/2, w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
-                            geo.vertices[a-2].z = Math.min(1, time/2000) * d/2;
+                            geo.vertices[a-2].z = sCurve(Math.min(1, time/2000)) * d/2;
                             geo.vertices[a-1].x = Math.max(-w*rand3/2,Math.min(w*rand3/2, w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
-                            geo.vertices[a-1].z = -Math.min(1, time/2000) * d/2;
+                            geo.vertices[a-1].z = -sCurve(Math.min(1, time/2000)) * d/2;
                             geo.verticesNeedUpdate = true;
                         }
                     })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth, this.boxHeight,randSeed, randSeed2, randSeed3)
@@ -1125,9 +1125,9 @@
                             return function(time){
                                 var posTime = Math.max(time, 3000);
                                 geo.vertices[a-2].x = Math.max(-w*rand3/2,Math.min(w*rand3/2,w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
-                                geo.vertices[a-2].y = Math.min(1, time/2000) * h/2 + h/2;
+                                geo.vertices[a-2].y = sCurve(Math.min(1, time/2000)) * h/2 + h/2;
                                 geo.vertices[a-1].x = Math.max(-w*rand3/2, Math.min(w*rand3/2,w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
-                                geo.vertices[a-1].y = h/2 -Math.min(1, time/2000) * h/2;
+                                geo.vertices[a-1].y = h/2 -sCurve(Math.min(1, time/2000)) * h/2;
                                 geo.verticesNeedUpdate = true;
 
                             }
@@ -1352,43 +1352,43 @@
         }
 
         for(var i = 0; i < 2; i++){
-            this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, i*2 - 5, this.boxDepth/2));
-            this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, i*2 - 5, this.boxDepth/2));
+            this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, i*2 - 2, this.boxDepth/2));
+            this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, i*2 - 2, this.boxDepth/2));
 
-            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [this.boxWidth/2, i*2 - 5, this.boxDepth/2], [this.boxWidth/2, i*2 - 5, -this.boxDepth/2], 0, 1000);
+            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [this.boxWidth/2, i*2 - 2, this.boxDepth/2], [this.boxWidth/2, i*2 - 2, -this.boxDepth/2], 0, 1000);
 
-            this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, i*2 -5, -this.boxDepth/2));
-            this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, i*2 - 5, -this.boxDepth/2));
+            this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, i*2 -2, -this.boxDepth/2));
+            this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, i*2 - 2, -this.boxDepth/2));
 
-            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [this.boxWidth/2, i*2 - 5, -this.boxDepth/2], [-this.boxWidth/2, i*2 - 5, -this.boxDepth/2], 500, 1500);
+            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [this.boxWidth/2, i*2 - 2, -this.boxDepth/2], [-this.boxWidth/2, i*2 - 2, -this.boxDepth/2], 500, 1500);
 
-            this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, i*2 - 5, -this.boxDepth/2));
-            this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, i*2 - 5, -this.boxDepth/2));
+            this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, i*2 - 2, -this.boxDepth/2));
+            this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, i*2 - 2, -this.boxDepth/2));
 
-            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-this.boxWidth/2, i*2 - 5, -this.boxDepth/2], [-this.boxWidth/2, i*2 - 5, this.boxDepth/2], 1000, 2000);
+            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-this.boxWidth/2, i*2 - 2, -this.boxDepth/2], [-this.boxWidth/2, i*2 - 2, this.boxDepth/2], 1000, 2000);
 
-            this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, i*2 - 5, this.boxDepth/2));
-            this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, i*2 - 5, this.boxDepth/2));
+            this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, i*2 - 2, this.boxDepth/2));
+            this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, i*2 - 2, this.boxDepth/2));
 
-            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-this.boxWidth/2, i*2 - 5, this.boxDepth/2], [this.boxWidth/2, i*2 - 5, this.boxDepth/2], 1500, 2500);
+            addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-this.boxWidth/2, i*2 - 2, this.boxDepth/2], [this.boxWidth/2, i*2 - 2, this.boxDepth/2], 1500, 2500);
 
         }
 
-        this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, -5, this.boxDepth/2));
-        this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, -5, this.boxDepth/2));
-        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [this.boxWidth/2, -5, this.boxDepth/2], [this.boxWidth/2, -3, this.boxDepth/2], 0, 500);
+        this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, -2, this.boxDepth/2));
+        this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, -2, this.boxDepth/2));
+        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [this.boxWidth/2, -2, this.boxDepth/2], [this.boxWidth/2, 0, this.boxDepth/2], 0, 500);
 
-        this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, -5, -this.boxDepth/2));
-        this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, -5, -this.boxDepth/2));
-        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [this.boxWidth/2, -5, -this.boxDepth/2], [this.boxWidth/2, -3, -this.boxDepth/2], 500, 1000);
+        this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, -2, -this.boxDepth/2));
+        this.frameGeometry.vertices.push(new THREE.Vector3(this.boxWidth/2, -2, -this.boxDepth/2));
+        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [this.boxWidth/2, -2, -this.boxDepth/2], [this.boxWidth/2, 0, -this.boxDepth/2], 500, 1000);
 
-        this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, -5, -this.boxDepth/2));
-        this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, -5, -this.boxDepth/2));
-        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-this.boxWidth/2, -5, -this.boxDepth/2], [-this.boxWidth/2, -3, -this.boxDepth/2], 1000, 1500);
+        this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, -2, -this.boxDepth/2));
+        this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, -2, -this.boxDepth/2));
+        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-this.boxWidth/2, -2, -this.boxDepth/2], [-this.boxWidth/2, 0, -this.boxDepth/2], 1000, 1500);
 
-        this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, -5, this.boxDepth/2));
-        this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, -5, this.boxDepth/2));
-        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-this.boxWidth/2, -5, this.boxDepth/2], [-this.boxWidth/2, -3, this.boxDepth/2], 1500, 2000);
+        this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, -2, this.boxDepth/2));
+        this.frameGeometry.vertices.push(new THREE.Vector3(-this.boxWidth/2, -2, this.boxDepth/2));
+        addFrameAnimation.call(this, this.frameGeometry.vertices[this.frameGeometry.vertices.length-1], [-this.boxWidth/2, -2, this.boxDepth/2], [-this.boxWidth/2, 0, this.boxDepth/2], 1500, 2000);
 
         var line = new THREE.Line(this.frameGeometry, frameMaterial, THREE.LinePieces);
 

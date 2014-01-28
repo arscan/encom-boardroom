@@ -9,6 +9,10 @@
         }
     };
 
+    var sCurve = function(t) {
+        return 1/(1 + Math.exp(-t*12 + 6));
+    };
+
     // http://stackoverflow.com/a/13542669
     var shadeColor = function(color, percent) {   
         var num = parseInt(color.slice(1),16), 
@@ -1076,33 +1080,37 @@
             });
 
 
-        for(var i = 0; i< 5; i++){
+        for(var i = 0; i< 7; i++){
             var trackerX = Math.random() * this.boxWidth - this.boxWidth/2;
-            var trackerY = Math.random() * this.boxDepth - this.boxDepth/2;
+            var trackerY = Math.floor(.5 + Math.random()) * this.boxHeight;
+            var trackerZ = Math.random() * this.boxDepth - this.boxDepth/2;
             var verts = [];
             var count = 0;
             var randSeed = Math.random();
             var randSeed2 = Math.random() + .3;
+            var randSeed3 = Math.random();
+
 
             if(Math.random() < .5){
                 // x axis
                 
-                var vert0 =  new THREE.Vector3(trackerX, this.boxHeight, this.boxDepth/2);
-                var vert1 = new THREE.Vector3(trackerX, this.boxHeight, -this.boxDepth/2);
+                var vert0 =  new THREE.Vector3(trackerX, trackerY, this.boxDepth/2);
+                var vert1 = new THREE.Vector3(trackerX, trackerY, -this.boxDepth/2);
 
                 this.trackerGeometry.vertices.push(vert0);
                 this.trackerGeometry.vertices.push(vert1);
 
                 this.trackers.push({
-                    update: (function(geo, a, w, d, h, rand, rand2){
+                    update: (function(geo, a, w, d, h, rand, rand2, rand3){
                         return function(time){
-                            geo.vertices[a-2].x = w * Math.cos(rand2 * (rand * w + time/1000)) / 2;
+                            var posTime = Math.max(time, 3000);
+                            geo.vertices[a-2].x = Math.max(-w*rand3/2,Math.min(w*rand3/2, w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
                             geo.vertices[a-2].z = Math.min(1, time/2000) * d/2;
-                            geo.vertices[a-1].x = w * Math.cos(rand2 * (rand * w + time/1000)) / 2;
+                            geo.vertices[a-1].x = Math.max(-w*rand3/2,Math.min(w*rand3/2, w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
                             geo.vertices[a-1].z = -Math.min(1, time/2000) * d/2;
                             geo.verticesNeedUpdate = true;
                         }
-                    })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth, this.boxHeight,randSeed, randSeed2)
+                    })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth, this.boxHeight,randSeed, randSeed2, randSeed3)
                 });
 
                 if(Math.random() < .3){
@@ -1113,16 +1121,17 @@
                     this.trackerGeometry.vertices.push(vert3);
 
                     this.trackers.push({
-                        update: (function(geo, a, w, d, h, rand, rand2){
+                        update: (function(geo, a, w, d, h, rand, rand2, rand3){
                             return function(time){
-                                geo.vertices[a-2].x = w * Math.cos(rand2 * (rand * w + time/1000)) / 2;
+                                var posTime = Math.max(time, 3000);
+                                geo.vertices[a-2].x = Math.max(-w*rand3/2,Math.min(w*rand3/2,w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
                                 geo.vertices[a-2].y = Math.min(1, time/2000) * h/2 + h/2;
-                                geo.vertices[a-1].x = w * Math.cos(rand2 * (rand * w + time/1000)) / 2;
+                                geo.vertices[a-1].x = Math.max(-w*rand3/2, Math.min(w*rand3/2,w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
                                 geo.vertices[a-1].y = h/2 -Math.min(1, time/2000) * h/2;
                                 geo.verticesNeedUpdate = true;
 
                             }
-                        })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth,this.boxHeight, randSeed, randSeed2)
+                        })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth,this.boxHeight, randSeed, randSeed2, randSeed3)
                     });
 
                 }  else if(Math.random() > .7){
@@ -1132,74 +1141,80 @@
                     this.trackerGeometry.vertices.push(vert3);
 
                     this.trackers.push({
-                        update: (function(geo, a, w, d, h, rand, rand2){
+                        update: (function(geo, a, w, d, h, rand, rand2, rand3){
                             return function(time){
-                                geo.vertices[a-2].x = w * Math.cos(rand2 * (rand * w + time/1000)) / 2;
-                                geo.vertices[a-2].y = Math.min(1, time/2000) * h/2 + h/2;
-                                geo.vertices[a-1].x = w * Math.cos(rand2 * (rand * w + time/1000)) / 2;
-                                geo.vertices[a-1].y = h/2-Math.min(1, time/2000) * h/2;
+                            var posTime = Math.max(time, 3000);
+                                geo.vertices[a-2].x = Math.max(-w*rand3/2,Math.min(w*rand3/2,w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
+                                geo.vertices[a-2].y = sCurve(Math.min(1, time/2000)) * h/2 + h/2;
+                                geo.vertices[a-1].x = Math.max(-w*rand3/2,Math.min(w*rand3/2,w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
+                                geo.vertices[a-1].y = h/2-sCurve(Math.min(1, time/2000)) * h/2;
                                 geo.verticesNeedUpdate = true;
 
                             }
-                        })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth, this.boxHeight, randSeed, randSeed2)
+                        })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth, this.boxHeight, randSeed, randSeed2, randSeed3)
                     });
                 }
 
             } else {
                 // y axis
-                var vert0 = new THREE.Vector3(this.boxWidth/2, this.boxHeight, trackerY);
-                var vert1 = new THREE.Vector3(-this.boxWidth/2, this.boxHeight, trackerY);
+                var vert0 = new THREE.Vector3(this.boxWidth/2, trackerY, trackerZ);
+                var vert1 = new THREE.Vector3(-this.boxWidth/2, trackerY, trackerZ);
 
                 this.trackerGeometry.vertices.push(vert0);
                 this.trackerGeometry.vertices.push(vert1);
 
 
                 this.trackers.push({
-                    update: (function(geo, a, w, d, h, rand, rand2){
+                    update: (function(geo, a, w, d, h, rand, rand2, rand3){
                         return function(time){
-                            geo.vertices[a-2].z = d * Math.cos(rand2 * (rand * d + time/1000)) / 2;
-                            geo.vertices[a-1].z = d * Math.cos(rand2 * (rand * d + time/1000)) / 2;
-                            geo.vertices[a-2].x = Math.min(1, time/2000) * w/2;
-                            geo.vertices[a-1].x = -Math.min(1, time/2000) * w/2;
+                            var posTime = Math.max(time, 3000);
+                            geo.vertices[a-2].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + posTime/1000)) / 2));
+                            geo.vertices[a-1].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + posTime/1000)) / 2));
+                            geo.vertices[a-2].x = sCurve(Math.min(1, time/2000)) * w/2;
+                            geo.vertices[a-1].x = -sCurve(Math.min(1, time/2000)) * w/2
                             geo.verticesNeedUpdate = true;
                         }
-                    })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth, this.boxHeight, randSeed, randSeed2)
+                    })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth, this.boxHeight, randSeed, randSeed2, randSeed3)
                 });
 
-                /* TODO: FINISH THESE TWO INTRO ANIMATIONS!! */
-
-                if(Math.random() < .5){
-                    var vert2 = new THREE.Vector3(this.boxWidth/2, this.boxHeight, trackerY);
-                    var vert3 = new THREE.Vector3(this.boxWidth/2, 0, trackerY);
+                if(Math.random() < .3){
+                    var vert2 = new THREE.Vector3(this.boxWidth/2, this.boxHeight, trackerZ);
+                    var vert3 = new THREE.Vector3(this.boxWidth/2, 0, trackerZ);
 
                     this.trackerGeometry.vertices.push(vert2);
                     this.trackerGeometry.vertices.push(vert3);
 
                     this.trackers.push({
-                        update: (function(geo, a, w, d, rand, rand2){
+                        update: (function(geo, a, w, d, h, rand, rand2, rand3){
                             return function(time){
-                                geo.vertices[a-2].z = d * Math.cos(rand2 * (rand * d + time/1000)) / 2;
-                                geo.vertices[a-1].z = d * Math.cos(rand2 * (rand * d + time/1000)) / 2;
+                            var posTime = Math.max(time, 3000);
+                                geo.vertices[a-2].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + posTime/1000)) / 2));
+                                geo.vertices[a-1].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + posTime/1000)) / 2));
+                                geo.vertices[a-2].y = h/2 + sCurve(Math.min(1, time/2000)) * h/2;
+                                geo.vertices[a-1].y = h/2 - sCurve(Math.min(1, time/2000)) * h/2;
                                 geo.verticesNeedUpdate = true;
                             }
-                        })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth, randSeed, randSeed2)
+                        })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth, this.boxHeight, randSeed, randSeed2, randSeed3)
                     });
 
                 }  else if(Math.random() > .7){
-                    var vert2 = new THREE.Vector3(-this.boxWidth/2, this.boxHeight, trackerY);
-                    var vert3 = new THREE.Vector3(-this.boxWidth/2, 0, trackerY);
+                    var vert2 = new THREE.Vector3(-this.boxWidth/2, this.boxHeight, trackerZ);
+                    var vert3 = new THREE.Vector3(-this.boxWidth/2, 0, trackerZ);
 
                     this.trackerGeometry.vertices.push(vert2);
                     this.trackerGeometry.vertices.push(vert3);
 
                     this.trackers.push({
-                        update: (function(geo, a, w, d, rand, rand2){
+                        update: (function(geo, a, w, d, h, rand, rand2, rand3){
                             return function(time){
-                                geo.vertices[a-2].z = d * Math.cos(rand2 * (rand * d + time/1000)) / 2;
-                                geo.vertices[a-1].z = d * Math.cos(rand2 * (rand * d + time/1000)) / 2;
+                            var posTime = Math.max(time, 3000);
+                                geo.vertices[a-2].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + time/1000)) / 2));
+                                geo.vertices[a-1].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + time/1000)) / 2));
+                                geo.vertices[a-2].y = h/2 + sCurve(Math.min(1, time/2000)) * h/2;
+                                geo.vertices[a-1].y = h/2 - sCurve(Math.min(1, time/2000)) * h/2;
                                 geo.verticesNeedUpdate = true;
                             }
-                        })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth, randSeed, randSeed2)
+                        })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth, this.boxHeight, randSeed, randSeed2, randSeed3)
                     });
 
                 }
@@ -1207,9 +1222,6 @@
 
         }
         
-
-
-
 
         this.scene.add(new THREE.Line(this.trackerGeometry, trackerMaterial, THREE.LinePieces));
 
@@ -1421,14 +1433,14 @@
             /* do the frame */
 
             for(var i = 0; i<this.frameSegments.length; i++){
-                var startTime = this.frameSegments[i].startTime;
-                var endTime = this.frameSegments[i].endTime;
+                var fStartTime = this.frameSegments[i].startTime;
+                var fEndTime = this.frameSegments[i].endTime;
 
-                if(totalRunTime > startTime){
+                if(totalRunTime > fStartTime){
                     var point = this.frameSegments[i].point;
                     var func = this.frameSegments[i].func;
 
-                    var newPoint = func(Math.min(totalRunTime,endTime) - startTime);
+                    var newPoint = func(Math.min(totalRunTime,fEndTime) - fStartTime);
 
                     if(point.x !== newPoint.x || point.y !== newPoint.y || point.z !== newPoint.z){
                         point.x = newPoint.x;
@@ -1472,11 +1484,16 @@
             this.particleGeometry.vertices[i].z = z;
 
             // fix that 36...
-            this.shaderAttributes.opacity.value[i] = Math.min(1,(36 - Math.sqrt(Math.pow(x,2) + Math.pow(z,2)))/36 * percentComplete + Math.max(y,0)/10);
+            if(!this.animationsDone){
+               this.shaderAttributes.opacity.value[i] = Math.min(1,(36 - Math.sqrt(Math.pow(x,2) + Math.pow(z,2)))/36 * sCurve(percentComplete) + Math.max(y,0)/10);
+            }
+            // console.log(percentComplete);
+            // this.shaderAttributes.opacity.value[i] = percentComplete;
             this.shaderAttributes.color.value[i] = this.particleColors[Math.min(maxColors,Math.max(0,Math.floor(y)))];
         }
-        
-        this.shaderAttributes.opacity.needsUpdate = true;
+        if(!this.animationsDone){
+            this.shaderAttributes.opacity.needsUpdate = true;
+        }
         this.shaderAttributes.color.needsUpdate = true;
         this.particleGeometry.verticesNeedUpdate = true;
 

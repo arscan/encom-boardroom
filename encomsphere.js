@@ -1008,7 +1008,7 @@
         var sideCanvas =  renderToCanvas(200, 100, function(ctx){
 
 
-            var gradient = ctx.createLinearGradient(0, -25, 0, 50);
+            var gradient = ctx.createLinearGradient(0, -100, 0, 100);
             gradient.addColorStop(0, "#fff");
             gradient.addColorStop(1, "transparent");
             ctx.fillStyle = gradient;
@@ -1021,12 +1021,6 @@
         return sideCanvas;
 
     };
-
-
-    var box_addTracker = function(){
-
-
-    }
 
     var Box = function(opts){
 
@@ -1045,6 +1039,7 @@
         this.cameraDistance = 75;
 
         this.trackers = [];
+        this.trackerBalls = [];
 
         // TEMP
         // _this.container.appendChild( _this.specialPointCanvas);
@@ -1079,6 +1074,25 @@
             transparent: true
             });
 
+        var trackerBallCanvas = renderToCanvas(10, 10, function(ctx){
+            ctx.beginPath();
+            ctx.fillStyle = "#aaa";
+            ctx.arc(5,5,3,0, 2* Math.PI, true);
+            ctx.closePath();
+            ctx.fill();
+
+        });
+        this.trackerBallTexture = new THREE.Texture(trackerBallCanvas);
+        this.trackerBallTexture.needsUpdate = true;
+
+        // this.container.appendChild(this.trackerBallCanvas);
+
+        this.trackerBallMaterial = new THREE.SpriteMaterial({size: 10, 
+                                                           map: this.trackerBallTexture, 
+                                                           opacity: 0,
+                                                           depthTest: false});
+
+        var forwardToBackCount = 0;
 
         for(var i = 0; i< 7; i++){
             var trackerX = Math.random() * this.boxWidth - this.boxWidth/2;
@@ -1091,17 +1105,24 @@
             var randSeed3 = Math.random();
 
 
-            if(Math.random() < .5){
+            if(Math.random() < .5 && forwardToBackCount < 5){
                 // x axis
+
+                forwardToBackCount++;
                 
                 var vert0 =  new THREE.Vector3(trackerX, trackerY, this.boxDepth/2);
                 var vert1 = new THREE.Vector3(trackerX, trackerY, -this.boxDepth/2);
-
                 this.trackerGeometry.vertices.push(vert0);
                 this.trackerGeometry.vertices.push(vert1);
 
+                var ball = new THREE.Sprite(this.trackerBallMaterial);
+                ball.position.set(10,10,10);
+                ball.scale.set(1,1);
+                this.scene.add(ball);
+                this.trackerBalls.push(ball);
+
                 this.trackers.push({
-                    update: (function(geo, a, w, d, h, rand, rand2, rand3){
+                    update: (function(geo, a, balls, l, w, d, h, rand, rand2, rand3){
                         return function(time){
                             var posTime = Math.max(time, 3000);
                             geo.vertices[a-2].x = Math.max(-w*rand3/2,Math.min(w*rand3/2, w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
@@ -1109,8 +1130,11 @@
                             geo.vertices[a-1].x = Math.max(-w*rand3/2,Math.min(w*rand3/2, w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
                             geo.vertices[a-1].z = -sCurve(Math.min(1, time/2000)) * d/2;
                             geo.verticesNeedUpdate = true;
+
+                            balls[l-1].position.set(geo.vertices[a-2].x, geo.vertices[a-2].y, geo.vertices[a-2].z);
+
                         }
-                    })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth, this.boxHeight,randSeed, randSeed2, randSeed3)
+                    })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.trackerBalls, this.trackerBalls.length, this.boxWidth, this.boxDepth, this.boxHeight,randSeed, randSeed2, randSeed3)
                 });
 
                 if(Math.random() < .3){
@@ -1120,8 +1144,14 @@
                     this.trackerGeometry.vertices.push(vert2);
                     this.trackerGeometry.vertices.push(vert3);
 
+                    var ball = new THREE.Sprite(this.trackerBallMaterial);
+                    ball.position.set(10,10,10);
+                    ball.scale.set(1,1);
+                    this.scene.add(ball);
+                    this.trackerBalls.push(ball);
+
                     this.trackers.push({
-                        update: (function(geo, a, w, d, h, rand, rand2, rand3){
+                        update: (function(geo, a, balls, l, w, d, h, rand, rand2, rand3){
                             return function(time){
                                 var posTime = Math.max(time, 3000);
                                 geo.vertices[a-2].x = Math.max(-w*rand3/2,Math.min(w*rand3/2,w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
@@ -1130,8 +1160,10 @@
                                 geo.vertices[a-1].y = h/2 -sCurve(Math.min(1, time/2000)) * h/2;
                                 geo.verticesNeedUpdate = true;
 
+                                balls[l-1].position.set(geo.vertices[a-2].x, geo.vertices[a-2].y, geo.vertices[a-2].z);
+
                             }
-                        })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth,this.boxHeight, randSeed, randSeed2, randSeed3)
+                        })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.trackerBalls, this.trackerBalls.length, this.boxWidth, this.boxDepth,this.boxHeight, randSeed, randSeed2, randSeed3)
                     });
 
                 }  else if(Math.random() > .7){
@@ -1140,8 +1172,14 @@
                     this.trackerGeometry.vertices.push(vert2);
                     this.trackerGeometry.vertices.push(vert3);
 
+                    var ball = new THREE.Sprite(this.trackerBallMaterial);
+                    ball.position.set(10,10,10);
+                    ball.scale.set(1,1);
+                    this.scene.add(ball);
+                    this.trackerBalls.push(ball);
+
                     this.trackers.push({
-                        update: (function(geo, a, w, d, h, rand, rand2, rand3){
+                        update: (function(geo, a, balls, l, w, d, h, rand, rand2, rand3){
                             return function(time){
                             var posTime = Math.max(time, 3000);
                                 geo.vertices[a-2].x = Math.max(-w*rand3/2,Math.min(w*rand3/2,w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
@@ -1149,9 +1187,11 @@
                                 geo.vertices[a-1].x = Math.max(-w*rand3/2,Math.min(w*rand3/2,w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
                                 geo.vertices[a-1].y = h/2-sCurve(Math.min(1, time/2000)) * h/2;
                                 geo.verticesNeedUpdate = true;
+                                
+                                balls[l-1].position.set(geo.vertices[a-2].x, 0, geo.vertices[a-2].z);
 
                             }
-                        })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth, this.boxHeight, randSeed, randSeed2, randSeed3)
+                        })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.trackerBalls, this.trackerBalls.length, this.boxWidth, this.boxDepth, this.boxHeight, randSeed, randSeed2, randSeed3)
                     });
                 }
 
@@ -1163,9 +1203,14 @@
                 this.trackerGeometry.vertices.push(vert0);
                 this.trackerGeometry.vertices.push(vert1);
 
+                var ball = new THREE.Sprite(this.trackerBallMaterial);
+                ball.position.set(10,10,10);
+                ball.scale.set(1,1);
+                this.scene.add(ball);
+                this.trackerBalls.push(ball);
 
                 this.trackers.push({
-                    update: (function(geo, a, w, d, h, rand, rand2, rand3){
+                    update: (function(geo, a, balls, l, w, d, h, rand, rand2, rand3){
                         return function(time){
                             var posTime = Math.max(time, 3000);
                             geo.vertices[a-2].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + posTime/1000)) / 2));
@@ -1173,8 +1218,10 @@
                             geo.vertices[a-2].x = sCurve(Math.min(1, time/2000)) * w/2;
                             geo.vertices[a-1].x = -sCurve(Math.min(1, time/2000)) * w/2
                             geo.verticesNeedUpdate = true;
+
+                            balls[l-1].position.set(geo.vertices[a-2].x, geo.vertices[a-2].y, geo.vertices[a-2].z);
                         }
-                    })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth, this.boxHeight, randSeed, randSeed2, randSeed3)
+                    })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.trackerBalls, this.trackerBalls.length, this.boxWidth, this.boxDepth, this.boxHeight, randSeed, randSeed2, randSeed3)
                 });
 
                 if(Math.random() < .3){
@@ -1184,8 +1231,14 @@
                     this.trackerGeometry.vertices.push(vert2);
                     this.trackerGeometry.vertices.push(vert3);
 
+                    var ball = new THREE.Sprite(this.trackerBallMaterial);
+                    ball.position.set(10,10,10);
+                    ball.scale.set(1,1);
+                    this.scene.add(ball);
+                    this.trackerBalls.push(ball);
+
                     this.trackers.push({
-                        update: (function(geo, a, w, d, h, rand, rand2, rand3){
+                        update: (function(geo, a, balls, l, w, d, h, rand, rand2, rand3){
                             return function(time){
                             var posTime = Math.max(time, 3000);
                                 geo.vertices[a-2].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + posTime/1000)) / 2));
@@ -1193,8 +1246,10 @@
                                 geo.vertices[a-2].y = h/2 + sCurve(Math.min(1, time/2000)) * h/2;
                                 geo.vertices[a-1].y = h/2 - sCurve(Math.min(1, time/2000)) * h/2;
                                 geo.verticesNeedUpdate = true;
+
+                                balls[l-1].position.set(geo.vertices[a-2].x, geo.vertices[a-2].y, geo.vertices[a-2].z);
                             }
-                        })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth, this.boxHeight, randSeed, randSeed2, randSeed3)
+                        })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.trackerBalls, this.trackerBalls.length, this.boxWidth, this.boxDepth, this.boxHeight, randSeed, randSeed2, randSeed3)
                     });
 
                 }  else if(Math.random() > .7){
@@ -1204,8 +1259,14 @@
                     this.trackerGeometry.vertices.push(vert2);
                     this.trackerGeometry.vertices.push(vert3);
 
+                    var ball = new THREE.Sprite(this.trackerBallMaterial);
+                    ball.position.set(10,10,10);
+                    ball.scale.set(1,1);
+                    this.scene.add(ball);
+                    this.trackerBalls.push(ball);
+
                     this.trackers.push({
-                        update: (function(geo, a, w, d, h, rand, rand2, rand3){
+                        update: (function(geo, a, balls, l, w, d, h, rand, rand2, rand3){
                             return function(time){
                             var posTime = Math.max(time, 3000);
                                 geo.vertices[a-2].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + time/1000)) / 2));
@@ -1213,8 +1274,10 @@
                                 geo.vertices[a-2].y = h/2 + sCurve(Math.min(1, time/2000)) * h/2;
                                 geo.vertices[a-1].y = h/2 - sCurve(Math.min(1, time/2000)) * h/2;
                                 geo.verticesNeedUpdate = true;
+
+                                balls[l-1].position.set(geo.vertices[a-2].x, geo.vertices[a-2].y, geo.vertices[a-2].z);
                             }
-                        })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.boxWidth, this.boxDepth, this.boxHeight, randSeed, randSeed2, randSeed3)
+                        })(this.trackerGeometry, this.trackerGeometry.vertices.length, this.trackerBalls, this.trackerBalls.length, this.boxWidth, this.boxDepth, this.boxHeight, randSeed, randSeed2, randSeed3)
                     });
 
                 }
@@ -1235,15 +1298,14 @@
             map : boxTexture,
             transparent: true,
             opacity: 0
-            // wireframe: true
         });
 
         this.sideMaterial.side = THREE.DoubleSide;
 
-        var face1 = new THREE.PlaneGeometry(this.boxWidth,this.boxHeight,1,1);
-        var face2 = new THREE.PlaneGeometry(this.boxWidth,this.boxHeight,1,1);
-        var face3 = new THREE.PlaneGeometry(this.boxDepth,this.boxHeight,1,1);
-        var face4 = new THREE.PlaneGeometry(this.boxDepth,this.boxHeight,1,1);
+        var face1 = new THREE.PlaneGeometry(this.boxWidth,this.boxHeight/4,1,1);
+        var face2 = new THREE.PlaneGeometry(this.boxWidth,this.boxHeight/4,1,1);
+        var face3 = new THREE.PlaneGeometry(this.boxDepth,this.boxHeight/4,1,1);
+        var face4 = new THREE.PlaneGeometry(this.boxDepth,this.boxHeight/4,1,1);
 
 
         var mesh1 = new THREE.Mesh(face1, this.sideMaterial);
@@ -1251,10 +1313,10 @@
         var mesh3 = new THREE.Mesh(face3, this.sideMaterial);
         var mesh4 = new THREE.Mesh(face4, this.sideMaterial);
     
-        mesh1.position = {x: 0, y: this.boxHeight/2, z: this.boxDepth/2};
-        mesh2.position = {x: 0, y: this.boxHeight/2, z: -this.boxDepth/2};
-        mesh3.position = {x: -this.boxWidth/2, y: this.boxHeight/2, z: 0};
-        mesh4.position = {x: this.boxWidth/2, y: this.boxHeight/2, z: 0};
+        mesh1.position = {x: 0, y: 7*this.boxHeight/8, z: this.boxDepth/2};
+        mesh2.position = {x: 0, y: 7*this.boxHeight/8, z: -this.boxDepth/2};
+        mesh3.position = {x: -this.boxWidth/2, y: 7*this.boxHeight/8, z: 0};
+        mesh4.position = {x: this.boxWidth/2, y: 7*this.boxHeight/8, z: 0};
         mesh3.rotateY(Math.PI/2);
         mesh4.rotateY(Math.PI/2);
 
@@ -1453,11 +1515,14 @@
                 }
             } 
 
+
             /* do the particles */
 
             // this.particleMaterial.opacity = Math.pow(percentComplete, 2) / 2;
 
             /* do the sides */
+
+            this.trackerBallMaterial.opacity = sCurve(percentComplete);
 
             if(totalRunTime > 1000){
                 this.sideMaterial.opacity = Math.pow((Math.min(totalRunTime, maxTime)-1000) / (maxTime-1000), 2);

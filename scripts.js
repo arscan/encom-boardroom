@@ -102,92 +102,94 @@ function start(){
                 $("#sydney-time").text(moment().tz("Australia/Sydney").format("HH:mm:ss"));
             }, 1000);
 
-
-          
-
 }
 
 $(function() {
-    globe = new ENCOM.globe({containerId: "globe"});
+    // not sure why I need this setTimeout... gonna leave for now though
+    // otherwise, sometimes it seems like some things aren't loaded properly
+    setTimeout(function(){
+        globe = new ENCOM.globe({containerId: "globe"});
 
-    locationbar = new ENCOM.LocationBar("locationbar", {
-        "North America": {
-            "label1": "North Ameria",
-            "label2": "United States",
-            "points": [.1,.2,.5,.7,.9]
-        },
-        "South America": {
-            "label1": "South America",
-            "label2": "United States",
-            "points": [.1,.2,.5,.7,.9]
-        },
-        "Europe": {
-            "label1": "Europe",
-            "label2": "United States",
-            "points": [.1,.2,.5,.7,.9]
-        },
-        "Asia": {
-            "label1": "Asia",
-            "label2": "United States",
-            "points": [.1,.2,.5,.7,.9]
-        },
-        "Africa": {
-            "label1": "Africa",
-            "label2": "Great Britian",
-            "points": [.2,.25,.4,.8,.9]
-        },
-        "Australia": {
-            "label1": "Australia",
-            "label2": "Great Britian",
-            "points": [.2,.25,.4,.8,.9]
-        },
-        "blank": {
-            "blank": true
-        },
-        "New York": {
-            "label1": "New York",
-            "label2": "United States",
-            "points": [.1,.2,.5,.7,.9]
-        },
-        "Boston": {
-            "label1": "Boston",
-            "label2": "Great Britian",
-            "points": [.2,.25,.4,.8,.9]
-        },
-        "Germany": {
-            "label1": "Germany",
-            "label2": "Great Britian",
-            "points": [.2,.25,.4,.8,.9]
-        },
-        "blank2": {
-            "blank": true
-        },
-        "Everywhere": {
-            "label1": "Everywhere",
-            "label2": "United States",
-            "points": [.1,.2,.5,.7,.9]
-        },
-    });
+        locationbar = new ENCOM.LocationBar("locationbar", {
+            "North America": {
+                "label1": "North Ameria",
+                "label2": "United States",
+                "points": [.1,.2,.5,.7,.9]
+            },
+            "South America": {
+                "label1": "South America",
+                "label2": "United States",
+                "points": [.1,.2,.5,.7,.9]
+            },
+            "Europe": {
+                "label1": "Europe",
+                "label2": "United States",
+                "points": [.1,.2,.5,.7,.9]
+            },
+            "Asia": {
+                "label1": "Asia",
+                "label2": "United States",
+                "points": [.1,.2,.5,.7,.9]
+            },
+            "Africa": {
+                "label1": "Africa",
+                "label2": "Great Britian",
+                "points": [.2,.25,.4,.8,.9]
+            },
+            "Australia": {
+                "label1": "Australia",
+                "label2": "Great Britian",
+                "points": [.2,.25,.4,.8,.9]
+            },
+            "blank": {
+                "blank": true
+            },
+            "New York": {
+                "label1": "New York",
+                "label2": "United States",
+                "points": [.1,.2,.5,.7,.9]
+            },
+            "Boston": {
+                "label1": "Boston",
+                "label2": "Great Britian",
+                "points": [.2,.25,.4,.8,.9]
+            },
+            "Germany": {
+                "label1": "Germany",
+                "label2": "Great Britian",
+                "points": [.2,.25,.4,.8,.9]
+            },
+            "blank2": {
+                "blank": true
+            },
+            "Everywhere": {
+                "label1": "Everywhere",
+                "label2": "United States",
+                "points": [.1,.2,.5,.7,.9]
+            },
+        });
 
-    simpleclock = new ENCOM.SimpleClock("simpleclock");
+        simpleclock = new ENCOM.SimpleClock("simpleclock");
 
-    globe.init(function(){
-        // called after the globe is complete
+        globe.init(function(){
+            // called after the globe is complete
 
-        box = new ENCOM.Box({containerId: "cube"});
-        stats = new Stats(document.getElementById("fps-stats"), document.getElementById("ms-stats"));
-        satbar = new ENCOM.SatBar("satbar");
-        timertrees = new ENCOM.TimerTrees("timer-trees");
-        stockchart = new ENCOM.StockChart("stock-chart");
-        stockchartsmall = new ENCOM.StockChartSmall("stock-chart-small");
+            box = new ENCOM.Box({containerId: "cube"});
+            stats = new Stats(document.getElementById("fps-stats"), document.getElementById("ms-stats"));
+            satbar = new ENCOM.SatBar("satbar");
+            timertrees = new ENCOM.TimerTrees("timer-trees");
+            stockchart = new ENCOM.StockChart("stock-chart");
+            stockchartsmall = new ENCOM.StockChartSmall("stock-chart-small");
 
-        $("#logo").animate({
-            fontSize: "40px",
-            opacity: 0
-        }, 2000, "easeInOutBack", start
-                          );
+            $("#logo").animate({
+                fontSize: "40px",
+                opacity: 0
+            }, 2000, "easeInOutBack", start
+                              );
 
-    });
+        });
+    }, 10);
+
 });
 
 

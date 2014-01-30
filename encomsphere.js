@@ -49,9 +49,6 @@
        ctx.closePath();
     }
 
-
-
-
     // based on from http://stemkoski.github.io/Three.js/Texture-Animation.html
     var TextureAnimator = function(texture, tilesHoriz, tilesVert, numTiles, tileDispDuration, repeatAtTile, endAtTile) 
     {   
@@ -199,18 +196,16 @@
         var canvas = document.createElement("canvas");
 
         var context = canvas.getContext("2d");
-        // context.font = size + "pt Arial";
         context.font = size + "pt Inconsolata";
 
         var textWidth = context.measureText(text).width;
 
         canvas.width = textWidth;
-        canvas.height = size;
+        canvas.height = size + 10;
         if(underlineColor){
             canvas.height += 30;
         }
         context = canvas.getContext("2d");
-        // context.font = size + "pt Arial";
         context.font = size + "pt Inconsolata";
 
         context.textAlign = "center";
@@ -227,16 +222,15 @@
             context.stroke();
         }
 
-        // context.strokeStyle = "black";
-        // context.strokeRect(0, 0, canvas.width, canvas.height);
-
         var texture = new THREE.Texture(canvas);
         texture.needsUpdate = true;
 
         var material = new THREE.SpriteMaterial({
             map : texture,
             useScreenCoordinates: false,
-            opacity:0
+            opacity:0,
+            depthTest: false
+
             
             });
         var sprite = new THREE.Sprite(material);
@@ -541,8 +535,8 @@
                 marker.top.position.set(this.posx, this.posy, this.posz);
             })
             .onComplete(function(){
-                _this.scene_sprite.remove(marker.label);
-                _this.scene_sprite.remove(marker.top);
+                _this.scene.remove(marker.label);
+                _this.scene.remove(marker.top);
             })
             .start();
 
@@ -596,6 +590,8 @@
             satelliteMeshes: []
 
         };
+
+        this.smokeIndex = 0;
 
         extend(opts, defaults);
 
@@ -653,7 +649,6 @@
                         document.body.appendChild( _this.container );
                     }
 
-
                     // TEMP
                     // _this.container.appendChild( _this.specialPointCanvas);
 
@@ -672,7 +667,6 @@
                     // create the scene
 
                     _this.scene = new THREE.Scene();
-                    _this.scene_sprite = new THREE.Scene();
 
                     _this.scene.fog = new THREE.Fog( 0x000000, _this.cameraDistance-200, _this.cameraDistance+550 );
 
@@ -682,6 +676,73 @@
 
                     // add the swirls
                     globe_swirls.call(_this);
+
+                    // initialize the smoke
+                    
+
+                    // create particle system
+                    _this.smokeParticleGeometry = new THREE.Geometry();
+
+                   _this.smokeVertexShader = [
+                       "#define PI 3.141592653589793238462643",
+                       "#define ROTATETIME 20000.0",
+                       "#define DISTANCE 500.0",
+                       "attribute float myStartTime;",
+                       "uniform float currentTime;",
+                       "uniform vec3 color;",
+                       "varying vec4 vColor;",
+                       "void main()",
+                       "{",
+                            // var rotateCameraBy = (2 * Math.PI)/(20000/renderTime);
+                           "float dt = currentTime - myStartTime;",
+                           "float opacity = 1.0 - dt/ 1000.0;",
+                           "float rotateRadians = (2.0 * PI) / ( ROTATETIME / dt);", 
+                           "float positionX = DISTANCE * cos(rotateRadians);",
+                           "float positionZ = DISTANCE * sin(rotateRadians);",
+                           "vec3 newPos = vec3(position.x + positionX, position.y, position.z + positionZ);",
+                           "vColor = vec4( color, opacity );", //     set color associated to vertex; use later in fragment shader.
+                           "vec4 mvPosition = modelViewMatrix * vec4( newPos, 1.0 );",
+                           "gl_PointSize = 1.0;",
+                           "gl_Position = projectionMatrix * mvPosition;",
+                       "}"
+                       ].join("\n");
+
+                   _this.smokeFragmentShader = [
+                       "varying vec4 vColor;",     
+                        "void main()", 
+                        "{",
+                           "gl_FragColor = vColor;",
+                        "}"
+                    ].join("\n");
+
+                    _this.smokeAttributes = {
+                        myStartTime: {type: 'f', value: []}
+                    };
+
+                    _this.smokeUniforms = {
+                        currentTime: { type: 'f', value: 0.0},
+                        color: { type: 'c', value: new THREE.Color("#ccc")},
+                    }
+
+                    _this.smokeMaterial = new THREE.ShaderMaterial( {
+                        uniforms:       _this.smokeUniforms,
+                        attributes:     _this.smokeAttributes,
+                        vertexShader:   _this.smokeVertexShader,
+                        fragmentShader: _this.smokeFragmentShader,
+                        transparent:    true
+                    });
+
+                    for(var i = 0; i< 1000; i++){
+                        var vertex = new THREE.Vector3();
+                        vertex.set(0,0,0);
+                        _this.smokeParticleGeometry.vertices.push( vertex );
+                        _this.smokeAttributes.myStartTime.value[i] = 0.0;
+                    }
+                    _this.smokeAttributes.myStartTime.needsUpdate = true;
+
+                    var particleSystem = new THREE.ParticleSystem( _this.smokeParticleGeometry, _this.smokeMaterial);
+
+                    _this.scene.add( particleSystem);
 
                     cb();
                 }
@@ -702,35 +763,52 @@
 
     globe.prototype.addMarker = function(lat, lng, text){
 
+        var _this = this;
         var point = globe_mapPoint(lat,lng);
+
+
+        /* add line */
         var markerGeometry = new THREE.Geometry();
         var markerMaterial = new THREE.LineBasicMaterial({
             color: 0x8FD8D8,
             });
-        var _this = this;
-
         markerGeometry.vertices.push(new THREE.Vector3(point.x, point.y, point.z));
         markerGeometry.vertices.push(new THREE.Vector3(point.x, point.y, point.z));
-
         var line = new THREE.Line(markerGeometry, markerMaterial);
-
-        var textSprite = globe_createLabel(text, point.x*1.2, point.y*1.2, point.z*1.2, 20, "white");
-        // textMesh.rotateY(Math.PI/2 - cameraAngle);
-
         this.scene.add(line);
-        this.scene_sprite.add(textSprite);
 
+        /* add the text */
+        var textSprite = globe_createLabel(text, point.x*1.2, point.y*1.2, point.z*1.2, 20, "white");
+        this.scene.add(textSprite);
 
-        var markerMaterial = new THREE.SpriteMaterial({map: _this.markerTopTexture, color: 0xFD7D8});
-        var markerTop = new THREE.Sprite(markerMaterial);
-        markerTop.scale.set(15, 15);
-        markerTop.position.set(point.x*1.2, point.y*1.2, point.z*1.2);
+        /* add the top */
+        var markerTopMaterial = new THREE.SpriteMaterial({map: _this.markerTopTexture, color: 0xFD7D8, depthTest: false});
+        var markerTopSprite = new THREE.Sprite(markerTopMaterial);
+        markerTopSprite.scale.set(15, 15);
+        markerTopSprite.position.set(point.x*1.2, point.y*1.2, point.z*1.2);
 
         this.markers.push({
             line: line,
             label: textSprite,
-            top: markerTop
+            top: markerTopSprite
         });
+
+        /* add the smoke */
+
+        for(var i = 0; i< 100; i++){
+            setTimeout(function(){
+                _this.smokeIndex++;
+                _this.smokeIndex = _this.smokeIndex % _this.smokeParticleGeometry.vertices.length;
+                _this.smokeParticleGeometry.vertices[_this.smokeIndex].set(point.x * 1.2, point.y * 1.2, point.z * 1.2);
+                _this.smokeParticleGeometry.verticesNeedUpdate = true;
+                _this.smokeAttributes.myStartTime.value[_this.smokeIndex] = _this.totalRunTime;
+                _this.smokeAttributes.myStartTime.needsUpdate = true;
+            }, i*50 + 2000);
+        }
+
+
+
+        /* do some stuff that allows me to remove based on location */
 
         var labelKey = Math.floor(lat/10) + '-' + Math.floor(lng/10);
         if(Math.abs(lat)>80){
@@ -757,7 +835,7 @@
                 markerGeometry.verticesNeedUpdate = true;
             })
             .onComplete(function(){
-                _this.scene_sprite.add(markerTop);
+                _this.scene.add(markerTopSprite);
 
             })
             .start();
@@ -770,7 +848,7 @@
         var point1 = globe_mapPoint(lat1,lng1);
         var point2 = globe_mapPoint(lat2,lng2);
 
-        var markerMaterial = new THREE.SpriteMaterial({map: _this.specialMarkerTexture, opacity: .7});
+        var markerMaterial = new THREE.SpriteMaterial({map: _this.specialMarkerTexture, opacity: .7, depthTest: false});
         // var markerMaterial = new THREE.SpriteMaterial({map: _this.markerTopTexture});
 
         var marker1 = new THREE.Sprite(markerMaterial);
@@ -783,14 +861,14 @@
         marker2.position.set(point2.x*1.2, point2.y*1.2, point2.z*1.2);
 
 
-        this.scene_sprite.add(marker1);
-        this.scene_sprite.add(marker2);
+        this.scene.add(marker1);
+        this.scene.add(marker2);
 
         var textSprite1 = globe_createLabel(text1.toUpperCase(), point1.x*1.25, point1.y*1.25, point1.z*1.25, 25, "white", "#FFCC00");
         var textSprite2 = globe_createLabel(text2.toUpperCase(), point2.x*1.25, point2.y*1.25, point2.z*1.25, 25, "white", "#FFCC00");
 
-        this.scene_sprite.add(textSprite1);
-        this.scene_sprite.add(textSprite2);
+        this.scene.add(textSprite1);
+        this.scene.add(textSprite2);
 
         new TWEEN.Tween({x: 0, y: 0})
             .to({x: 55, y: 55}, 2000)
@@ -955,7 +1033,7 @@
             this.firstRenderDate = new Date();
         }
 
-        var totalRunTime = new Date() - this.firstRenderDate;
+        this.totalRunTime = new Date() - this.firstRenderDate;
 
         var renderTime = new Date() - this.lastRenderDate;
         this.lastRenderDate = new Date();
@@ -978,13 +1056,13 @@
             
         }
 
-        if(this.swirlTime > totalRunTime){
-            if(totalRunTime/this.swirlTime < .1){
-                this.swirlMaterial.opacity = (totalRunTime/this.swirlTime)*10 - .2;
-            } else if(totalRunTime/this.swirlTime < .9){
+        if(this.swirlTime > this.totalRunTime){
+            if(this.totalRunTime/this.swirlTime < .1){
+                this.swirlMaterial.opacity = (this.totalRunTime/this.swirlTime)*10 - .2;
+            } else if(this.totalRunTime/this.swirlTime < .9){
                 this.swirlMaterial.opacity = .8;
-            }if(totalRunTime/this.swirlTime > .9){
-                this.swirlMaterial.opacity = Math.max(1-totalRunTime/this.swirlTime,0);
+            }if(this.totalRunTime/this.swirlTime > .9){
+                this.swirlMaterial.opacity = Math.max(1-this.totalRunTime/this.swirlTime,0);
             }
             this.swirl.rotateY((2 * Math.PI)/(this.swirlTime/renderTime));
         } else if(this.swirl){
@@ -993,9 +1071,11 @@
 
         }
 
+        // do the particles
+        
+        this.smokeUniforms.currentTime.value = this.totalRunTime;
 
         this.camera.lookAt( this.scene.position );
-        this.renderer.render( this.scene_sprite, this.camera );
         this.renderer.render( this.scene, this.camera );
         globe_updateSatellites.call(this, renderTime);
 
@@ -1326,7 +1406,6 @@
         this.scene.add(mesh4);
 
         // create particle system
-        this.particleMaterial = new THREE.ParticleSystemMaterial( { size: 1, color: "#00eeee", transparent: true} );
         this.particleGeometry = new THREE.Geometry();
 
        this.particleVertexShader = [

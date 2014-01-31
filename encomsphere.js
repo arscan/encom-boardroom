@@ -479,20 +479,6 @@
                 opacity: .8
             });
 
-        // new TWEEN.Tween( {opacity: 1})
-        //     .to( {opacity: 0}, 500 )
-        //     .delay(this.swirlTime-500)
-        //     .onUpdate(function(){
-        //         materialSpline.opacity = this.opacity;
-
-        //     })
-        //     .start();
-
-
-        // setTimeout(function(){
-        //     _this.scene.remove(_this.swirl);
-        // }, this.swirlTime);
-
         for(var i = 0; i<75; i++){
             geometrySpline = new THREE.Geometry();
 
@@ -523,6 +509,14 @@
         var pos = marker.line.geometry.vertices[1];
         var _this = this;
         var scaleDownBy = 1+ Math.random()*.2;
+
+        
+
+        for(var i = marker.startSmokeIndex; i< marker.smokeCount + marker.startSmokeIndex; i++){
+            var realI = i % _this.smokeAttributes.active.value.length;
+            _this.smokeAttributes.active.value[realI] = 0.0;
+            _this.smokeAttributes.active.needsUpdate = true;
+        }
 
         new TWEEN.Tween({posx: pos.x, posy: pos.y, posz: pos.z, opacity: 1})
             .to( {posx: pos.x/scaleDownBy, posy: pos.y/scaleDownBy, posz: pos.z/scaleDownBy, opacity: 0}, 1000 )
@@ -685,24 +679,48 @@
 
                    _this.smokeVertexShader = [
                        "#define PI 3.141592653589793238462643",
-                       "#define ROTATETIME 20000.0",
-                       "#define DISTANCE 500.0",
+                       "#define DISTANCE 600.0",
                        "attribute float myStartTime;",
+                       "attribute float myStartLat;",
+                       "attribute float myStartLon;",
+                       "attribute float active;",
                        "uniform float currentTime;",
                        "uniform vec3 color;",
                        "varying vec4 vColor;",
+                       "",
+                       "vec3 getPos(float lat, float lon)",
+                       "{",
+                       "if (lon < -180.0){",
+                       "   lon = 180.0;",
+                       "}",
+                       "float phi = (90.0 - lat) * PI / 180.0;",
+                       "float theta = (180.0 - lon) * PI / 180.0;",
+                       "float x = DISTANCE * sin(phi) * cos(theta);",
+                       "float y = DISTANCE * cos(phi);",
+                       "float z = DISTANCE * sin(phi) * sin(theta);",
+                       "return vec3(x, y, z);",
+                       "}",
+                       "",
                        "void main()",
                        "{",
-                            // var rotateCameraBy = (2 * Math.PI)/(20000/renderTime);
                            "float dt = currentTime - myStartTime;",
-                           "float opacity = 1.0 - dt/ 1000.0;",
-                           "float rotateRadians = (2.0 * PI) / ( ROTATETIME / dt);", 
-                           "float positionX = DISTANCE * cos(rotateRadians);",
-                           "float positionZ = DISTANCE * sin(rotateRadians);",
-                           "vec3 newPos = vec3(position.x + positionX, position.y, position.z + positionZ);",
+                           "if (dt < 0.0){",
+                              "dt = 0.0;",
+                           "}",
+                           "if (dt > 0.0 && active > 0.0) {",
+                             "dt = mod(dt,1500.0);",
+                           "}",
+                           "float opacity = 1.0 - dt/ 1500.0;",
+                           "if (dt == 0.0){",
+                              "opacity = 0.0;",
+                           "}",
+                           /* TODO: figrue out the math to get the smoke to fade on the backside of the planet*/
+                           // "float rotateBy = PI + (2.0 * PI)/ (20000.0/(currentTime)) + (180.0 - myStartLon) * PI / 180.0;",
+                           // "opacity = opacity * (1.0-sin(rotateBy))/2.0;",
+                           "vec3 newPos = getPos(myStartLat, myStartLon - ( dt / 50.0));",
                            "vColor = vec4( color, opacity );", //     set color associated to vertex; use later in fragment shader.
                            "vec4 mvPosition = modelViewMatrix * vec4( newPos, 1.0 );",
-                           "gl_PointSize = 1.0;",
+                           "gl_PointSize = 2.0 - (dt / 1500.0);",
                            "gl_Position = projectionMatrix * mvPosition;",
                        "}"
                        ].join("\n");
@@ -716,7 +734,10 @@
                     ].join("\n");
 
                     _this.smokeAttributes = {
-                        myStartTime: {type: 'f', value: []}
+                        myStartTime: {type: 'f', value: []},
+                        myStartLat: {type: 'f', value: []},
+                        myStartLon: {type: 'f', value: []},
+                        active: {type: 'f', value: []}
                     };
 
                     _this.smokeUniforms = {
@@ -737,8 +758,14 @@
                         vertex.set(0,0,0);
                         _this.smokeParticleGeometry.vertices.push( vertex );
                         _this.smokeAttributes.myStartTime.value[i] = 0.0;
+                        _this.smokeAttributes.myStartLat.value[i] = 0.0;
+                        _this.smokeAttributes.myStartLon.value[i] = 0.0;
+                        _this.smokeAttributes.active.value[i] = 0.0;
                     }
                     _this.smokeAttributes.myStartTime.needsUpdate = true;
+                    _this.smokeAttributes.myStartLat.needsUpdate = true;
+                    _this.smokeAttributes.myStartLon.needsUpdate = true;
+                    _this.smokeAttributes.active.needsUpdate = true;
 
                     var particleSystem = new THREE.ParticleSystem( _this.smokeParticleGeometry, _this.smokeMaterial);
 
@@ -787,24 +814,34 @@
         markerTopSprite.scale.set(15, 15);
         markerTopSprite.position.set(point.x*1.2, point.y*1.2, point.z*1.2);
 
+
+        /* add the smoke */
+        var startSmokeIndex = _this.smokeIndex;
+
+        for(var i = 0; i< 30; i++){
+            _this.smokeParticleGeometry.vertices[_this.smokeIndex].set(point.x * 1.2, point.y * 1.2, point.z * 1.2);
+            _this.smokeParticleGeometry.verticesNeedUpdate = true;
+            _this.smokeAttributes.myStartTime.value[_this.smokeIndex] = _this.totalRunTime + (i*50 + 1500);
+            _this.smokeAttributes.myStartLat.value[_this.smokeIndex] = lat;
+            _this.smokeAttributes.myStartLon.value[_this.smokeIndex] = lng;
+            _this.smokeAttributes.active.value[_this.smokeIndex] = 1.0;
+            _this.smokeAttributes.myStartTime.needsUpdate = true;
+            _this.smokeAttributes.myStartLat.needsUpdate = true;
+            _this.smokeAttributes.myStartLon.needsUpdate = true;
+            _this.smokeAttributes.active.needsUpdate = true;
+
+            _this.smokeIndex++;
+            _this.smokeIndex = _this.smokeIndex % _this.smokeParticleGeometry.vertices.length;
+        }
+
+
         this.markers.push({
             line: line,
             label: textSprite,
-            top: markerTopSprite
+            top: markerTopSprite,
+            startSmokeIndex: startSmokeIndex,
+            smokeCount: 30
         });
-
-        /* add the smoke */
-
-        for(var i = 0; i< 100; i++){
-            setTimeout(function(){
-                _this.smokeIndex++;
-                _this.smokeIndex = _this.smokeIndex % _this.smokeParticleGeometry.vertices.length;
-                _this.smokeParticleGeometry.vertices[_this.smokeIndex].set(point.x * 1.2, point.y * 1.2, point.z * 1.2);
-                _this.smokeParticleGeometry.verticesNeedUpdate = true;
-                _this.smokeAttributes.myStartTime.value[_this.smokeIndex] = _this.totalRunTime;
-                _this.smokeAttributes.myStartTime.needsUpdate = true;
-            }, i*50 + 2000);
-        }
 
 
 
@@ -1042,7 +1079,7 @@
         this.cameraAngle += rotateCameraBy;
 
         this.camera.position.x = this.cameraDistance * Math.cos(this.cameraAngle);
-        this.camera.position.y = 200*Math.sin(this.cameraAngle);
+        // this.camera.position.y = 200*Math.sin(this.cameraAngle);
         this.camera.position.z = this.cameraDistance * Math.sin(this.cameraAngle);
 
 
@@ -1074,6 +1111,9 @@
         // do the particles
         
         this.smokeUniforms.currentTime.value = this.totalRunTime;
+
+        // console.log(this.totalRunTime);
+        // console.log(this.smokeUniforms.currentTime.value - this.smokeUniforms.absoluteStartTime.value);
 
         this.camera.lookAt( this.scene.position );
         this.renderer.render( this.scene, this.camera );

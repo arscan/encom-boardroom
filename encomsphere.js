@@ -646,7 +646,7 @@
                     // TEMP
                     // _this.container.appendChild( _this.specialPointCanvas);
 
-                    _this.renderer = new THREE.WebGLRenderer( { clearAlpha: 1 } );
+                    _this.renderer = new THREE.WebGLRenderer( { antialias:true } );
                     // _this.renderer = new THREE.CanvasRenderer( { clearAlpha: 1 } );
                     _this.renderer.setSize( _this.width, _this.height);
                     _this.renderer.autoClear = false;
@@ -901,14 +901,14 @@
         this.scene.add(marker1);
         this.scene.add(marker2);
 
-        var textSprite1 = globe_createLabel(text1.toUpperCase(), point1.x*1.25, point1.y*1.25, point1.z*1.25, 25, "white", "#FFCC00");
-        var textSprite2 = globe_createLabel(text2.toUpperCase(), point2.x*1.25, point2.y*1.25, point2.z*1.25, 25, "white", "#FFCC00");
+        var textSprite1 = globe_createLabel(text1.toUpperCase(), point1.x*1.25, point1.y*1.25, point1.z*1.25, 20, "white", "#FFCC00");
+        var textSprite2 = globe_createLabel(text2.toUpperCase(), point2.x*1.25, point2.y*1.25, point2.z*1.25, 20, "white", "#FFCC00");
 
         this.scene.add(textSprite1);
         this.scene.add(textSprite2);
 
         new TWEEN.Tween({x: 0, y: 0})
-            .to({x: 55, y: 55}, 2000)
+            .to({x: 45, y: 45}, 2000)
             .easing( TWEEN.Easing.Elastic.InOut )
             .onUpdate(function(){
                 marker1.scale.set(this.x, this.y);
@@ -916,7 +916,7 @@
             .start();
 
         new TWEEN.Tween({x: 0, y: 0})
-            .to({x: 55, y: 55}, 2000)
+            .to({x: 45, y: 45}, 2000)
             .easing( TWEEN.Easing.Elastic.InOut )
             .onUpdate(function(){
                 marker2.scale.set(this.x, this.y);
@@ -928,30 +928,47 @@
         var materialSpline = new THREE.LineBasicMaterial({
             color: 0xFFCC00,
             transparent: true,
-            linewidth: 4,
+            linewidth: 2,
             opacity: .5
         });
 
-        var latdist = (lat2 - lat1)/39;
-        var londist = (lng2 - lng1)/39;
+        var geometrySpline2 = new THREE.Geometry();
+        var materialSpline2 = new THREE.LineBasicMaterial({
+            color: 0xFFCC00,
+            linewidth: 1,
+            transparent: true,
+            opacity: .5
+        });
+
+        var latdist = (lat2 - lat1)/99;
+        var londist = (lng2 - lng1)/99;
         var startPoint = globe_mapPoint(lat1, lng1);
         var pointList = [];
+        var pointList2 = [];
 
-        for(var j = 0; j< 40; j++){
+        for(var j = 0; j< 100; j++){
             // var nextlat = ((90 + lat1 + j*1)%180)-90;
             // var nextlon = ((180 + lng1 + j*1)%360)-180;
 
             
-            var nextlat = (((90 + lat1 + j*latdist)%180)-90) * (.5 + Math.cos(j*(5*Math.PI/2)/39)/2) + (j*lat2/39/2);
+            var nextlat = (((90 + lat1 + j*latdist)%180)-90) * (.5 + Math.cos(j*(5*Math.PI/2)/99)/2) + (j*lat2/99/2);
             var nextlon = ((180 + lng1 + j*londist)%360)-180;
             pointList.push({lat: nextlat, lon: nextlon, index: j});
+            if(j == 0 || j == 99){
+                pointList2.push({lat: nextlat, lon: nextlon, index: j});
+            } else {
+                pointList2.push({lat: nextlat+1, lon: nextlon, index: j});
+            }
             // var thisPoint = globe_mapPoint(nextlat, nextlon);
             sPoint = new THREE.Vector3(startPoint.x*1.2, startPoint.y*1.2, startPoint.z*1.2);
+            sPoint2 = new THREE.Vector3(startPoint.x*1.2, startPoint.y*1.2, startPoint.z*1.2);
             // sPoint = new THREE.Vector3(thisPoint.x*1.2, thisPoint.y*1.2, thisPoint.z*1.2);
 
             sPoint.globe_index = j;
+            sPoint2.globe_index = j;
 
             geometrySpline.vertices.push(sPoint);  
+            geometrySpline2.vertices.push(sPoint2);  
         }
 
         var currentLat = lat1;
@@ -961,16 +978,23 @@
 
         var update = function(){
             var nextSpot = pointList.shift();
+            var nextSpot2 = pointList2.shift();
             
             for(var x = 0; x< geometrySpline.vertices.length; x++){
                 
                 currentVert = geometrySpline.vertices[x];
                 currentPoint = globe_mapPoint(nextSpot.lat, nextSpot.lon);
 
+                currentVert2 = geometrySpline2.vertices[x];
+                currentPoint2 = globe_mapPoint(nextSpot2.lat, nextSpot2.lon);
+
+
                 if(x >= nextSpot.index){
                     currentVert.set(currentPoint.x*1.2, currentPoint.y*1.2, currentPoint.z*1.2);
+                    currentVert2.set(currentPoint2.x*1.19, currentPoint2.y*1.19, currentPoint2.z*1.19);
                 }
                 geometrySpline.verticesNeedUpdate = true;
+                geometrySpline2.verticesNeedUpdate = true;
             }
             if(pointList.length > 0){
                 setTimeout(update,30);
@@ -983,6 +1007,7 @@
 
 
         this.scene.add(new THREE.Line(geometrySpline, materialSpline));
+        this.scene.add(new THREE.Line(geometrySpline2, materialSpline2, THREE.LinePieces));
             
     }
 
@@ -1164,7 +1189,7 @@
         // TEMP
         // _this.container.appendChild( _this.specialPointCanvas);
 
-        this.renderer = new THREE.WebGLRenderer( { clearAlpha: 1 } );
+        this.renderer = new THREE.WebGLRenderer( { antialias : true } );
         // this.renderer = new THREE.CanvasRenderer( { clearAlpha: 1 } );
         this.renderer.setSize( this.width, this.height);
         // this.renderer.autoClear = false;

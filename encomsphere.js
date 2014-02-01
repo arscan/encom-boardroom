@@ -570,26 +570,28 @@
             opts = {};
         }
 
+        var baseSampleMultiplier = .85;
+
         var defaults = {
             mapUrl: "equirectangle_projection.png",
             size: 100,
             width: document.width,
             height: document.height,
-            swirlMultiplier: 1.20,
+            swirlMultiplier: 1.15,
             swirlTime: 3500,
             cameraDistance: 1700,
             samples: [
                 { 
                     offsetLat: 0,
                     offsetLon: 0,
-                    incLat: 2,
-                    incLon: 4
+                    incLat: baseSampleMultiplier * 2,
+                    incLon: baseSampleMultiplier * 4
                 },
                 { 
-                    offsetLat: 1,
-                    offsetLon: 2,
-                    incLat: 2,
-                    incLon: 4
+                    offsetLat: baseSampleMultiplier,
+                    offsetLon: baseSampleMultiplier * 2,
+                    incLat: baseSampleMultiplier * 2,
+                    incLon: baseSampleMultiplier * 4
                 }
                 ],
             points: [],
@@ -1672,7 +1674,6 @@
             if(totalRunTime > maxTime){
                 this.animationsDone = true;
                 totalRunTime = maxTime;
-                console.log('done with box animations');
             }
 
 

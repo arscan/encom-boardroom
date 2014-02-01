@@ -81,10 +81,8 @@ function start(){
             setTimeout(function(){
                 for(var i = 0; i< 2; i++){
                     for(var j = 0; j< 4; j++){
-                        console.log("" + i + ' ' + j);
                         
                         globe.addSatellite(50 * i - 30 + 15 * Math.random(), 90 * j - 120 + 30 * i, 1.3 + Math.random()/10);
-
                     }
                 }
             }, 5000);

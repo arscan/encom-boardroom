@@ -78,12 +78,16 @@ function start(){
                 }, 1000);
             },2000);
 
-            setInterval(function(){
-                var sat = globe.addSatellite(Math.random()*180 - 90, Math.random() * 360, 1.2 + .6 * Math.random());
-                setTimeout(function(){
-                    globe.removeSatellite(sat);
-                },20000);
-            },10000);
+            setTimeout(function(){
+                for(var i = 0; i< 2; i++){
+                    for(var j = 0; j< 4; j++){
+                        console.log("" + i + ' ' + j);
+                        
+                        globe.addSatellite(60 * i - 30, 90 * j - 120 + 30 * i, 1.4);
+
+                    }
+                }
+            }, 2000);
 
             setInterval(function(){
                 satbar.setZone(Math.floor(Math.random()*4-1));

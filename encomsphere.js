@@ -901,14 +901,14 @@
         this.scene.add(marker1);
         this.scene.add(marker2);
 
-        var textSprite1 = globe_createLabel(text1.toUpperCase(), point1.x*1.25, point1.y*1.25, point1.z*1.25, 20, "white", "#FFCC00");
-        var textSprite2 = globe_createLabel(text2.toUpperCase(), point2.x*1.25, point2.y*1.25, point2.z*1.25, 20, "white", "#FFCC00");
+        var textSprite1 = globe_createLabel(text1.toUpperCase(), point1.x*1.25, point1.y*1.25, point1.z*1.25, 25, "white", "#FFCC00");
+        var textSprite2 = globe_createLabel(text2.toUpperCase(), point2.x*1.25, point2.y*1.25, point2.z*1.25, 25, "white", "#FFCC00");
 
         this.scene.add(textSprite1);
         this.scene.add(textSprite2);
 
         new TWEEN.Tween({x: 0, y: 0})
-            .to({x: 45, y: 45}, 2000)
+            .to({x: 50, y: 50}, 2000)
             .easing( TWEEN.Easing.Elastic.InOut )
             .onUpdate(function(){
                 marker1.scale.set(this.x, this.y);
@@ -1012,7 +1012,7 @@
     }
 
 
-    globe.prototype.addSatellite = function(lat, lon, dist){
+    globe.prototype.addSatellite = function(lat, lon, dist, newTexture){
 
         var point = globe_mapPoint(lat,lon);
         point.x *= dist;
@@ -1031,17 +1031,18 @@
         if(!this.satelliteCanvas){
             this.satelliteCanvas = globe_createSatelliteCanvas.call(this, numFrames, pixels, rows, waveStart, waveEnd, satEnd, numWaves);
         }
-        var satelliteTexture = new THREE.Texture(this.satelliteCanvas);
-        satelliteTexture.needsUpdate = true;
+        if(newTexture || !this.satelliteTexture){
+           this.satelliteTexture = new THREE.Texture(this.satelliteCanvas)
+           this.satelliteTexture.needsUpdate = true;
+           var animator = new TextureAnimator(this.satelliteTexture,rows, numFrames/rows, numFrames, 80, repeatAt, waveEnd); 
+           this.satelliteAnimations.push(animator);
+        }
 
         // this.container.appendChild( this.satelliteCanvas);
 
-        var animator = new TextureAnimator(satelliteTexture,rows, numFrames/rows, numFrames, 80, repeatAt, waveEnd);
-
-        this.satelliteAnimations.push(animator);
 
         var material = new THREE.MeshBasicMaterial({
-            map : satelliteTexture,
+            map : this.satelliteTexture,
             transparent: true
         });
 
@@ -1059,14 +1060,15 @@
         mesh.rotation.z = -1*(lat/90)* Math.PI/2;
         mesh.rotation.y = (lon/180)* Math.PI
         this.scene.add(mesh);
-        return {mesh: mesh, shutDownFunc: animator.shutDown};
+        return {mesh: mesh, shutDownFunc: (animator ? animator.shutDown : function(){})};
 
     };
 
     globe.prototype.removeSatellite = function(sat){
         var _this = this;
 
-        sat.shutDownFunc(function(){
+
+        function kill(){
             var pos = -1;
             for(var i = 0; i < _this.satelliteMeshes.length; i++){
                 if(sat.mesh == _this.satelliteMeshes[i]){
@@ -1074,11 +1076,21 @@
                 }
             }
 
+            // cannot remove the first one
             if(pos >= 0){
                 _this.scene.remove(sat.mesh);
                 _this.satelliteMeshes.splice(pos,1);
             }
-        });
+        }
+
+        // don't shut down the first one
+        if(this.satelliteAnimations.length > 1){
+            sat.shutDownFunc(kill);
+
+        } else {
+            kill();
+        }
+
 
     };
 

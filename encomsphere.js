@@ -229,8 +229,8 @@
             map : texture,
             useScreenCoordinates: false,
             opacity:0,
-            depthTest: false
-
+            depthTest: false,
+            fog: true
             
             });
         var sprite = new THREE.Sprite(material);
@@ -690,15 +690,15 @@
                        "",
                        "vec3 getPos(float lat, float lon)",
                        "{",
-                       "if (lon < -180.0){",
-                       "   lon = 180.0;",
-                       "}",
-                       "float phi = (90.0 - lat) * PI / 180.0;",
-                       "float theta = (180.0 - lon) * PI / 180.0;",
-                       "float x = DISTANCE * sin(phi) * cos(theta);",
-                       "float y = DISTANCE * cos(phi);",
-                       "float z = DISTANCE * sin(phi) * sin(theta);",
-                       "return vec3(x, y, z);",
+                           "if (lon < -180.0){",
+                           "   lon = 180.0;",
+                           "}",
+                           "float phi = (90.0 - lat) * PI / 180.0;",
+                           "float theta = (180.0 - lon) * PI / 180.0;",
+                           "float x = DISTANCE * sin(phi) * cos(theta);",
+                           "float y = DISTANCE * cos(phi);",
+                           "float z = DISTANCE * sin(phi) * sin(theta);",
+                           "return vec3(x, y, z);",
                        "}",
                        "",
                        "void main()",
@@ -714,13 +714,13 @@
                            "if (dt == 0.0){",
                               "opacity = 0.0;",
                            "}",
-                           /* TODO: figrue out the math to get the smoke to fade on the backside of the planet*/
-                           // "float rotateBy = PI + (2.0 * PI)/ (20000.0/(currentTime)) + (180.0 - myStartLon) * PI / 180.0;",
-                           // "opacity = opacity * (1.0-sin(rotateBy))/2.0;",
+                           "float cameraAngle = (2.0 * PI) / (20000.0/currentTime);",
+                           "float myAngle = (180.0-myStartLon) * PI / 180.0;",
+                           "opacity = opacity * (cos(myAngle - cameraAngle) + 1.0)/2.0;",
                            "vec3 newPos = getPos(myStartLat, myStartLon - ( dt / 50.0));",
                            "vColor = vec4( color, opacity );", //     set color associated to vertex; use later in fragment shader.
                            "vec4 mvPosition = modelViewMatrix * vec4( newPos, 1.0 );",
-                           "gl_PointSize = 2.0 - (dt / 1500.0);",
+                           "gl_PointSize = 3.0 - (dt / 1500.0);",
                            "gl_Position = projectionMatrix * mvPosition;",
                        "}"
                        ].join("\n");
@@ -742,7 +742,7 @@
 
                     _this.smokeUniforms = {
                         currentTime: { type: 'f', value: 0.0},
-                        color: { type: 'c', value: new THREE.Color("#ccc")},
+                        color: { type: 'c', value: new THREE.Color("#666")},
                     }
 
                     _this.smokeMaterial = new THREE.ShaderMaterial( {
@@ -809,7 +809,7 @@
         this.scene.add(textSprite);
 
         /* add the top */
-        var markerTopMaterial = new THREE.SpriteMaterial({map: _this.markerTopTexture, color: 0xFD7D8, depthTest: false});
+        var markerTopMaterial = new THREE.SpriteMaterial({map: _this.markerTopTexture, color: 0xFD7D8, depthTest: false, fog: true});
         var markerTopSprite = new THREE.Sprite(markerTopMaterial);
         markerTopSprite.scale.set(15, 15);
         markerTopSprite.position.set(point.x*1.2, point.y*1.2, point.z*1.2);
@@ -885,7 +885,7 @@
         var point1 = globe_mapPoint(lat1,lng1);
         var point2 = globe_mapPoint(lat2,lng2);
 
-        var markerMaterial = new THREE.SpriteMaterial({map: _this.specialMarkerTexture, opacity: .7, depthTest: false});
+        var markerMaterial = new THREE.SpriteMaterial({map: _this.specialMarkerTexture, opacity: .7, depthTest: false, fog: true});
         // var markerMaterial = new THREE.SpriteMaterial({map: _this.markerTopTexture});
 
         var marker1 = new THREE.Sprite(markerMaterial);
@@ -896,7 +896,6 @@
 
         marker1.position.set(point1.x*1.2, point1.y*1.2, point1.z*1.2);
         marker2.position.set(point2.x*1.2, point2.y*1.2, point2.z*1.2);
-
 
         this.scene.add(marker1);
         this.scene.add(marker2);

@@ -83,11 +83,11 @@ function start(){
                     for(var j = 0; j< 4; j++){
                         console.log("" + i + ' ' + j);
                         
-                        globe.addSatellite(60 * i - 30, 90 * j - 120 + 30 * i, 1.4);
+                        globe.addSatellite(50 * i - 30 + 15 * Math.random(), 90 * j - 120 + 30 * i, 1.3 + Math.random()/10);
 
                     }
                 }
-            }, 2000);
+            }, 5000);
 
             setInterval(function(){
                 satbar.setZone(Math.floor(Math.random()*4-1));

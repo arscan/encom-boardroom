@@ -536,6 +536,26 @@
 
     };
 
+    var globe_removeQuill = function(quill){
+
+        var pos = quill.line.geometry.vertices[1];
+        var pos2 = quill.line.geometry.vertices[0];
+        var _this = this;
+        var scaleDownBy = 1+ Math.random()*.2;
+
+        new TWEEN.Tween({posx: pos.x, posy: pos.y, posz: pos.z, opacity: 1})
+            .to( {posx: pos2.x, posy: pos2.y, posz: pos2.z}, 1000 )
+            .onUpdate(function(){
+                quill.line.geometry.vertices[1].set(this.posx, this.posy, this.posz);
+                quill.line.geometry.verticesNeedUpdate = true;
+            })
+            .onComplete(function(){
+                _this.scene.remove(quill.line);
+            })
+            .start();
+
+    };
+
     var globe_updateSatellites = function(renderTime){
         for(var i = 0; i< this.satelliteAnimations.length; i++){
             this.satelliteAnimations[i].update(renderTime);
@@ -576,9 +596,10 @@
             globe_pointAnimations: [],
             swirl: new THREE.Object3D(),
             markers: [],
+            quills: [],
             markerCoords: {},
             maxMarkers: 20,
-            maxLines:1000,
+            maxQuills:200,
 
             satelliteAnimations: [],
             satelliteMeshes: []
@@ -717,7 +738,7 @@
                            "float cameraAngle = (2.0 * PI) / (20000.0/currentTime);",
                            "float myAngle = (180.0-myStartLon) * PI / 180.0;",
                            "opacity = opacity * (cos(myAngle - cameraAngle) + 1.0)/2.0;",
-                           "vec3 newPos = getPos(myStartLat, myStartLon - ( dt / 50.0));",
+                           "vec3 newPos = getPos(myStartLat, myStartLon - ( dt / 70.0));",
                            "vColor = vec4( color, opacity );", //     set color associated to vertex; use later in fragment shader.
                            "vec4 mvPosition = modelViewMatrix * vec4( newPos, 1.0 );",
                            "gl_PointSize = 3.0 - (dt / 1500.0);",
@@ -755,7 +776,7 @@
 
                     for(var i = 0; i< 1000; i++){
                         var vertex = new THREE.Vector3();
-                        vertex.set(0,0,0);
+                        vertex.set(0,1000,0);
                         _this.smokeParticleGeometry.vertices.push( vertex );
                         _this.smokeAttributes.myStartTime.value[i] = 0.0;
                         _this.smokeAttributes.myStartLat.value[i] = 0.0;
@@ -843,6 +864,10 @@
             smokeCount: 30
         });
 
+        this.quills.push({
+            line: line,
+        });
+
 
 
         /* do some stuff that allows me to remove based on location */
@@ -860,6 +885,10 @@
 
         if(this.markers.length > this.maxMarkers){
             globe_removeMarker.call(this, this.markers.shift());
+        }
+
+        if(this.quills.length > this.maxQuills){
+            globe_removeQuill.call(this, this.quills.shift());
         }
 
         new TWEEN.Tween(point)

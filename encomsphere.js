@@ -457,7 +457,7 @@
 
         geometry.colors = colors;
 
-        material = new THREE.ParticleSystemMaterial( { size: 12, map: sprite, vertexColors: true, transparent: true } );
+        material = new THREE.ParticleSystemMaterial( { size: 13, map: sprite, vertexColors: true, transparent: false, depthTest: false} );
 
         this.globe_particles = new THREE.ParticleSystem( geometry, material );
         this.globe_particles.geometry.dynamic=true;
@@ -740,10 +740,10 @@
                            "float cameraAngle = (2.0 * PI) / (20000.0/currentTime);",
                            "float myAngle = (180.0-myStartLon) * PI / 180.0;",
                            "opacity = opacity * (cos(myAngle - cameraAngle) + 1.0)/2.0;",
-                           "vec3 newPos = getPos(myStartLat, myStartLon - ( dt / 70.0));",
+                           "vec3 newPos = getPos(myStartLat, myStartLon - ( dt / 50.0));",
                            "vColor = vec4( color, opacity );", //     set color associated to vertex; use later in fragment shader.
                            "vec4 mvPosition = modelViewMatrix * vec4( newPos, 1.0 );",
-                           "gl_PointSize = 3.0 - (dt / 1500.0);",
+                           "gl_PointSize = 2.5 - (dt / 1500.0);",
                            "gl_Position = projectionMatrix * mvPosition;",
                        "}"
                        ].join("\n");
@@ -765,7 +765,7 @@
 
                     _this.smokeUniforms = {
                         currentTime: { type: 'f', value: 0.0},
-                        color: { type: 'c', value: new THREE.Color("#666")},
+                        color: { type: 'c', value: new THREE.Color("#aaa")},
                     }
 
                     _this.smokeMaterial = new THREE.ShaderMaterial( {

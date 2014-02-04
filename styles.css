@@ -254,18 +254,30 @@ div {
 
 #stock-chart
 {
-    float: left;
-    margin-top: 10px;
+    position: absolute;
+    top: 50px;
+    left: 100px;
+    width: 500px;
+    height:105px; 
+    overflow: hidden;
+}
+#stock-chart canvas {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+
 }
 
 #stock-subcharts
 {
+    position: absolute;
+    top: 161px;
+    left: 110px;
     border: 0px;
     color: #fff;
-    float: right;
     width: 500px;
     height: 28px;
-    margin: 8px 0;
+
 
 }
 

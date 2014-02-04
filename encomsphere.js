@@ -2166,56 +2166,56 @@
 
     };
 
-    var stockchart_render = function(){
+    var stockchart_addGrid = function(ctx, ticks, width, height){
 
-       this.context.beginPath();
-       this.context.lineWidth=2;
-       this.context.strokeStyle="#666";
-       this.context.moveTo(30, this.height-1);
-       this.context.lineTo(this.width-1,this.height-1);
-       this.context.stroke();
-       this.context.closePath();
+       ctx.beginPath();
+       ctx.lineWidth=2;
+       ctx.strokeStyle="#666";
+       ctx.moveTo(30, height-1);
+       ctx.lineTo(width-1,height-1);
+       ctx.stroke();
+       ctx.closePath();
 
 
        /* draw the grid */
        var newY = 0;
 
-       for(var i = 0; i< this.opts.ticks; i++){
-           var y = i*(this.height/this.opts.ticks);
-           this.context.beginPath();
-           this.context.lineWidth=1;
-           this.context.strokeStyle="#666";
-           this.context.moveTo(30, y);
-           this.context.lineTo(this.width-1,y);
-           this.context.stroke();
-           this.context.closePath();
+       for(var i = 0; i< ticks;i++){
+           var y = i*(height/ticks);
+           ctx.beginPath();
+           ctx.lineWidth=1;
+           ctx.strokeStyle="#666";
+           ctx.moveTo(30, y);
+           ctx.lineTo(width-1,y);
+           ctx.stroke();
+           ctx.closePath();
        }
 
        newX = 30;
-       while(newX < this.width){
-           this.context.beginPath();
-           this.context.lineWidth=1;
-           this.context.strokeStyle="#666";
-           this.context.moveTo(newX, 0);
-           this.context.lineTo(newX,this.height);
-           this.context.stroke();
-           this.context.closePath();
-           newX += this.height/this.opts.ticks;
+       while(newX < width){
+           ctx.beginPath();
+           ctx.lineWidth=1;
+           ctx.strokeStyle="#666";
+           ctx.moveTo(newX, 0);
+           ctx.lineTo(newX,height);
+           ctx.stroke();
+           ctx.closePath();
+           newX += height/ticks;
        }
 
        // draw the far right line.
        // this might be a bit hokey
        
-       this.context.beginPath();
-       this.context.lineWidth=1;
-       this.context.strokeStyle="#666";
-       this.context.moveTo(this.width-1, 0);
-       this.context.lineTo(this.width-1,this.height);
-       this.context.stroke();
-       this.context.closePath();
+       ctx.beginPath();
+       ctx.lineWidth=1;
+       ctx.strokeStyle="#666";
+       ctx.moveTo(width-1, 0);
+       ctx.lineTo(width-1,height);
+       ctx.stroke();
+       ctx.closePath();
     };
 
-    var StockChart = function(canvasId, opts){
+    var StockChart = function(containerId, opts){
 
         var defaults = {
             ticks: 7
@@ -2224,32 +2224,38 @@
         extend(opts, defaults);
         this.opts = defaults;
 
+        this.frames = [];
+
         if(this.firstTick == null){
             this.firstTick = new Date();
         }
 
-        var canvas = document.getElementById(canvasId);
-        this.context = canvas.getContext("2d");
+        this.container = document.getElementById(containerId);
+        this.container.width = '500';
+        this.container.height = '105'
 
-        this.width = canvas.width;
-        this.height = canvas.height;
+        this.width = this.container.width;
+        this.height = this.container.height;
 
-        stockchart_render.call(this);
+        this.currentFrame = 0;
 
-        var data = [];
+        for(var j = 0; j < 4; j++){
+            var data = [];
 
-        for(var i = 0; i< 20; i++){
-            data.push(Math.random()*100);
-        }
-        setTimeout(function(){
+            for(var i = 0; i< 20; i++){
+                data.push(Math.random()*100);
+            }
+
             this.addFrame("First Quarter", data);
-        }.bind(this), 3000);
+            // this.context.drawImage(this.frames[0], 0, 0);
+            //
 
+            this.frames[this.frames.length-1].id = "stock-chart-" + j;
+            this.container.appendChild( this.frames[j] );
+        }
     };
 
     StockChart.prototype.addFrame = function(label, data) {
-
-
 
        // get bounds of the data
        
@@ -2267,54 +2273,73 @@
        var increment = (max - min) / this.opts.ticks; 
        var heightIncrement  = (this.height) / this.opts.ticks; 
 
+       var frameCanvas = renderToCanvas(this.width, this.height, function(ctx){
+           // draw the y ticks
 
-       // draw the y ticks
+           ctx.fillStyle = "#000";
+           ctx.fillRect(0,0,this.width, this.height);
+           
+           stockchart_addGrid(ctx, this.opts.ticks, this.width, this.height);
 
-       this.context.font = "5pt Inconsolata";
-       this.context.fillStyle="#fff";
+           ctx.font = "5pt Inconsolata";
+           ctx.fillStyle="#fff";
 
-       for(var i = 0; i < this.opts.ticks; i++){
+           for(var i = 0; i < this.opts.ticks; i++){
 
-           this.context.fillText(('' + (min + (this.opts.ticks - i -1)* increment)).substring(0,6), 0, heightIncrement*i+10);
-           this.context.beginPath();
-           this.context.lineWidth="1";
-           this.context.strokeStyle="#666";
-           this.context.moveTo(0, heightIncrement * (i + 1));
-           this.context.lineTo(30,heightIncrement * (i + 1));
-           this.context.stroke();
-           this.context.closePath();
-       }
+               ctx.fillText(('' + (min + (this.opts.ticks - i -1)* increment)).substring(0,6), 0, heightIncrement*i+10);
+               ctx.beginPath();
+               ctx.lineWidth="1";
+               ctx.strokeStyle="#666";
+               ctx.moveTo(0, heightIncrement * (i + 1));
+               ctx.lineTo(30,heightIncrement * (i + 1));
+               ctx.stroke();
+               ctx.closePath();
+           }
 
-       var xIncrement = (this.width - 30)/(data.length-1);
+           var xIncrement = (this.width - 30)/(data.length-1);
 
-       this.context.beginPath();
-       this.context.moveTo(30,this.height-1);
+           ctx.beginPath();
+           ctx.moveTo(30,this.height-1);
 
-       for(var i = 0; i < data.length; i++){
-           this.context.lineWidth = "1px";
-           this.context.lineTo(30 + i*xIncrement, data[i]);
-       }
-       this.context.lineTo(this.width, this.height-1);
-       this.context.stroke();
-       var gradient = this.context.createLinearGradient(0, 0, 0, this.height);
-       gradient.addColorStop(0, shadeColor("#00eeee",-60));
-       gradient.addColorStop(1, "black");
-       this.context.fillStyle = gradient;
-       this.context.fill();
+           for(var i = 0; i < data.length; i++){
+               ctx.lineWidth = "1px";
+               ctx.lineTo(30 + i*xIncrement, data[i]);
+           }
+           ctx.lineTo(this.width, this.height-1);
+           ctx.stroke();
+           console.log(this.height);
+           var gradient = ctx.createLinearGradient(0, 0, 0, this.height);
+           gradient.addColorStop(0, shadeColor("#00eeee",-60));
+           gradient.addColorStop(1, "black");
+           ctx.fillStyle = gradient;
+           ctx.fill();
 
-       // draw the label
-       this.context.font = "7pt Inconsolata";
-       var textWidth = this.context.measureText(label).width;
+           // draw the label
+           ctx.font = "7pt Inconsolata";
+           var textWidth = ctx.measureText(label).width;
 
-       this.context.textAlign = "left";
-       this.context.fillStyle="#000";
-       this.context.strokeStyle="#00eeee";
-       this.context.textBaseline = "top";
+           ctx.textAlign = "left";
+           ctx.fillStyle="#000";
+           ctx.strokeStyle="#00eeee";
+           ctx.textBaseline = "top";
 
-       drawCurvedRectangle(this.context, 40, 1, textWidth + 10, 16, 2);
-       this.context.strokeStyle="#fff";
-       this.context.fillStyle="#fff";
-       this.context.fillText(label, 45, 3);
+           drawCurvedRectangle(ctx, 40, 1, textWidth + 10, 16, 2);
+           ctx.strokeStyle="#fff";
+           ctx.fillStyle="#fff";
+           ctx.fillText(label, 45, 3);
+
+
+       }.bind(this));
+
+       this.frames.push(frameCanvas);
+
+    };
+
+    StockChart.prototype.tick = function(){
+
+
+
+
     };
 
     var StockChartSmall = function(canvasId, opts){
@@ -2391,7 +2416,7 @@
 
         var data = [];
 
-        for(var i = 0; i< 20; i++){
+        for(var i = 0; i< 50; i++){
             data.push(Math.random()*this.height);
         }
 

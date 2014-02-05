@@ -10,6 +10,7 @@ function animate(){
     $("#clock").text(getTime());
     simpleclock.tick();
     box.tick();
+    stockchart.tick();
     requestAnimationFrame(animate);
     stats.update();
 

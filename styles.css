@@ -262,9 +262,21 @@ div {
     overflow: hidden;
 }
 #stock-chart canvas {
+
+}
+
+#stock-chart div {
     position: absolute;
     top: 0px;
-    left: 0px;
+    left: -2px;
+    width: 0px;
+    overflow: hidden;
+    height: 105px;
+    border-right: 1px solid #666;
+}
+
+#stock-chart div canvas{
+    margin-left: 2px;
 
 }
 

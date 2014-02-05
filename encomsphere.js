@@ -2218,7 +2218,9 @@
     var StockChart = function(containerId, opts){
 
         var defaults = {
-            ticks: 7
+            ticks: 7,
+            holdTime: 10000,
+            swipeTime: 800,
         }
 
         extend(opts, defaults);
@@ -2237,7 +2239,7 @@
         this.width = this.container.width;
         this.height = this.container.height;
 
-        this.currentFrame = 0;
+        this.currentFrame = -1;
 
         for(var j = 0; j < 4; j++){
             var data = [];
@@ -2246,12 +2248,23 @@
                 data.push(Math.random()*100);
             }
 
-            this.addFrame("First Quarter", data);
-            // this.context.drawImage(this.frames[0], 0, 0);
-            //
+            var quarter = "";
+            if(j == 0){
+                quarter = "1st Quarter";
+            } else if(j==1){
+                quarter = "2nd Quarter";
+            } else if(j==2){
+                quarter = "3rd Quarter";
+            } else if(j==3){
+                quarter = "4th Quarter";
+            }
 
-            this.frames[this.frames.length-1].id = "stock-chart-" + j;
-            this.container.appendChild( this.frames[j] );
+            this.addFrame(quarter, data);
+
+            this.frames[this.frames.length-1].id = "stock-chart-canvas" + j;
+            this.frames[this.frames.length-1].div = document.createElement("div");
+            this.frames[this.frames.length-1].div.appendChild( this.frames[j] );
+            this.container.appendChild(this.frames[this.frames.length-1].div);
         }
     };
 
@@ -2336,10 +2349,29 @@
     };
 
     StockChart.prototype.tick = function(){
+        
+        if(!this.firstTick){
+            this.firstTick = new Date();
+        }
+        var timeSinceStarted = new Date() - this.firstTick;
 
+        var ticks = timeSinceStarted % (this.opts.holdTime * this.frames.length);
+        
+        var thisFrame = Math.floor(ticks / (this.opts.holdTime));
 
+        if(thisFrame !== this.currentFrame){
+            // this.frames[this.currentFrame].div.style.width = "0px";
+            this.currentFrame = thisFrame;
+            this.frames[this.currentFrame].div.style.zIndex = Math.floor(timeSinceStarted/this.opts.holdTime);
+            this.percentDone = 0;
+        }
+        // console.log(this.frames[this.currentFrame].div);
 
-
+        if(this.percentDone < 1){
+            this.percentDone = Math.min((ticks  - this.currentFrame * this.opts.holdTime) / this.opts.swipeTime, 1);
+            this.frames[this.currentFrame].div.style.width = (this.width * sCurve(this.percentDone)) + "px";
+        }
+        // console.log(this.frames[this.currentFrame].div.width);
     };
 
     var StockChartSmall = function(canvasId, opts){

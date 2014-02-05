@@ -2314,18 +2314,26 @@
            ctx.beginPath();
            ctx.moveTo(30,this.height-1);
 
+           ctx.lineWidth = "1px";
            for(var i = 0; i < data.length; i++){
-               ctx.lineWidth = "1px";
                ctx.lineTo(30 + i*xIncrement, data[i]);
            }
            ctx.lineTo(this.width, this.height-1);
            ctx.stroke();
-           console.log(this.height);
            var gradient = ctx.createLinearGradient(0, 0, 0, this.height);
            gradient.addColorStop(0, shadeColor("#00eeee",-60));
-           gradient.addColorStop(1, "black");
+           gradient.addColorStop(1, 'rgba(0,238,238,.5)');
            ctx.fillStyle = gradient;
            ctx.fill();
+           ctx.closePath();
+
+           ctx.fillStyle = "rgba(255,255,255,.5)";
+           for(var i = 0; i < data.length; i++){
+
+               ctx.beginPath();
+               ctx.arc(30 + i*xIncrement, data[i], 2, 0, 2*Math.PI);
+               ctx.fill();
+           }
 
            // draw the label
            ctx.font = "7pt Inconsolata";

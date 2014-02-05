@@ -256,8 +256,8 @@ div {
 {
     position: absolute;
     top: 50px;
-    left: 100px;
-    width: 500px;
+    left: 105px;
+    width: 496px;
     height:105px; 
     overflow: hidden;
 }
@@ -272,7 +272,7 @@ div {
     width: 0px;
     overflow: hidden;
     height: 105px;
-    border-right: 1px solid #666;
+    border-right: 1px solid #ffcc00;
 }
 
 #stock-chart div canvas{

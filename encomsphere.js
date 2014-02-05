@@ -2244,8 +2244,8 @@
         for(var j = 0; j < 4; j++){
             var data = [];
 
-            for(var i = 0; i< 20; i++){
-                data.push(Math.random()*100);
+            for(var i = 0; i< 50; i++){
+                data.push(100-((20+i) + Math.random()*30));
             }
 
             var quarter = "";
@@ -2456,7 +2456,7 @@
 
         var data = [];
 
-        for(var i = 0; i< 50; i++){
+        for(var i = 0; i< 20; i++){
             data.push(Math.random()*this.height);
         }
 

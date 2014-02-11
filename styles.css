@@ -164,13 +164,36 @@ div {
     height: 450px;
 }
 #cube {
-    padding: 2px;
-    margin-top:6px;
-    float: left;
+    position: absolute;
+    left: 302px;
     width: 290px;
     height: 225px;
     border-bottom: 1px solid #333;
 }
+#cube-labels {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    font-size: 4pt;
+    padding: 0;
+    margin: 0;
+}
+
+#cube-labels div {
+    margin: 3px 0 0 0;
+    padding:0 0 0 3px;
+}
+
+#cube-label-1{
+    border-left: 42px solid #00eeee;
+}
+#cube-label-2{
+    border-left: 10px solid #ffcc00;
+}
+#cube-label-3{
+    border-left: 25px solid #aaa;
+}
+
 #swirls {
     float: left;
     width: 290px;

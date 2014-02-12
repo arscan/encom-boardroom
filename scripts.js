@@ -1,4 +1,4 @@
-var globe, stats, satbar, locationbar, simpleclock, startDate, box;
+var globe, stats, satbar, locationbar, simpleclock, startDate, box, swirls;
 
 startDate = new Date();
 
@@ -11,6 +11,7 @@ function animate(){
     simpleclock.tick();
     box.tick();
     stockchart.tick();
+    swirls.tick();
     requestAnimationFrame(animate);
     stats.update();
 
@@ -76,6 +77,7 @@ function start(){
             setTimeout(function(){
                 setInterval(function(){
                     globe.addMarker(Math.random()*180 + 90, Math.random()*360+180, "testing");
+                    swirls.hit("lang " + Math.floor(Math.random()*10));
                 }, 1000);
             },2000);
 
@@ -183,6 +185,7 @@ $(function() {
             timertrees = new ENCOM.TimerTrees("timer-trees");
             stockchart = new ENCOM.StockChart("stock-chart");
             stockchartsmall = new ENCOM.StockChartSmall("stock-chart-small");
+            swirls = new ENCOM.Swirls("swirls");
 
             $("#logo").animate({
                 fontSize: "40px",

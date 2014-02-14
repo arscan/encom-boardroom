@@ -98,9 +98,11 @@ function start(){
 
                     swirls.hit(data.type);
 
-                    var mb = $(mediaBoxes[Math.floor(Math.random() * mediaBoxes.length)]);
-                    mb.css('background-image', 'url(http://0.gravatar.com/avatar/' + data.pic + '?s=' + mb.width() +')');
-                    mb.find('span').text(data.actor);
+                    if(Math.random() < .05){
+                        var mb = $(mediaBoxes[Math.floor(Math.random() * mediaBoxes.length)]);
+                        mb.css('background-image', 'url(http://0.gravatar.com/avatar/' + data.pic + '?s=' + mb.width() +')');
+                        mb.find('span').text(data.actor);
+                    }
                     
                 });
             }, 2000);

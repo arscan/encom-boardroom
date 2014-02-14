@@ -38,6 +38,8 @@ function start(){
     animate();
 
 
+    var mediaBoxes = $('.media-box div');
+
     // render the other elements intro animations
 
     $("#fps").delay(100).animate({
@@ -72,6 +74,9 @@ function start(){
                 width: "450px"
             }, 500);
 
+
+            
+
             setTimeout(function(){
                 StreamServer.onMessage(function (datain) {
                     var chunks = datain.message.split("*");
@@ -88,8 +93,15 @@ function start(){
                     data.actor = chunks[3].trim();
                     data.repo = chunks[0].trim();
                     data.type = chunks[5].trim();
+                    data.pic = chunks[6].trim();
+
 
                     swirls.hit(data.type);
+
+                    var mb = $(mediaBoxes[Math.floor(Math.random() * mediaBoxes.length)]);
+                    mb.css('background-image', 'url(http://0.gravatar.com/avatar/' + data.pic + '?s=' + mb.width() +')');
+                    mb.find('span').text(data.actor);
+                    
                 });
             }, 2000);
 

@@ -406,7 +406,6 @@ div {
 
 .user-pic{
     position: relative;
-    background: url(http://0.gravatar.com/avatar/d8f1dd663be9b8a3845e040f883883c0?s=90);
     margin: 3px;
     height: 89px;
     width: 89px;
@@ -418,7 +417,6 @@ div {
  
 
 .user-pic.larger{
-    background: url(http://0.gravatar.com/avatar/d8f1dd663be9b8a3845e040f883883c0?s=184);
     height: 184px;
     width: 184px;
 }

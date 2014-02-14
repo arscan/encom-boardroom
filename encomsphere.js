@@ -2532,7 +2532,7 @@
         }
 
         this.context.beginPath();
-        this.context.arc(this.x, this.y, 2, 0, Math.PI * 2);
+        this.context.arc(this.x, this.y, 1, 0, Math.PI * 2);
         this.context.fill();
         this.context.closePath();
 

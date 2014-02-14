@@ -72,14 +72,25 @@ function start(){
                 width: "450px"
             }, 500);
 
+            StreamServer.onMessage(function (datain) {
+                var chunks = datain.message.split("*");
+                
+                var data = {};
+                if(datain.location){
+                   data.location = datain.location.name;
+                   if(datain.location.lat && datain.location.lng){
+                       data.latlng = {"lat": datain.location.lat, "lng": datain.location.lng};
+                        globe.addMarker(datain.location.lat, datain.location.lng, datain.location.name);
+                   }
+                }
+                
+                data.actor = chunks[3].trim();
+                data.repo = chunks[0].trim();
+                data.type = chunks[5].trim();
 
+                swirls.hit(data.type);
+            });
 
-            setTimeout(function(){
-                setInterval(function(){
-                    globe.addMarker(Math.random()*180 + 90, Math.random()*360+180, "testing");
-                    swirls.hit("lang " + Math.floor(Math.random()*10));
-                }, 1000);
-            },2000);
 
             setTimeout(function(){
                 for(var i = 0; i< 2; i++){

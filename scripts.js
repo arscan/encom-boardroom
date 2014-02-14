@@ -72,24 +72,26 @@ function start(){
                 width: "450px"
             }, 500);
 
-            StreamServer.onMessage(function (datain) {
-                var chunks = datain.message.split("*");
-                
-                var data = {};
-                if(datain.location){
-                   data.location = datain.location.name;
-                   if(datain.location.lat && datain.location.lng){
-                       data.latlng = {"lat": datain.location.lat, "lng": datain.location.lng};
-                        globe.addMarker(datain.location.lat, datain.location.lng, datain.location.name);
-                   }
-                }
-                
-                data.actor = chunks[3].trim();
-                data.repo = chunks[0].trim();
-                data.type = chunks[5].trim();
+            setTimeout(function(){
+                StreamServer.onMessage(function (datain) {
+                    var chunks = datain.message.split("*");
+                    
+                    var data = {};
+                    if(datain.location){
+                       data.location = datain.location.name;
+                       if(datain.location.lat && datain.location.lng){
+                           data.latlng = {"lat": datain.location.lat, "lng": datain.location.lng};
+                            globe.addMarker(datain.location.lat, datain.location.lng, datain.location.name);
+                       }
+                    }
+                    
+                    data.actor = chunks[3].trim();
+                    data.repo = chunks[0].trim();
+                    data.type = chunks[5].trim();
 
-                swirls.hit(data.type);
-            });
+                    swirls.hit(data.type);
+                });
+            }, 2000);
 
 
             setTimeout(function(){

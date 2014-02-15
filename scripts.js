@@ -101,6 +101,8 @@ function start(){
                     data.pic = chunks[6].trim();
 
 
+                    $("#interaction > div").prepend('<div class="interaction-data">' + data.actor + ' - ' + data.repo + ' - ' + data.type + '</div>');
+
                     swirls.hit(data.type);
 
                     $(blinkies[Math.floor(Math.random() * blinkies.length)]).css('background-color', blinkiesColors[Math.floor(Math.random() * blinkiesColors.length)]);

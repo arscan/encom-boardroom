@@ -161,7 +161,18 @@ div {
     float: left;
     border-right: 1px solid #333;
     width: 296px;
-    height: 450px;
+    height: 445px;
+    font-size: 10px;
+}
+#interaction-overlay {
+    position:absolute;
+    width: 296px;
+    height: 200px;
+    bottom: 0px;
+    background: -webkit-linear-gradient(transparent, #000); /* For Safari */
+    background: -o-linear-gradient(transparent, #000); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(transparent, #000); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(transparent, #000); /* Standard syntax */
 }
 #cube {
     position: absolute;

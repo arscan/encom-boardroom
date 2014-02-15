@@ -39,6 +39,8 @@ function start(){
 
 
     var mediaBoxes = $('.media-box .user-pic');
+    var blinkies = $('.blinky');
+    var blinkiesColors = ["#000", "#ffcc00", "#00eeee", "#fff"];
 
     // render the other elements intro animations
 
@@ -103,6 +105,8 @@ function start(){
                         mb.css('background-image', 'url(http://0.gravatar.com/avatar/' + data.pic + '?s=' + mb.width() +')');
                         mb.find('span').text(data.actor);
                     }
+
+                    $(blinkies[Math.floor(Math.random() * blinkies.length)]).css('background-color', blinkiesColors[Math.floor(Math.random() * blinkiesColors.length)]);
                     
                 });
             }, 2000);

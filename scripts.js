@@ -38,7 +38,7 @@ function start(){
     animate();
 
 
-    var mediaBoxes = $('.media-box div');
+    var mediaBoxes = $('.media-box .user-pic');
 
     // render the other elements intro animations
 

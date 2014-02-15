@@ -394,6 +394,23 @@ div {
     height: 100%;
 }
 
+.media-scanlines{
+    position:absolute;
+    width: 380px;
+    height: 190px;
+    background: transparent url(scanlines.png) repeat;
+    z-index: 5;
+    opacity: .4;
+}
+
+#media-top .media-scanlines{
+    top: 46px;
+}
+
+#media-bottom .media-scanlines{
+    top: 274px;
+}
+
 .media-box{
     float: left;
     width: 380px;

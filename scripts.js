@@ -41,6 +41,9 @@ function start(){
     var mediaBoxes = $('.media-box .user-pic');
     var blinkies = $('.blinky');
     var blinkiesColors = ["#000", "#ffcc00", "#00eeee", "#fff"];
+    var userIndex = 0;
+    var lastUserDate = Date.now();
+    var currentUsers = [];
 
     // render the other elements intro animations
 
@@ -100,13 +103,41 @@ function start(){
 
                     swirls.hit(data.type);
 
-                    if(Math.random() < .05){
-                        var mb = $(mediaBoxes[Math.floor(Math.random() * mediaBoxes.length)]);
-                        mb.css('background-image', 'url(http://0.gravatar.com/avatar/' + data.pic + '?s=' + mb.width() +')');
-                        mb.find('span').text(data.actor);
-                    }
-
                     $(blinkies[Math.floor(Math.random() * blinkies.length)]).css('background-color', blinkiesColors[Math.floor(Math.random() * blinkiesColors.length)]);
+
+                    var showUser = true;
+
+                    if(currentUsers.length < 10 || Date.now() - lastUserDate > 1000){
+                        
+                        for(var i = 0; i< currentUsers.length && showUser; i++){
+                            if(currentUsers[i] == data.pic){
+                                showUser = false;
+                            }
+                        }
+
+                        if(showUser){
+                            var img = document.createElement('img');
+
+                            var profileImageLoaded = function(ui){
+                                var mb = $(mediaBoxes[ui]);
+                                mb.css('background-image', 'url(http://0.gravatar.com/avatar/' + data.pic + '?s=' + mb.width() +')');
+                                mb.find('span').text(data.actor);
+
+                            };
+
+                            img.addEventListener('load', profileImageLoaded.bind(this, userIndex));
+                            img.src = 'http://0.gravatar.com/avatar/' + data.pic + '?s=' + $(mediaBoxes[userIndex]).width();
+
+                            currentUsers[userIndex] = data.pic;
+
+                            userIndex++;
+                            userIndex = userIndex % 10;
+
+                            lastUserDate = Date.now();
+
+
+                        }
+                    }
                     
                 });
             }, 2000);

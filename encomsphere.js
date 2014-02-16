@@ -510,7 +510,11 @@
         var _this = this;
         var scaleDownBy = 1+ Math.random()*.2;
 
-        
+        if(!marker.active){
+            return;
+        }
+
+        marker.active = false;
 
         for(var i = marker.startSmokeIndex; i< marker.smokeCount + marker.startSmokeIndex; i++){
             var realI = i % _this.smokeAttributes.active.value.length;
@@ -533,6 +537,15 @@
                 _this.scene.remove(marker.top);
             })
             .start();
+
+        this.quills.push({
+            line: marker.line,
+        });
+
+        if(this.quills.length > this.maxQuills){
+            globe_removeQuill.call(this, this.quills.shift());
+        }
+
 
     };
 
@@ -560,6 +573,30 @@
         for(var i = 0; i< this.satelliteAnimations.length; i++){
             this.satelliteAnimations[i].update(renderTime);
         }
+    };
+
+    var globe_registerMarker = function(marker, lat, lng){
+        var labelKey = Math.floor(lat/20) + '-' + Math.floor(lng/40);
+        if(Math.abs(lat)>80){
+            labelKey = Math.floor(lat/20);
+        }
+        this.markerCoords[labelKey] = marker;
+        
+    };
+
+    var globe_findNearbyMarkers = function(lat, lng){
+        var ret = [];
+        var labelKey = Math.floor(lat/20) + '-' + Math.floor(lng/40);
+        if(Math.abs(lat)>80){
+            labelKey = Math.floor(lat/20);
+        }
+
+        if(this.markerCoords[labelKey]){
+            ret.push(this.markerCoords[labelKey]);
+        }
+
+        return ret;
+        
     };
 
     /* globe constructor */
@@ -817,6 +854,8 @@
         var point = globe_mapPoint(lat,lng);
 
 
+        // always make at least a line for the quill
+        //
         /* add line */
         var markerGeometry = new THREE.Geometry();
         var markerMaterial = new THREE.LineBasicMaterial({
@@ -827,70 +866,79 @@
         var line = new THREE.Line(markerGeometry, markerMaterial);
         this.scene.add(line);
 
-        /* add the text */
-        var textSprite = globe_createLabel(text, point.x*1.2, point.y*1.2, point.z*1.2, 20, "white");
-        this.scene.add(textSprite);
-
-        /* add the top */
-        var markerTopMaterial = new THREE.SpriteMaterial({map: _this.markerTopTexture, color: 0xFD7D8, depthTest: false, fog: true});
-        var markerTopSprite = new THREE.Sprite(markerTopMaterial);
-        markerTopSprite.scale.set(15, 15);
-        markerTopSprite.position.set(point.x*1.2, point.y*1.2, point.z*1.2);
-
-
-        /* add the smoke */
-        var startSmokeIndex = _this.smokeIndex;
-
-        for(var i = 0; i< 30; i++){
-            _this.smokeParticleGeometry.vertices[_this.smokeIndex].set(point.x * 1.2, point.y * 1.2, point.z * 1.2);
-            _this.smokeParticleGeometry.verticesNeedUpdate = true;
-            _this.smokeAttributes.myStartTime.value[_this.smokeIndex] = _this.totalRunTime + (i*50 + 1500);
-            _this.smokeAttributes.myStartLat.value[_this.smokeIndex] = lat;
-            _this.smokeAttributes.myStartLon.value[_this.smokeIndex] = lng;
-            _this.smokeAttributes.active.value[_this.smokeIndex] = 1.0;
-            _this.smokeAttributes.myStartTime.needsUpdate = true;
-            _this.smokeAttributes.myStartLat.needsUpdate = true;
-            _this.smokeAttributes.myStartLon.needsUpdate = true;
-            _this.smokeAttributes.active.needsUpdate = true;
-
-            _this.smokeIndex++;
-            _this.smokeIndex = _this.smokeIndex % _this.smokeParticleGeometry.vertices.length;
+        var existingMarkers = globe_findNearbyMarkers.call(_this, lat, lng);
+        var allOld = true;
+        for(var i = 0; i< existingMarkers.length; i++){
+            if(Date.now() - existingMarkers[i].creationDate < 10000){
+                allOld = false;
+            }
         }
 
+        if(existingMarkers.length == 0 || allOld){
+            // get rid of old ones
+            
+            for(var i = 0; i< existingMarkers.length; i++){
+                globe_removeMarker.call(this, existingMarkers[i]);
+            }
 
-        this.markers.push({
-            line: line,
-            label: textSprite,
-            top: markerTopSprite,
-            startSmokeIndex: startSmokeIndex,
-            smokeCount: 30
-        });
+            // create the new one
 
-        this.quills.push({
-            line: line,
-        });
+            /* add the text */
+            var textSprite = globe_createLabel(text, point.x*1.2, point.y*1.2, point.z*1.2, 20, "white");
+            this.scene.add(textSprite);
+
+            /* add the top */
+            var markerTopMaterial = new THREE.SpriteMaterial({map: _this.markerTopTexture, color: 0xFD7D8, depthTest: false, fog: true});
+            var markerTopSprite = new THREE.Sprite(markerTopMaterial);
+            markerTopSprite.scale.set(15, 15);
+            markerTopSprite.position.set(point.x*1.2, point.y*1.2, point.z*1.2);
 
 
+            /* add the smoke */
+            var startSmokeIndex = _this.smokeIndex;
 
-        /* do some stuff that allows me to remove based on location */
+            for(var i = 0; i< 30; i++){
+                _this.smokeParticleGeometry.vertices[_this.smokeIndex].set(point.x * 1.2, point.y * 1.2, point.z * 1.2);
+                _this.smokeParticleGeometry.verticesNeedUpdate = true;
+                _this.smokeAttributes.myStartTime.value[_this.smokeIndex] = _this.totalRunTime + (i*50 + 1500);
+                _this.smokeAttributes.myStartLat.value[_this.smokeIndex] = lat;
+                _this.smokeAttributes.myStartLon.value[_this.smokeIndex] = lng;
+                _this.smokeAttributes.active.value[_this.smokeIndex] = 1.0;
+                _this.smokeAttributes.myStartTime.needsUpdate = true;
+                _this.smokeAttributes.myStartLat.needsUpdate = true;
+                _this.smokeAttributes.myStartLon.needsUpdate = true;
+                _this.smokeAttributes.active.needsUpdate = true;
 
-        var labelKey = Math.floor(lat/10) + '-' + Math.floor(lng/10);
-        if(Math.abs(lat)>80){
-            labelKey = Math.floor(lat/10);
-        }
+                _this.smokeIndex++;
+                _this.smokeIndex = _this.smokeIndex % _this.smokeParticleGeometry.vertices.length;
+            }
 
-        // if(this.markerCoords[labelKey]){
-        //     this.markerCoords[labelKey].material.opacity = 0;
-        // }
+            var m = {
+                line: line,
+                label: textSprite,
+                top: markerTopSprite,
+                startSmokeIndex: startSmokeIndex,
+                smokeCount: 30,
+                active: true,
+                creationDate: Date.now()
+            };
 
-        this.markerCoords[labelKey] = textSprite;
+            this.markers.push(m);
 
-        if(this.markers.length > this.maxMarkers){
-            globe_removeMarker.call(this, this.markers.shift());
-        }
+            globe_registerMarker.call(_this,m, lat, lng);
 
-        if(this.quills.length > this.maxQuills){
-            globe_removeQuill.call(this, this.quills.shift());
+            setTimeout(function(){
+                _this.scene.add(markerTopSprite);
+            }, 1500)
+
+        } else {
+            this.quills.push({
+                line: line,
+            });
+
+            if(this.quills.length > this.maxQuills){
+                globe_removeQuill.call(this, this.quills.shift());
+            }
         }
 
         new TWEEN.Tween(point)
@@ -902,11 +950,9 @@
                 markerGeometry.vertices[1].z = this.z;
                 markerGeometry.verticesNeedUpdate = true;
             })
-            .onComplete(function(){
-                _this.scene.add(markerTopSprite);
-
-            })
             .start();
+
+
     }
 
     globe.prototype.addConnectedPoints = function(lat1, lng1, text1, lat2, lng2, text2){

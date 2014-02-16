@@ -739,7 +739,7 @@
                            "}",
                            "float cameraAngle = (2.0 * PI) / (20000.0/currentTime);",
                            "float myAngle = (180.0-myStartLon) * PI / 180.0;",
-                           "opacity = opacity * (cos(myAngle - cameraAngle) + 1.0)/2.0;",
+                           "opacity = opacity * (cos(myAngle - cameraAngle - PI) + 1.0)/2.0;",
                            "vec3 newPos = getPos(myStartLat, myStartLon - ( dt / 50.0));",
                            "vColor = vec4( color, opacity );", //     set color associated to vertex; use later in fragment shader.
                            "vec4 mvPosition = modelViewMatrix * vec4( newPos, 1.0 );",

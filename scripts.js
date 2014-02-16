@@ -81,7 +81,6 @@ function start(){
 
 
             
-
             setTimeout(function(){
                 StreamServer.onMessage(function (datain) {
                     var chunks = datain.message.split("*");
@@ -143,8 +142,7 @@ function start(){
                     
                 });
             }, 2000);
-
-
+            
             setTimeout(function(){
                 for(var i = 0; i< 2; i++){
                     for(var j = 0; j< 4; j++){

@@ -210,6 +210,17 @@
 
         context.textAlign = "center";
         context.textBaseline = "middle";
+
+        context.strokeStyle = 'black';
+
+        context.miterLimit = 2;
+        context.lineJoin = 'circle';
+        context.lineWidth = 2;
+
+        context.strokeText(text, canvas.width / 2, canvas.height / 2);
+
+        context.lineWidth = 1;
+
         context.fillStyle = color;
         context.fillText(text, canvas.width / 2, canvas.height / 2);
 
@@ -813,9 +824,9 @@
                         transparent:    true
                     });
 
-                    for(var i = 0; i< 1000; i++){
+                    for(var i = 0; i< 2000; i++){
                         var vertex = new THREE.Vector3();
-                        vertex.set(0,1000,0);
+                        vertex.set(1000,1000,0);
                         _this.smokeParticleGeometry.vertices.push( vertex );
                         _this.smokeAttributes.myStartTime.value[i] = 0.0;
                         _this.smokeAttributes.myStartLat.value[i] = 0.0;
@@ -865,6 +876,8 @@
         markerGeometry.vertices.push(new THREE.Vector3(point.x, point.y, point.z));
         var line = new THREE.Line(markerGeometry, markerMaterial);
         this.scene.add(line);
+
+        line._globe_multiplier = 1.2; // if normal line, make it 1.2 times the radius in orbit
 
         var existingMarkers = globe_findNearbyMarkers.call(_this, lat, lng);
         var allOld = true;
@@ -932,6 +945,7 @@
             }, 1500)
 
         } else {
+            line._globe_multiplier = 1 + (.05 + Math.random() * .15); // randomize how far out
             this.quills.push({
                 line: line,
             });
@@ -942,7 +956,7 @@
         }
 
         new TWEEN.Tween(point)
-            .to( {x: point.x*1.2, y: point.y*1.2, z: point.z*1.2}, 1500 )
+            .to( {x: point.x*line._globe_multiplier, y: point.y*line._globe_multiplier, z: point.z*line._globe_multiplier}, 1500 )
             .easing( TWEEN.Easing.Elastic.InOut )
             .onUpdate(function(){
                 markerGeometry.vertices[1].x = this.x;

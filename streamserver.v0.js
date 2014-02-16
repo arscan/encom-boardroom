@@ -66,7 +66,7 @@ var StreamServer = (function () {
                 lat: Math.random() * 180 - 90,
                 lng: Math.random() * 360 - 180
             },
-            message: "repo*second*third*user*fifth*java*" + mockUsers[Math.floor(Math.random() * mockUsers.length)]
+            message: "repo*second*third*user*fifth*java java asdfasdf ajav asdfja sdfjasdfjadsf jasjdf asjdf jasfdj asdfj asdfj asdfj *" + mockUsers[Math.floor(Math.random() * mockUsers.length)]
         });
     }, 100);
 

@@ -155,15 +155,38 @@ div {
     font-size: 3pt;
     margin: 0px;
 }
+
 #interaction {
-    padding: 2px;
+    padding: 2px 5px;
     margin-top:6px;
     float: left;
     border-right: 1px solid #333;
-    width: 296px;
+    width: 286px;
     height: 445px;
     font-size: 10px;
+    overflow: hidden;
 }
+
+.interaction-data {
+    padding: 1px 5px;
+    white-space: nowrap;
+    color: #00eeee;
+    padding: 0px;
+    margin: 5px;
+}
+
+.interaction-data li {
+    display: inline-block;
+    padding: 0px;
+    padding-right: 10px;
+}
+.interaction-data :first-child {
+    color: #fff;
+}
+.interaction-data :last-child {
+    color: #fff;
+}
+
 #interaction-overlay {
     position:absolute;
     width: 296px;

@@ -101,7 +101,7 @@ function start(){
                     data.pic = chunks[6].trim();
 
 
-                    $("#interaction > div").prepend('<div class="interaction-data">' + data.actor + ' - ' + data.repo + ' - ' + data.type + '</div>');
+                    $("#interaction > div").prepend('<ul class="interaction-data"><li>' + data.actor + '</li><li>' + data.repo + '</li><li>' + data.type + '</li></ul>');
 
                     swirls.hit(data.type);
 

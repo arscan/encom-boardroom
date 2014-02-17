@@ -20,8 +20,8 @@ function animate(){
     });
     if(Math.random()<.3){
         $(".location-slider ul").each(function(index, val){
-            if($(val).children().length > 15){
-                $(val).children().slice(15-$(val).children().length).remove();
+            if($(val).children().length > 10){
+                $(val).children().slice(10-$(val).children().length).remove();
             }
         });
         $(".location-slider ul :first-child").each(function(index, val){

@@ -1,4 +1,4 @@
-var globe, stats, satbar, locationbar, simpleclock, startDate, box, swirls;
+var globe, stats, satbar, simpleclock, startDate, box, swirls;
 
 startDate = new Date();
 
@@ -6,7 +6,6 @@ function animate(){
 
     globe.tick();
     satbar.tick();
-    locationbar.tick();
     $("#clock").text(getTime());
     simpleclock.tick();
     box.tick();
@@ -15,7 +14,55 @@ function animate(){
     requestAnimationFrame(animate);
     stats.update();
 
+    // incrememnt everybody
+    $(".location-slider ul :first-child").each(function(index, val){
+        $(val).css("margin-left", "+=2px");
+    });
+    if(Math.random()<.3){
+        $(".location-slider ul").each(function(index, val){
+            if($(val).children().length > 15){
+                $(val).children().slice(15-$(val).children().length).remove();
+            }
+        });
+        $(".location-slider ul :first-child").each(function(index, val){
+            if(parseInt($(val).css("margin-left")) > 200){
+                $(val).parent().children().remove();
+            }
+        });
+    }
 }
+
+function findArea(lat, lng){
+    if(lat <= -40){
+        return "antarctica";
+    }
+    if(lat > 12 && lng > -180 && lng < -45){
+        return "northamerica";
+    }
+    if(lat <= 12 && lat > -40 && lng > -90 && lng < -30){
+        return "southamerica";
+    }
+    if(lat < -10 && lng >= 105 && lng <=155){
+        return "australia";
+    }
+    if(lat > 20 && lng >= 60 && lng <=160){
+        return "asia";
+    }
+    if(lat > 10 && lat < 40 && lng >= 35 && lng <=60){
+        return "asia";
+    }
+    if(lat > -40 && lat < 35 && lng >= -20 && lng <=50){
+        return "africa";
+    }
+    if(lat >= 35 && lng >= -10 && lng <=40){
+        return "europe";
+    }
+
+    return "other";
+
+
+}
+
 
 function getTime(){
 
@@ -99,6 +146,22 @@ function start(){
                     data.type = chunks[5].trim();
                     data.pic = chunks[6].trim();
 
+                    /* do the globalization */
+
+                    // figure out which one I'm in
+
+                    var area = "unknown";
+                    
+                    if(data.latlng){
+                       area = findArea(data.latlng.lat, data.latlng.lng);
+                        $("#location-city-" + area).text(data.location);
+                    }
+
+                    $("#location-slider-" + area + " ul :first-child").css("margin-left", "-=5px");
+                    $("#location-slider-" + area + " ul").prepend("<li/>");
+
+                    // cleanup
+
 
                     $("#interaction > div").prepend('<ul class="interaction-data"><li>' + data.actor + '</li><li>' + data.repo + '</li><li>' + data.type + '</li></ul>');
 
@@ -177,64 +240,6 @@ $(function() {
     setTimeout(function(){
         globe = new ENCOM.globe({containerId: "globe"});
 
-        locationbar = new ENCOM.LocationBar("locationbar", {
-            "North America": {
-                "label1": "North Ameria",
-                "label2": "United States",
-                "points": [.1,.2,.5,.7,.9]
-            },
-            "South America": {
-                "label1": "South America",
-                "label2": "United States",
-                "points": [.1,.2,.5,.7,.9]
-            },
-            "Europe": {
-                "label1": "Europe",
-                "label2": "United States",
-                "points": [.1,.2,.5,.7,.9]
-            },
-            "Asia": {
-                "label1": "Asia",
-                "label2": "United States",
-                "points": [.1,.2,.5,.7,.9]
-            },
-            "Africa": {
-                "label1": "Africa",
-                "label2": "Great Britian",
-                "points": [.2,.25,.4,.8,.9]
-            },
-            "Australia": {
-                "label1": "Australia",
-                "label2": "Great Britian",
-                "points": [.2,.25,.4,.8,.9]
-            },
-            "blank": {
-                "blank": true
-            },
-            "New York": {
-                "label1": "New York",
-                "label2": "United States",
-                "points": [.1,.2,.5,.7,.9]
-            },
-            "Boston": {
-                "label1": "Boston",
-                "label2": "Great Britian",
-                "points": [.2,.25,.4,.8,.9]
-            },
-            "Germany": {
-                "label1": "Germany",
-                "label2": "Great Britian",
-                "points": [.2,.25,.4,.8,.9]
-            },
-            "blank2": {
-                "blank": true
-            },
-            "Everywhere": {
-                "label1": "Everywhere",
-                "label2": "United States",
-                "points": [.1,.2,.5,.7,.9]
-            },
-        });
 
         simpleclock = new ENCOM.SimpleClock("simpleclock");
 

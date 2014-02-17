@@ -1829,7 +1829,7 @@
         this.context = this.canvas.getContext("2d");
 
         // this.context.font = "8pt Arial";
-        this.context.font = "8pt Inconsolata";
+        this.context.font = "7pt Inconsolata";
         this.context.textAlign = "center";
         this.context.textBaseline = "middle";
 
@@ -1882,21 +1882,21 @@
         context.moveTo(x, 35);
         context.lineTo(x+width * percent, 35);
 
-        context.moveTo(35 + percent*(width-35)/3, 15);
-        context.lineTo(35 + percent*(width-35)/3, 20);
+        context.moveTo(35 + percent*(width-35)/3 + 5, 15);
+        context.lineTo(35 + percent*(width-35)/3 + 5, 20);
 
         context.moveTo(35 + 2*percent*(width-35)/3, 15);
         context.lineTo(35 + 2*percent*(width-35)/3, 20);
         
-        context.moveTo(35 + percent*(width-35)/3, 30);
-        context.lineTo(35 + percent*(width-35)/3, 35);
+        context.moveTo(35 + percent*(width-35)/3 + 5, 30);
+        context.lineTo(35 + percent*(width-35)/3 + 5, 35);
 
         context.moveTo(35 + 2*percent*(width-35)/3, 30);
         context.lineTo(35 + 2*percent*(width-35)/3, 35);
         context.stroke();
 
-        if(percent >.6){
-            context.fillStyle=shadeColor("#000000",100*percent);
+        if(percent >.8){
+            context.fillStyle=shadeColor("#000000",100*(percent*percent));
             context.fillText("satellite", 35 + (width-35)/6, 25);
             context.fillText("data", 35+percent*(width-35)/2, 25);
             context.fillText("uplink", 35+percent*5*(width-35)/6, 25);

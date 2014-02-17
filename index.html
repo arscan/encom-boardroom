@@ -24,14 +24,111 @@
         <link href='http://fonts.googleapis.com/css?family=Inconsolata&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     </head>
     <body>
-        <div id="showSatelitte" style="position: absolute; width: 500px; height: 500px; top: 0; left:0; z-index:500">.</div>
 
         <div id="container">
 
             <div id="globalization">
                 <div class="header" id="globalization-header">GLOBALIZATION</div>
                 <canvas id="satbar" width="180px" height="36px"></canvas>
-                <canvas id="locationbar" width="180px" height="700px"></canvas>
+                <div class="location-slider" id="location-slider-northamerica"">
+                    <span class="location-area" id="location-area-northamerica">No America</span>
+                    <span class="location-city" id="location-city-northamerica">Boston</span>
+                    <div class="location-line"></div>
+                    <ul>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-southamerica" >
+                    <span class="location-area" id="location-area-southamerica">So America</span>
+                    <span class="location-city" id="location-city-southamerica">Rio</span>
+                    <div class="location-line"></div>
+                    <ul>
+                        <li></li>
+                        <li style="margin-left: 10px;"></li>
+                        <li></li>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-europe">
+                    <span class="location-area other" id="location-area-europe">Europe</span>
+                    <span class="location-city" id="location-city-europe">Berlin</span>
+                    <div class="location-line"></div>
+                    <ul>
+                        <li></li>
+                        <li style="margin-left: 10px;"></li>
+                        <li></li>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-asia">
+                    <span class="location-area other" id="location-area-asia">Asia</span>
+                    <span class="location-city" id="location-city-asia">Tokyo</span>
+                    <div class="location-line"></div>
+                    <ul>
+                        <li></li>
+                        <li style="margin-left: 10px;"></li>
+                        <li></li>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-australia">
+                    <span class="location-area" id="location-area-australia">Australia</span>
+                    <span class="location-city" id="location-city-australia">Sydney</span>
+                    <div class="location-line"></div>
+                    <ul>
+                        <li></li>
+                        <li style="margin-left: 10px;"></li>
+                        <li></li>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-africa">
+                    <span class="location-area other" id="location-area-africa">Africa</span>
+                    <span class="location-city" id="location-city-africa">South Africa</span>
+                    <div class="location-line"></div>
+                    <ul>
+                        <li></li>
+                        <li style="margin-left: 10px;"></li>
+                        <li></li>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-antarctica">
+                    <span class="location-area other" id="location-area-antarctica">Antarctica</span>
+                    <span class="location-city" id="location-city-antarctica">Zulu Station</span>
+                    <div class="location-line"></div>
+                    <ul>
+                        <li></li>
+                        <li style="margin-left: 10px;"></li>
+                        <li></li>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider location-gap" id="location-slider-other">
+                    <span class="location-area" id="location-area-other">Other</span>
+                    <span class="location-city" id="location-city-other">Hawaii</span>
+                    <div class="location-line"></div>
+                    <ul>
+                        <li></li>
+                        <li style="margin-left: 10px;"></li>
+                        <li></li>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-unknown">
+                    <span class="location-area" id="location-area-unknown">Location</span>
+                    <span class="location-city" id="location-city-unknown">Not Specified</span>
+                    <div class="location-line"></div>
+                    <ul>
+                        <li></li>
+                        <li style="margin-left: 10px;"></li>
+                        <li></li>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
             </div>
 
             <div id="globe"></div>

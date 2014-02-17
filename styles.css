@@ -117,8 +117,60 @@ div {
 }
 
 #satbar {
+    margin-bottom: 20px;
 }
 
+.location-slider {
+    font-size: 8pt;
+    color: #000;
+    border-bottom: 2px solid #333;
+    margin-bottom: 15px;
+    width: 1000px;
+    overflow: hidden;
+}
+
+.location-area {
+    background-color: #ffcc00;
+    padding: 0 2px;
+}
+
+.location-area.other {
+    background-color: #00eeee;
+}
+
+.location-city {
+    color: #fff;
+    padding: 0 2px;
+}
+
+.location-line{
+    margin-top: 10px;
+    border-bottom: 1px solid #00eeee;
+
+}
+.location-slider ul {
+    margin: 0;
+    padding-left: 15px;
+    position: relative;
+    top: -9px;
+    height: 10px;
+
+}
+
+.location-slider li {
+    color: #00eeee;
+    font-size: 10pt;
+    margin-bottom: -6px;
+    width: 5px;
+    float: left;
+    /*display: inline-block;*/
+
+}
+
+.location-gap {
+    margin-top: 60px;
+
+}
 
 #globe{
     position:absolute;

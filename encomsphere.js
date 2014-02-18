@@ -66,8 +66,6 @@
         this.tilesHorizontal = tilesHoriz;
         this.tilesVertical = tilesVert;
 
-        console.log(this.tilesHorizontal);
-        console.log(this.tilesVertical);
         // how many images does this spritesheet contain?
         //  usually equals tilesHoriz * tilesVert, but not necessarily,
         //  if there at blank tiles at the bottom of the spritesheet. 
@@ -550,6 +548,7 @@
 
         this.quills.push({
             line: marker.line,
+            latlng: marker.latlng
         });
 
         if(this.quills.length > this.maxQuills){
@@ -565,6 +564,8 @@
         var pos2 = quill.line.geometry.vertices[0];
         var _this = this;
         var scaleDownBy = 1+ Math.random()*.2;
+
+        delete this.markerIndex[quill.latlng];
 
         new TWEEN.Tween({posx: pos.x, posy: pos.y, posz: pos.z, opacity: 1})
             .to( {posx: pos2.x, posy: pos2.y, posz: pos2.z}, 1000 )
@@ -648,7 +649,8 @@
             quills: [],
             markerCoords: {},
             maxMarkers: 20,
-            maxQuills:200,
+            maxQuills:100,
+            markerIndex: {},
 
             satelliteAnimations: [],
             satelliteMeshes: []
@@ -872,6 +874,13 @@
         var point = globe_mapPoint(lat,lng);
 
 
+        /* check to see if we have somebody at that exact lat-lng right now */
+
+        var checkExisting = this.markerIndex[lat + "-" + lng];
+        if(checkExisting){
+            return false;
+        }
+
         // always make at least a line for the quill
         //
         /* add line */
@@ -893,6 +902,7 @@
                 allOld = false;
             }
         }
+        this.markerIndex[lat + "-" + lng] = true;
 
         if(existingMarkers.length == 0 || allOld){
             // get rid of old ones
@@ -940,7 +950,8 @@
                 startSmokeIndex: startSmokeIndex,
                 smokeCount: 30,
                 active: true,
-                creationDate: Date.now()
+                creationDate: Date.now(),
+                latlng: lat + "-" + lng
             };
 
             this.markers.push(m);
@@ -955,7 +966,9 @@
             line._globe_multiplier = 1 + (.05 + Math.random() * .15); // randomize how far out
             this.quills.push({
                 line: line,
+                latlng: lat + "-" + lng
             });
+            
 
             if(this.quills.length > this.maxQuills){
                 globe_removeQuill.call(this, this.quills.shift());
@@ -1237,9 +1250,6 @@
         // do the particles
         
         this.smokeUniforms.currentTime.value = this.totalRunTime;
-
-        // console.log(this.totalRunTime);
-        // console.log(this.smokeUniforms.currentTime.value - this.smokeUniforms.absoluteStartTime.value);
 
         this.camera.lookAt( this.scene.position );
         this.renderer.render( this.scene, this.camera );
@@ -1796,8 +1806,6 @@
             if(!this.animationsDone){
                this.shaderAttributes.opacity.value[i] = Math.min(1,(36 - Math.sqrt(Math.pow(x,2) + Math.pow(z,2)))/36 * sCurve(percentComplete) + Math.max(y,0)/10);
             }
-            // console.log(percentComplete);
-            // this.shaderAttributes.opacity.value[i] = percentComplete;
             this.shaderAttributes.color.value[i] = this.particleColors[Math.min(maxColors,Math.max(0,Math.floor(y)))];
         }
         if(!this.animationsDone){
@@ -2432,13 +2440,11 @@
             this.frames[this.currentFrame].div.style.zIndex = Math.floor(timeSinceStarted/this.opts.holdTime);
             this.percentDone = 0;
         }
-        // console.log(this.frames[this.currentFrame].div);
 
         if(this.percentDone < 1){
             this.percentDone = Math.min((ticks  - this.currentFrame * this.opts.holdTime) / this.opts.swipeTime, 1);
             this.frames[this.currentFrame].div.style.width = (this.width * sCurve(this.percentDone)) + "px";
         }
-        // console.log(this.frames[this.currentFrame].div.width);
     };
 
     var StockChartSmall = function(canvasId, opts){

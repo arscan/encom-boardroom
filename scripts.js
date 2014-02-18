@@ -1,8 +1,13 @@
-var globe, stats, satbar, simpleclock, startDate, box, swirls;
+var globe, stats, satbar, simpleclock, startDate, box, swirls, sliderHeads, slider, lastTime;
 
 startDate = new Date();
+sliderHeads = {};
+
+lastTime = Date.now();
 
 function animate(){
+    var animateTime = Date.now() - lastTime;
+    lastTime = Date.now();
 
     globe.tick();
     satbar.tick();
@@ -14,19 +19,28 @@ function animate(){
     requestAnimationFrame(animate);
     stats.update();
 
-    // incrememnt everybody
-    $(".location-slider ul :first-child").each(function(index, val){
-        $(val).css("margin-left", "+=2px");
-    });
-    if(Math.random()<.3){
+    var incDistance = Math.floor(200 * animateTime / 1000);
+
+    var rem = [];
+    for(var s in sliderHeads){
+        var slider = sliderHeads[s];
+        slider.margin += incDistance;
+        if(slider.margin > 200){
+            rem.push(slider);
+        } else {
+            slider.element.css("margin-left", slider.margin + "px"); 
+        }
+    }
+
+    for(var i = 0; i< rem.length; i++){
+        delete sliderHeads[rem[i].area];
+        rem[i].element.siblings().remove();
+    }
+
+    if(Math.random()<.1){
         $(".location-slider ul").each(function(index, val){
             if($(val).children().length > 10){
                 $(val).children().slice(10-$(val).children().length).remove();
-            }
-        });
-        $(".location-slider ul :first-child").each(function(index, val){
-            if(parseInt($(val).css("margin-left")) > 200){
-                $(val).parent().children().remove();
             }
         });
     }
@@ -159,9 +173,9 @@ function start(){
 
                     $("#location-slider-" + area + " ul :first-child").css("margin-left", "-=5px");
                     $("#location-slider-" + area + " ul").prepend("<li/>");
+                    sliderHeads[area] = {area: area, element: $("#location-slider-" + area + " ul :first-child"), margin: 0}; 
 
                     // cleanup
-
 
                     $("#interaction > div").prepend('<ul class="interaction-data"><li>' + data.actor + '</li><li>' + data.repo + '</li><li>' + data.type + '</li></ul>');
 

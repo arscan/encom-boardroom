@@ -140,8 +140,8 @@ function start(){
                 width: "450px"
             }, 500);
 
+            var interactionContainer = $("#interaction > div")[0];
 
-            
             setTimeout(function(){
                 StreamServer.onMessage(function (datain) {
                     var chunks = datain.message.split("*");
@@ -177,7 +177,10 @@ function start(){
 
                     // cleanup
 
-                    $("#interaction > div").prepend('<ul class="interaction-data"><li>' + data.actor + '</li><li>' + data.repo + '</li><li>' + data.type + '</li></ul>');
+                    var lastChild = interactionContainer.lastChild;
+                    lastChild.innerHTML = '<li>' + data.actor + '</li><li>' + data.repo + '</li><li>' + data.type + '</li>';
+                    interactionContainer.insertBefore(interactionContainer.lastChild, interactionContainer.firstChild);
+                    // $("#interaction > div").prepend('<ul class="interaction-data"><li>' + data.actor + '</li><li>' + data.repo + '</li><li>' + data.type + '</li></ul>');
 
                     swirls.hit(data.type);
 
@@ -276,6 +279,14 @@ $(function() {
 
         });
     }, 10);
+
+
+    var interactionContainer = $("#interaction > div");
+
+    for(var i = 0; i< 50; i++){
+        interactionContainer.append('<ul class="interaction-data"></ul>');
+    }
+
 
 });
 

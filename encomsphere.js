@@ -243,7 +243,7 @@
             
             });
         var sprite = new THREE.Sprite(material);
-        sprite.position = {x: x*1.1, y: y + (y < 0 ? -20 : 20), z: z*1.1};
+        sprite.position = {x: x*1.1, y: y + (y < 0 ? -15 : 30), z: z*1.1};
         sprite.scale.set(canvas.width, canvas.height);
             new TWEEN.Tween( {opacity: 0})
                 .to( {opacity: 1}, 500 )

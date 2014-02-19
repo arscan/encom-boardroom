@@ -213,7 +213,7 @@
 
         context.miterLimit = 2;
         context.lineJoin = 'circle';
-        context.lineWidth = 10;
+        context.lineWidth = 6;
 
         context.strokeText(text, canvas.width / 2, canvas.height / 2);
 

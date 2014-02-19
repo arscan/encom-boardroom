@@ -213,7 +213,7 @@
 
         context.miterLimit = 2;
         context.lineJoin = 'circle';
-        context.lineWidth = 2;
+        context.lineWidth = 10;
 
         context.strokeText(text, canvas.width / 2, canvas.height / 2);
 
@@ -419,13 +419,13 @@
         var colors = [];
 
         var sprite = this.hexTexture;
-        var myColors1 = pusher.color('orange').hueSet();
+        var myColors1 = pusher.color('#ffcc00').hueSet();
         var myColors = [];
         for(var i = 0; i< myColors1.length; i++){
             myColors.push(myColors1[i]);
 
-            myColors.push(myColors1[i].shade(.2 + Math.random()/2.0));
-            myColors.push(myColors1[i].shade(.2 + Math.random()/2.0));
+            // myColors.push(myColors1[i].shade(.2 + Math.random()/2.0));
+            // myColors.push(myColors1[i].shade(.2 + Math.random()/2.0));
         }
         var geometry = new THREE.Geometry();
 
@@ -721,20 +721,21 @@
                     _this.renderer = new THREE.WebGLRenderer( { antialias:true } );
                     // _this.renderer = new THREE.CanvasRenderer( { clearAlpha: 1 } );
                     _this.renderer.setSize( _this.width, _this.height);
-                    _this.renderer.autoClear = false;
+                    // _this.renderer.autoClear = false;
                     _this.container.appendChild( _this.renderer.domElement );
 
                     // create the camera
 
-                    _this.camera = new THREE.PerspectiveCamera( 50, _this.width / _this.height, 1, 3000 );
-                    _this.camera.position.z = this.cameraDistance;
+                    _this.camera = new THREE.PerspectiveCamera( 50, _this.width / _this.height, 1, _this.cameraDistance + 275 );
+                    _this.camera.position.z = _this.cameraDistance;
+                    
                     _this.cameraAngle=(Math.PI * 2) * .5;
 
                     // create the scene
 
                     _this.scene = new THREE.Scene();
 
-                    _this.scene.fog = new THREE.Fog( 0x000000, _this.cameraDistance-200, _this.cameraDistance+550 );
+                    _this.scene.fog = new THREE.Fog( 0x000000, _this.cameraDistance-200, _this.cameraDistance+275 );
 
                     // add the globe particles
                     
@@ -914,7 +915,7 @@
             // create the new one
 
             /* add the text */
-            var textSprite = globe_createLabel(text, point.x*1.2, point.y*1.2, point.z*1.2, 20, "white");
+            var textSprite = globe_createLabel(text, point.x*1.18, point.y*1.18, point.z*1.18, 18, "white");
             this.scene.add(textSprite);
 
             /* add the top */
@@ -1218,7 +1219,7 @@
         this.cameraAngle += rotateCameraBy;
 
         this.camera.position.x = this.cameraDistance * Math.cos(this.cameraAngle);
-        // this.camera.position.y = 200*Math.sin(this.cameraAngle);
+        this.camera.position.y = 400;
         this.camera.position.z = this.cameraDistance * Math.sin(this.cameraAngle);
 
 

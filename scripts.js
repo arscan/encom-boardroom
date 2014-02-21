@@ -1,4 +1,4 @@
-var globe, stats, satbar, simpleclock, startDate, box, swirls, sliderHeads, slider, lastTime;
+var globe, stats, satbar, simpleclock, startDate, box, swirls, sliderHeads, slider, lastTime, screensaver;
 
 startDate = new Date();
 sliderHeads = {};
@@ -92,7 +92,7 @@ function getTime(){
 }
 
 function start(){
-    $("#splash").css("display","none");
+    $("#screensaver").css("display","none");
 
     // the globe and other canvas-based renders will render their intros automatically
     // so start the render loop
@@ -256,6 +256,7 @@ $(function() {
     // otherwise, sometimes it seems like some things aren't loaded properly
     setTimeout(function(){
         globe = new ENCOM.globe({containerId: "globe"});
+        screensaver = new ENCOM.ScreenSaver("screensaver");
 
 
         simpleclock = new ENCOM.SimpleClock("simpleclock");
@@ -271,14 +272,19 @@ $(function() {
             stockchartsmall = new ENCOM.StockChartSmall("stock-chart-small");
             swirls = new ENCOM.Swirls("swirls");
 
-            $("#logo").animate({
-                fontSize: "40px",
-                opacity: 0
-            }, 2000, "easeInOutBack", start
-                              );
+            var canvas = $("#screensaver canvas");
 
+            canvas.animate({
+                opacity: 0,
+            },{
+                step: function(now, tween){ 
+                        canvas.css('transform', 'scale(' + now + ',' + now + '');
+                    },
+                duration: 2000, 
+                easing: "easeInOutBack", 
+                complete: start});
         });
-    }, 10);
+    }, 0);
 
 
     var interactionContainer = $("#interaction > div");

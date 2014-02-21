@@ -2720,6 +2720,73 @@
         this.points[label] = new SwirlPoint(label, Math.random() * 100, this.canvas);
     };
 
+    var screensaver_drawText = function(ctx, offset, color){
+
+            ctx.beginPath();
+            ctx.font = "bold 100pt Inconsolata";
+            ctx.fillStyle = color;
+            ctx.fillText("Github", 32 + offset, 233 - 50 + offset);
+            ctx.fill();
+
+            ctx.strokeStyle=color;
+            ctx.beginPath();
+            ctx.moveTo(245 + offset, 80 + offset);
+            ctx.quadraticCurveTo(245 + offset, 55 + offset, 265 + offset, 55 + offset);
+            ctx.lineTo(500-20 + offset, 55 + offset);
+            ctx.quadraticCurveTo(500 + offset, 55 + offset, 500 + offset, 75 + offset);
+            ctx.lineTo(500 + offset, 190 + offset);
+            ctx.quadraticCurveTo(500 + offset, 205 + offset, 480 + offset, 205 + offset);
+            ctx.lineTo(40 + offset, 205 + offset);
+            ctx.lineWidth = 18;
+            ctx.stroke();
+
+    };
+
+    var ScreenSaver = function(containerId){
+
+        this.container = document.getElementById(containerId);
+        this.container.width = 510;
+        this.container.height = 225
+        this.canvas = document.createElement("canvas");
+        this.canvas.width = this.container.width;
+        this.canvas.height = this.container.height;
+        this.context = this.canvas.getContext("2d");
+        this.container.appendChild(this.canvas);
+
+        this.width = this.container.width;
+        this.height = this.container.height;
+
+        this.points = {};
+
+        var backSplash = renderToCanvas(this.container.width, this.container.height, function(ctx){
+            screensaver_drawText(ctx, -2, "#fff");
+            screensaver_drawText(ctx, -1, "#fff");
+            screensaver_drawText(ctx, 2, "#666");
+            screensaver_drawText(ctx, 1, "#666");
+            screensaver_drawText(ctx, 0, "#aaa");
+
+        }.bind(this));
+
+        this.context.drawImage(backSplash, 0, 0);
+
+        this.context.globalCompositeOperation = "source-atop";
+
+        // this.context.fillStyle = "#333";
+        // this.context.fillRect(0, 100, this.container.width, 5);
+
+    };
+
+
+    ScreenSaver.prototype.tick = function(){
+
+        if(!this.firstTick){
+            this.firstTick = new Date();
+        }
+        var timeSinceStarted = new Date() - this.firstTick;
+
+    };
+
+
     return {
         globe: globe,
         SatBar: SatBar,
@@ -2729,7 +2796,8 @@
         StockChart: StockChart,
         StockChartSmall: StockChartSmall,
         Box: Box,
-        Swirls: Swirls
+        Swirls: Swirls,
+        ScreenSaver: ScreenSaver
 
     };
 

@@ -2723,21 +2723,21 @@
     var screensaver_drawText = function(ctx, offset, color){
 
             ctx.beginPath();
-            ctx.font = "bold 100pt Inconsolata";
+            ctx.font = "bold 100pt Cantarell";
             ctx.fillStyle = color;
             ctx.fillText("Github", 32 + offset, 233 - 50 + offset);
             ctx.fill();
 
             ctx.strokeStyle=color;
             ctx.beginPath();
-            ctx.moveTo(245 + offset, 80 + offset);
-            ctx.quadraticCurveTo(245 + offset, 55 + offset, 265 + offset, 55 + offset);
-            ctx.lineTo(500-20 + offset, 55 + offset);
-            ctx.quadraticCurveTo(500 + offset, 55 + offset, 500 + offset, 75 + offset);
-            ctx.lineTo(500 + offset, 190 + offset);
-            ctx.quadraticCurveTo(500 + offset, 205 + offset, 480 + offset, 205 + offset);
+            ctx.moveTo(241 + offset, 80 + offset);
+            ctx.quadraticCurveTo(240 + offset, 55 + offset, 265 + offset, 55 + offset);
+            ctx.lineTo(470-20 + offset, 55 + offset);
+            ctx.quadraticCurveTo(470 + offset, 55 + offset, 470 + offset, 75 + offset);
+            ctx.lineTo(470 + offset, 190 + offset);
+            ctx.quadraticCurveTo(470 + offset, 205 + offset, 460 + offset, 205 + offset);
             ctx.lineTo(40 + offset, 205 + offset);
-            ctx.lineWidth = 18;
+            ctx.lineWidth = 16;
             ctx.stroke();
 
     };

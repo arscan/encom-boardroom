@@ -252,39 +252,53 @@ function start(){
 }
 
 $(function() {
-    // not sure why I need this setTimeout... gonna leave for now though
-    // otherwise, sometimes it seems like some things aren't loaded properly
-    setTimeout(function(){
-        globe = new ENCOM.globe({containerId: "globe"});
-        screensaver = new ENCOM.ScreenSaver("screensaver");
+
+    WebFontConfig = {
+        google: {
+              families: ['Inconsolata', 'Cantarell']
+        },
+        active: function(){
+            globe = new ENCOM.globe({containerId: "globe"});
+            screensaver = new ENCOM.ScreenSaver("screensaver");
 
 
-        simpleclock = new ENCOM.SimpleClock("simpleclock");
+            simpleclock = new ENCOM.SimpleClock("simpleclock");
 
-        globe.init(function(){
-            // called after the globe is complete
+            globe.init(function(){
+                // called after the globe is complete
 
-            box = new ENCOM.Box({containerId: "cube"});
-            stats = new Stats(document.getElementById("fps-stats"), document.getElementById("ms-stats"));
-            satbar = new ENCOM.SatBar("satbar");
-            timertrees = new ENCOM.TimerTrees("timer-trees");
-            stockchart = new ENCOM.StockChart("stock-chart");
-            stockchartsmall = new ENCOM.StockChartSmall("stock-chart-small");
-            swirls = new ENCOM.Swirls("swirls");
+                box = new ENCOM.Box({containerId: "cube"});
+                stats = new Stats(document.getElementById("fps-stats"), document.getElementById("ms-stats"));
+                satbar = new ENCOM.SatBar("satbar");
+                timertrees = new ENCOM.TimerTrees("timer-trees");
+                stockchart = new ENCOM.StockChart("stock-chart");
+                stockchartsmall = new ENCOM.StockChartSmall("stock-chart-small");
+                swirls = new ENCOM.Swirls("swirls");
 
-            var canvas = $("#screensaver canvas");
+                var canvas = $("#screensaver canvas");
 
-            canvas.animate({
-                opacity: 0,
-            },{
-                step: function(now, tween){ 
+                canvas.animate({
+                    opacity: 0,
+                },{
+                    step: function(now, tween){ 
                         canvas.css('transform', 'scale(' + now + ',' + now + '');
                     },
-                duration: 2000, 
-                easing: "easeInOutBack", 
-                complete: start});
-        });
-    }, 0);
+                    duration: 2000, 
+                    easing: "easeInOutBack", 
+                    complete: start});
+            });
+        }
+    };
+
+    (function() {
+        var wf = document.createElement('script');
+        wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+            '://ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js';
+        wf.type = 'text/javascript';
+        wf.async = 'true';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(wf, s);
+    })();
 
 
     var interactionContainer = $("#interaction > div");

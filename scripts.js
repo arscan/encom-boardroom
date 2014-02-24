@@ -261,6 +261,18 @@ $(function() {
             globe = new ENCOM.globe({containerId: "globe"});
             screensaver = new ENCOM.ScreenSaver("screensaver");
 
+            var screensaverActive = true;
+            
+            var animateScreensaver = function(){
+
+                screensaver.tick();
+
+                if(screensaverActive){
+                    requestAnimationFrame(animateScreensaver);
+                }
+            }
+
+            animateScreensaver();
 
             simpleclock = new ENCOM.SimpleClock("simpleclock");
 
@@ -277,13 +289,14 @@ $(function() {
 
                 var canvas = $("#screensaver canvas");
 
+                screensaverActive = false;
                 canvas.animate({
                     opacity: 0,
                 },{
                     step: function(now, tween){ 
                         canvas.css('transform', 'scale(' + now + ',' + now + '');
                     },
-                    duration: 2000, 
+                    duration: 600, 
                     easing: "easeInOutBack", 
                     complete: start});
             });

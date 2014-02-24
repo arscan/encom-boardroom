@@ -2761,18 +2761,20 @@
         var backSplash = renderToCanvas(this.container.width, this.container.height, function(ctx){
             screensaver_drawText(ctx, -2, "#fff");
             screensaver_drawText(ctx, -1, "#fff");
-            screensaver_drawText(ctx, 2, "#666");
-            screensaver_drawText(ctx, 1, "#666");
-            screensaver_drawText(ctx, 0, "#aaa");
+            screensaver_drawText(ctx, 2, "#333");
+            screensaver_drawText(ctx, 1, "#333");
+            screensaver_drawText(ctx, 0, "#236B8E");
 
         }.bind(this));
 
         this.context.drawImage(backSplash, 0, 0);
 
         this.context.globalCompositeOperation = "source-atop";
-
-        // this.context.fillStyle = "#333";
-        // this.context.fillRect(0, 100, this.container.width, 5);
+        this.context.globalAlpha = .05;
+        for(var i = 0; i< 200; i++){
+            this.context.fillStyle = "#bbb";
+            this.context.fillRect(0, Math.random() * this.container.height, this.container.width, Math.floor(Math.random()*20));
+        }
 
     };
 
@@ -2783,7 +2785,6 @@
             this.firstTick = new Date();
         }
         var timeSinceStarted = new Date() - this.firstTick;
-
     };
 
 

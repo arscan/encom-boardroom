@@ -1,7 +1,15 @@
-var globe, stats, satbar, simpleclock, startDate, box, swirls, sliderHeads, slider, lastTime, screensaver;
+var globe, stats, satbar, simpleclock, startDate, box, swirls, sliderHeads, slider, lastTime, screensaver, locationAreas, locationAreaColors;
 
 startDate = new Date();
 sliderHeads = {};
+
+
+locationAreaColors = [];
+
+for(var i = 0; i< 20; i++){
+    locationAreaColors[i] = pusher.color('#ffcc00').blend('#00eeee', i/20).hex6();
+}
+
 
 lastTime = Date.now();
 
@@ -30,6 +38,14 @@ function animate(){
         } else {
             slider.element.css("margin-left", slider.margin + "px"); 
         }
+    }
+
+    var now = Date.now();
+    for(var a in locationAreas){
+        var loc = locationAreas[a];
+
+        loc.ref.css("background-color", locationAreaColors[Math.min(locationAreaColors.length - 1, Math.floor((now - loc.lastTime)/1000))]);
+
     }
 
     for(var i = 0; i< rem.length; i++){
@@ -180,8 +196,9 @@ function start(){
                     var lastChild = interactionContainer.lastChild;
                     lastChild.innerHTML = '<li>' + data.actor + '</li><li>' + data.repo + '</li><li>' + data.type + '</li>';
                     interactionContainer.insertBefore(interactionContainer.lastChild, interactionContainer.firstChild);
-                    // $("#interaction > div").prepend('<ul class="interaction-data"><li>' + data.actor + '</li><li>' + data.repo + '</li><li>' + data.type + '</li></ul>');
 
+                    locationAreas[area].lastTime = Date.now();
+                    locationAreas[area].ref.css("background-color", locationAreaColors[0]);
                     swirls.hit(data.type);
 
                     $(blinkies[Math.floor(Math.random() * blinkies.length)]).css('background-color', blinkiesColors[Math.floor(Math.random() * blinkiesColors.length)]);
@@ -215,7 +232,6 @@ function start(){
                             userIndex = userIndex % 10;
 
                             lastUserDate = Date.now();
-
 
                         }
                     }
@@ -252,6 +268,17 @@ function start(){
 }
 
 $(function() {
+    locationAreas = {
+       antarctica: {lastTime: 0, ref: $("#location-area-antarctica")},
+       northamerica: {lastTime: 0, ref: $("#location-area-northamerica")},
+       southamerica: {lastTime: 0, ref: $("#location-area-southamerica")},
+       europe: {lastTime: 0, ref: $("#location-area-europe")},
+       asia: {lastTime: 0, ref: $("#location-area-asia")},
+       australia: {lastTime: 0, ref: $("#location-area-australia")},
+       africa: {lastTime: 0, ref: $("#location-area-africa")},
+       other: {lastTime: 0, ref: $("#location-area-other")},
+       unknown: {lastTime: 0, ref: $("#location-area-unknown")}
+       };
 
     WebFontConfig = {
         google: {

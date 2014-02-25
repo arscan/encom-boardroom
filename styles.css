@@ -34,15 +34,13 @@ div {
 
 }
 
-#screensaver canvas {
+#screensaver img {
 
     position: absolute;
     right: 0;
     left: 0; 
     top: 0; 
     bottom: 0;
-    width: 510px;
-    height: 225px;
     margin: auto;
     max-width: 100%;
     max-height: 100%;

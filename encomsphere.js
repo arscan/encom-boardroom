@@ -2720,7 +2720,7 @@
         this.points[label] = new SwirlPoint(label, Math.random() * 100, this.canvas);
     };
 
-    var screensaver_drawText = function(ctx, offset, color, shadow){
+    var drawText = function(ctx, offset, color, shadow){
 
             ctx.beginPath();
             ctx.font = "bold 133px Cantarell";
@@ -2772,11 +2772,11 @@
         this.points = {};
 
         var backSplash = renderToCanvas(this.container.width, this.container.height, function(ctx){
-            screensaver_drawText(ctx, -2, "#fff", "#6992bd");
-            screensaver_drawText(ctx, -1, "#fff");
-            screensaver_drawText(ctx, 2, "#333");
-            screensaver_drawText(ctx, 1, "#333");
-            screensaver_drawText(ctx, 0, "#6992bd");
+            drawText(ctx, -2, "#fff", "#6992bd");
+            drawText(ctx, -1, "#fff");
+            drawText(ctx, 2, "#333");
+            drawText(ctx, 1, "#333");
+            drawText(ctx, 0, "#6992bd");
 
         }.bind(this));
 

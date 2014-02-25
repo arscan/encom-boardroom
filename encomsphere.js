@@ -2720,17 +2720,30 @@
         this.points[label] = new SwirlPoint(label, Math.random() * 100, this.canvas);
     };
 
-    var screensaver_drawText = function(ctx, offset, color){
+    var screensaver_drawText = function(ctx, offset, color, shadow){
 
             ctx.beginPath();
-            ctx.font = "bold 100pt Cantarell";
+            ctx.font = "bold 133px Cantarell";
             ctx.fillStyle = color;
             ctx.fillText("Github", 32 + offset, 233 - 50 + offset);
+            if(shadow != undefined){
+                ctx.shadowColor = shadow;
+                ctx.shadowBlur = 25;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+
+            } else {
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+            }
+
             ctx.fill();
 
             ctx.strokeStyle=color;
             ctx.beginPath();
-            ctx.moveTo(241 + offset, 80 + offset);
+            ctx.moveTo(241 + offset, 100 + offset);
+            ctx.lineTo(241 + offset, 80 + offset);
             ctx.quadraticCurveTo(240 + offset, 55 + offset, 265 + offset, 55 + offset);
             ctx.lineTo(470-20 + offset, 55 + offset);
             ctx.quadraticCurveTo(470 + offset, 55 + offset, 470 + offset, 75 + offset);
@@ -2759,22 +2772,30 @@
         this.points = {};
 
         var backSplash = renderToCanvas(this.container.width, this.container.height, function(ctx){
-            screensaver_drawText(ctx, -2, "#fff");
+            screensaver_drawText(ctx, -2, "#fff", "#6992bd");
             screensaver_drawText(ctx, -1, "#fff");
             screensaver_drawText(ctx, 2, "#333");
             screensaver_drawText(ctx, 1, "#333");
-            screensaver_drawText(ctx, 0, "#236B8E");
+            screensaver_drawText(ctx, 0, "#6992bd");
 
         }.bind(this));
 
         this.context.drawImage(backSplash, 0, 0);
 
         this.context.globalCompositeOperation = "source-atop";
-        this.context.globalAlpha = .05;
-        for(var i = 0; i< 200; i++){
-            this.context.fillStyle = "#bbb";
+        this.context.globalAlpha = .2;
+        this.context.fillStyle = "#bbb";
+        for(var i = 0; i< 20; i++){
             this.context.fillRect(0, Math.random() * this.container.height, this.container.width, Math.floor(Math.random()*20));
         }
+
+        this.context.globalAlpha = .2;
+        this.context.shadowColor = "#bbb";
+        this.context.shadowBlur = 10;
+        this.context.shadowOffsetX = 0;
+        this.context.shadowOffsetY = 0;
+        this.context.arc(this.container.width, this.container.height / 5, 200, 0, Math.PI * 2)
+        this.context.fill();
 
     };
 

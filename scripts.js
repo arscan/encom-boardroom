@@ -291,14 +291,14 @@ $(function() {
 
                 screensaverActive = false;
                 canvas.animate({
-                    opacity: 0,
-                },{
-                    step: function(now, tween){ 
-                        canvas.css('transform', 'scale(' + now + ',' + now + '');
-                    },
-                    duration: 600, 
-                    easing: "easeInOutBack", 
-                    complete: start});
+                        opacity: 0,
+                    },{
+                        step: function(now, tween){ 
+                            canvas.css('transform', 'scale(' + now + ',' + now + '');
+                        },
+                        duration: 600, 
+                        easing: "easeInOutBack", 
+                        complete: start});
             });
         }
     };

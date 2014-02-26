@@ -286,7 +286,7 @@ $(function() {
             loc.ref.css("background-color", locationAreaColors[loc.count]);
 
         }
-    }, 2000);
+    }, 3000);
 
     WebFontConfig = {
         google: {

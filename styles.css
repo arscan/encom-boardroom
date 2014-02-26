@@ -142,7 +142,12 @@ div {
     color: #000;
     border-bottom: 2px solid #333;
     margin-bottom: 15px;
-    width: 2000px;
+    width: 0px;
+    height: 34px;
+    overflow: hidden;
+}
+.location-slider ul{
+    height: 5px;
     overflow: hidden;
 }
 

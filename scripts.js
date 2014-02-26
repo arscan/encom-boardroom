@@ -24,8 +24,15 @@ function animate(){
     box.tick();
     stockchart.tick();
     swirls.tick();
-    requestAnimationFrame(animate);
     stats.update();
+
+    updateSliders(animateTime);
+
+
+    requestAnimationFrame(animate);
+}
+
+var updateSliders = function(animateTime){
 
     var incDistance = Math.floor(200 * animateTime / 1000);
 
@@ -40,8 +47,6 @@ function animate(){
         }
     }
 
-
-
     for(var i = 0; i< rem.length; i++){
         delete sliderHeads[rem[i].area];
         rem[i].element.siblings().remove();
@@ -49,11 +54,13 @@ function animate(){
 
     if(Math.random()<.1){
         $(".location-slider ul").each(function(index, val){
-            if($(val).children().length > 10){
-                $(val).children().slice(10-$(val).children().length).remove();
+            var ch = $(val).children();
+            if(ch.length > 10){
+                ch.slice(10-ch.length).remove();
             }
         });
     }
+
 }
 
 function findArea(lat, lng){
@@ -108,7 +115,6 @@ function start(){
     // so start the render loop
     animate();
 
-
     var mediaBoxes = $('.media-box .user-pic');
     var blinkies = $('.blinky');
     var blinkiesColors = ["#000", "#ffcc00", "#00eeee", "#fff"];
@@ -123,144 +129,150 @@ function start(){
     }, 500).animate({
         width: "180px"}, 800);
 
-        $("#ms").delay(600).animate({
-            height: "25px"
-        }, 500).animate({
-            width: "180px"}, 800);
+    $("#ms").delay(600).animate({
+        height: "25px"
+    }, 500).animate({
+        width: "180px"}, 800);
 
-            $("#globalization").delay(600).animate({
-                top: "0px",
-                left: "0px",
-                width: "180px"
-            }, 500);
+    $("#globalization").delay(600).animate({
+        top: "0px",
+        left: "0px",
+        width: "180px"
+    }, 500);
 
-            $("#user-interaction").delay(600).animate({
-                width: "600px"
-            }, 500);
+    $("#globalization .location-slider").each(function(index, element){
+        $(element).delay(600 + index * 200).animate({
+            width: "180px"
+        }, 500);
+    });
 
-            $("#growth").delay(500).animate({
-                width: "600px"
-            }, 500);
+    $("#user-interaction").delay(600).animate({
+        width: "600px"
+    }, 500);
 
-            $("#media").delay(1000).animate({
-                width: "450px"
-            }, 500);
+    $("#growth").delay(500).animate({
+        width: "600px"
+    }, 500);
 
-            $("#timer").delay(1000).animate({
-                width: "450px"
-            }, 500);
+    $("#media").delay(1000).animate({
+        width: "450px"
+    }, 500);
 
-            var interactionContainer = $("#interaction > div")[0];
+    $("#timer").delay(1000).animate({
+        width: "450px"
+    }, 500);
 
-            setTimeout(function(){
-                StreamServer.onMessage(function (datain) {
-                    var chunks = datain.message.split("*");
-                    
-                    var data = {};
-                    if(datain.location){
-                       data.location = datain.location.name;
-                       if(datain.location.lat && datain.location.lng){
-                           data.latlng = {"lat": datain.location.lat, "lng": datain.location.lng};
-                            globe.addMarker(datain.location.lat, datain.location.lng, datain.location.name);
-                       }
-                    }
-                    
-                    data.actor = chunks[3].trim();
-                    data.repo = chunks[0].trim();
-                    data.type = chunks[5].trim();
-                    data.pic = chunks[6].trim();
+    var interactionContainer = $("#interaction > div")[0];
 
-                    /* do the globalization */
-
-                    // figure out which one I'm in
-
-                    var area = "unknown";
-                    
-                    if(data.latlng){
-                       area = findArea(data.latlng.lat, data.latlng.lng);
-                        $("#location-city-" + area).text(data.location);
-                    }
-
-
-                    locationAreas[area].count = locationAreas[area].count + 1;
-                    locationAreas[area].count = Math.min(19,locationAreas[area].count);
-                    locationAreas[area].ref.css("background-color", locationAreaColors[locationAreas[area].count]);
-
-                    $("#location-slider-" + area + " ul :first-child").css("margin-left", "-=5px");
-                    $("#location-slider-" + area + " ul").prepend("<li style='color: " + locationAreaColors[locationAreas[area].count] + "'/>");
-                    sliderHeads[area] = {area: area, element: $("#location-slider-" + area + " ul :first-child"), margin: 0}; 
-
-                    // cleanup
-
-                    var lastChild = interactionContainer.lastChild;
-                    lastChild.innerHTML = '<li>' + data.actor + '</li><li>' + data.repo + '</li><li>' + data.type + '</li>';
-                    interactionContainer.insertBefore(interactionContainer.lastChild, interactionContainer.firstChild);
-
-                    swirls.hit(data.type);
-
-                    $(blinkies[Math.floor(Math.random() * blinkies.length)]).css('background-color', blinkiesColors[Math.floor(Math.random() * blinkiesColors.length)]);
-
-                    var showUser = true;
-
-                    if(currentUsers.length < 10 || Date.now() - lastUserDate > 1000){
-                        
-                        for(var i = 0; i< currentUsers.length && showUser; i++){
-                            if(currentUsers[i] == data.pic){
-                                showUser = false;
-                            }
-                        }
-
-                        if(showUser){
-                            var img = document.createElement('img');
-
-                            var profileImageLoaded = function(ui){
-                                var mb = $(mediaBoxes[ui]);
-                                mb.css('background-image', 'url(http://0.gravatar.com/avatar/' + data.pic + '?s=' + mb.width() +')');
-                                mb.find('span').text(data.actor);
-
-                            };
-
-                            img.addEventListener('load', profileImageLoaded.bind(this, userIndex));
-                            img.src = 'http://0.gravatar.com/avatar/' + data.pic + '?s=' + $(mediaBoxes[userIndex]).width();
-
-                            currentUsers[userIndex] = data.pic;
-
-                            userIndex++;
-                            userIndex = userIndex % 10;
-
-                            lastUserDate = Date.now();
-
-                        }
-                    }
-                    
-                });
-            }, 2000);
+    setTimeout(function(){
+        StreamServer.onMessage(function (datain) {
+            var chunks = datain.message.split("*");
             
-            setTimeout(function(){
-                for(var i = 0; i< 2; i++){
-                    for(var j = 0; j< 4; j++){
-                        
-                        globe.addSatellite(50 * i - 30 + 15 * Math.random(), 90 * j - 120 + 30 * i, 1.3 + Math.random()/10);
+            var data = {};
+            if(datain.location){
+               data.location = datain.location.name;
+               if(datain.location.lat && datain.location.lng){
+                   data.latlng = {"lat": datain.location.lat, "lng": datain.location.lng};
+                    globe.addMarker(datain.location.lat, datain.location.lng, datain.location.name);
+               }
+            }
+            
+            data.actor = chunks[3].trim();
+            data.repo = chunks[0].trim();
+            data.type = chunks[5].trim();
+            data.pic = chunks[6].trim();
+
+            /* do the globalization */
+
+            // figure out which one I'm in
+
+            var area = "unknown";
+            
+            if(data.latlng){
+               area = findArea(data.latlng.lat, data.latlng.lng);
+                $("#location-city-" + area).text(data.location);
+            }
+
+
+            locationAreas[area].count = locationAreas[area].count + 1;
+            locationAreas[area].count = Math.min(19,locationAreas[area].count);
+            locationAreas[area].ref.css("background-color", locationAreaColors[locationAreas[area].count]);
+
+            $("#location-slider-" + area + " ul :first-child").css("margin-left", "-=5px");
+            $("#location-slider-" + area + " ul").prepend("<li style='color: " + locationAreaColors[locationAreas[area].count] + "'/>");
+            sliderHeads[area] = {area: area, element: $("#location-slider-" + area + " ul :first-child"), margin: 0}; 
+
+            // cleanup
+
+            var lastChild = interactionContainer.lastChild;
+            lastChild.innerHTML = '<li>' + data.actor + '</li><li>' + data.repo + '</li><li>' + data.type + '</li>';
+            interactionContainer.insertBefore(interactionContainer.lastChild, interactionContainer.firstChild);
+
+            swirls.hit(data.type);
+
+            $(blinkies[Math.floor(Math.random() * blinkies.length)]).css('background-color', blinkiesColors[Math.floor(Math.random() * blinkiesColors.length)]);
+
+            var showUser = true;
+
+            if(currentUsers.length < 10 || Date.now() - lastUserDate > 1000){
+                
+                for(var i = 0; i< currentUsers.length && showUser; i++){
+                    if(currentUsers[i] == data.pic){
+                        showUser = false;
                     }
                 }
-            }, 5000);
 
-            setInterval(function(){
-                satbar.setZone(Math.floor(Math.random()*4-1));
-            }, 7000);
+                if(showUser){
+                    var img = document.createElement('img');
 
-            setTimeout(function(){
-                globe.addConnectedPoints(49.25, -123.1, "Vancouver", 35.68, 129.69, "Tokyo");
-            }, 2000);
+                    var profileImageLoaded = function(ui){
+                        var mb = $(mediaBoxes[ui]);
+                        mb.css('background-image', 'url(http://0.gravatar.com/avatar/' + data.pic + '?s=' + mb.width() +')');
+                        mb.find('span').text(data.actor);
 
-            setInterval(function(){
-                $("#san-francisco-time").text(moment().tz("America/Los_Angeles").format("HH:mm:ss"));
-                $("#new-york-time").text(moment().tz("America/New_York").format("HH:mm:ss"));
-                $("#london-time").text(moment().tz("Europe/London").format("HH:mm:ss"));
-                $("#berlin-time").text(moment().tz("Europe/Berlin").format("HH:mm:ss"));
-                $("#bangalore-time").text(moment().tz("Asia/Colombo").format("HH:mm:ss"));
-                $("#sydney-time").text(moment().tz("Australia/Sydney").format("HH:mm:ss"));
-            }, 1000);
+                    };
+
+                    img.addEventListener('load', profileImageLoaded.bind(this, userIndex));
+                    img.src = 'http://0.gravatar.com/avatar/' + data.pic + '?s=' + $(mediaBoxes[userIndex]).width();
+
+                    currentUsers[userIndex] = data.pic;
+
+                    userIndex++;
+                    userIndex = userIndex % 10;
+
+                    lastUserDate = Date.now();
+
+                }
+            }
+            
+        });
+    }, 2000);
+    
+    setTimeout(function(){
+        for(var i = 0; i< 2; i++){
+            for(var j = 0; j< 4; j++){
+                
+                globe.addSatellite(50 * i - 30 + 15 * Math.random(), 90 * j - 120 + 30 * i, 1.3 + Math.random()/10);
+            }
+        }
+    }, 5000);
+
+    setInterval(function(){
+        satbar.setZone(Math.floor(Math.random()*4-1));
+    }, 7000);
+
+    setTimeout(function(){
+        globe.addConnectedPoints(49.25, -123.1, "Vancouver", 35.68, 129.69, "Tokyo");
+    }, 2000);
+
+    setInterval(function(){
+        $("#san-francisco-time").text(moment().tz("America/Los_Angeles").format("HH:mm:ss"));
+        $("#new-york-time").text(moment().tz("America/New_York").format("HH:mm:ss"));
+        $("#london-time").text(moment().tz("Europe/London").format("HH:mm:ss"));
+        $("#berlin-time").text(moment().tz("Europe/Berlin").format("HH:mm:ss"));
+        $("#bangalore-time").text(moment().tz("Asia/Colombo").format("HH:mm:ss"));
+        $("#sydney-time").text(moment().tz("Australia/Sydney").format("HH:mm:ss"));
+    }, 1000);
 
 }
 

@@ -7,7 +7,7 @@ sliderHeads = {};
 locationAreaColors = [];
 
 for(var i = 0; i< 20; i++){
-    locationAreaColors[i] = pusher.color('#ffcc00').blend('#00eeee', i/20).hex6();
+    locationAreaColors[i] = pusher.color('#00eeee').blend('#ffcc00', i/20).hex6();
 }
 
 
@@ -40,13 +40,7 @@ function animate(){
         }
     }
 
-    var now = Date.now();
-    for(var a in locationAreas){
-        var loc = locationAreas[a];
 
-        loc.ref.css("background-color", locationAreaColors[Math.min(locationAreaColors.length - 1, Math.floor((now - loc.lastTime)/1000))]);
-
-    }
 
     for(var i = 0; i< rem.length; i++){
         delete sliderHeads[rem[i].area];
@@ -187,8 +181,13 @@ function start(){
                         $("#location-city-" + area).text(data.location);
                     }
 
+
+                    locationAreas[area].count = locationAreas[area].count + 1;
+                    locationAreas[area].count = Math.min(19,locationAreas[area].count);
+                    locationAreas[area].ref.css("background-color", locationAreaColors[locationAreas[area].count]);
+
                     $("#location-slider-" + area + " ul :first-child").css("margin-left", "-=5px");
-                    $("#location-slider-" + area + " ul").prepend("<li/>");
+                    $("#location-slider-" + area + " ul").prepend("<li style='color: " + locationAreaColors[locationAreas[area].count] + "'/>");
                     sliderHeads[area] = {area: area, element: $("#location-slider-" + area + " ul :first-child"), margin: 0}; 
 
                     // cleanup
@@ -197,8 +196,6 @@ function start(){
                     lastChild.innerHTML = '<li>' + data.actor + '</li><li>' + data.repo + '</li><li>' + data.type + '</li>';
                     interactionContainer.insertBefore(interactionContainer.lastChild, interactionContainer.firstChild);
 
-                    locationAreas[area].lastTime = Date.now();
-                    locationAreas[area].ref.css("background-color", locationAreaColors[0]);
                     swirls.hit(data.type);
 
                     $(blinkies[Math.floor(Math.random() * blinkies.length)]).css('background-color', blinkiesColors[Math.floor(Math.random() * blinkiesColors.length)]);
@@ -269,16 +266,27 @@ function start(){
 
 $(function() {
     locationAreas = {
-       antarctica: {lastTime: 0, ref: $("#location-area-antarctica")},
-       northamerica: {lastTime: 0, ref: $("#location-area-northamerica")},
-       southamerica: {lastTime: 0, ref: $("#location-area-southamerica")},
-       europe: {lastTime: 0, ref: $("#location-area-europe")},
-       asia: {lastTime: 0, ref: $("#location-area-asia")},
-       australia: {lastTime: 0, ref: $("#location-area-australia")},
-       africa: {lastTime: 0, ref: $("#location-area-africa")},
-       other: {lastTime: 0, ref: $("#location-area-other")},
-       unknown: {lastTime: 0, ref: $("#location-area-unknown")}
+       antarctica: {count: 10, ref: $("#location-area-antarctica")},
+       northamerica: {count: 10, ref: $("#location-area-northamerica")},
+       southamerica: {count: 10, ref: $("#location-area-southamerica")},
+       europe: {count: 10, ref: $("#location-area-europe")},
+       asia: {count: 10, ref: $("#location-area-asia")},
+       australia: {count: 10, ref: $("#location-area-australia")},
+       africa: {count: 10, ref: $("#location-area-africa")},
+       other: {count: 10, ref: $("#location-area-other")},
+       unknown: {count: 10, ref: $("#location-area-unknown")}
        };
+
+    setInterval(function(){
+        for(var a in locationAreas){
+            var loc = locationAreas[a];
+            loc.count = loc.count -1;
+            loc.count = Math.max(loc.count, 0);
+
+            loc.ref.css("background-color", locationAreaColors[loc.count]);
+
+        }
+    }, 2000);
 
     WebFontConfig = {
         google: {

@@ -145,6 +145,7 @@ div {
     width: 0px;
     height: 34px;
     overflow: hidden;
+    white-space: nowrap;
 }
 .location-slider ul{
     height: 5px;

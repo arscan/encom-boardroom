@@ -1,4 +1,4 @@
-var globe, stats, satbar, simpleclock, startDate, box, swirls, sliderHeads, slider, lastTime, screensaver, locationAreas, locationAreaColors;
+var globe, satbar, simpleclock, startDate, box, swirls, sliderHeads, slider, lastTime, screensaver, locationAreas, locationAreaColors;
 
 startDate = new Date();
 sliderHeads = {};
@@ -24,7 +24,6 @@ function animate(){
     box.tick();
     stockchart.tick();
     swirls.tick();
-    stats.update();
 
     updateSliders(animateTime);
 
@@ -313,7 +312,6 @@ $(function() {
                 // called after the globe is complete
 
                 box = new ENCOM.Box({containerId: "cube"});
-                stats = new Stats(document.getElementById("fps-stats"), document.getElementById("ms-stats"));
                 satbar = new ENCOM.SatBar("satbar");
                 timertrees = new ENCOM.TimerTrees("timer-trees");
                 stockchart = new ENCOM.StockChart("stock-chart");

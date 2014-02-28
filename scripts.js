@@ -1,4 +1,4 @@
-var globe, satbar, simpleclock, startDate, box, swirls, sliderHeads, slider, lastTime, screensaver, locationAreas, locationAreaColors;
+var globe, satbar, simpleclock, startDate, box, swirls, sliderHeads, slider, lastTime, screensaver, locationAreas, locationAreaColors, logo;
 
 startDate = new Date();
 sliderHeads = {};
@@ -142,28 +142,40 @@ function start(){
     $("#globalization .location-slider").each(function(index, element){
         $(element).delay(600 + index * 200).animate({
             width: "180px"
-        }, 500);
+        }, 1000);
     });
 
-    $("#user-interaction").delay(600).animate({
+    $("#logo-cover-up").delay(3000).animate({
+        height: "0px"
+    }, 2500);
+
+    $("#logo-cover-side-1").delay(3000).animate({
+        left: "200px"
+    }, 2500);
+
+    $("#logo-cover-side-2").delay(3000).animate({
+        width: "0px"
+    }, 2500);
+
+    $("#user-interaction").delay(500).animate({
         width: "600px"
-    }, 500);
+    }, 1500);
 
-    $("#growth").delay(500).animate({
+    $("#growth").delay(1000).animate({
         width: "600px"
-    }, 500);
+    }, 1500);
 
-    $("#media").delay(1000).animate({
+    $("#media").delay(1500).animate({
         width: "450px"
-    }, 500);
+    }, 1500);
 
-    $("#timer").delay(1000).animate({
+    $("#timer").delay(2000).animate({
         width: "450px"
-    }, 500);
+    }, 1500);
 
     $("#bottom-border").delay(100).animate({
         width: "1900px"
-    }, 500);
+    }, 4000);
 
     var interactionContainer = $("#interaction > div")[0];
 
@@ -321,10 +333,13 @@ $(function() {
                 stockchart = new ENCOM.StockChart("stock-chart");
                 stockchartsmall = new ENCOM.StockChartSmall("stock-chart-small");
                 swirls = new ENCOM.Swirls("swirls");
+                logo = new ENCOM.Logo("logo");
 
-                var screenSaver = $("#screensaver img");
+                var screenSaver = $("#screensaver-info");
 
+                $("#screensaver-info span").text("Initializing...");
                 setTimeout(function(){
+                    $("#screensaver-info span").css("visibility", "hidden");
                     screenSaver.animate({
                             opacity: 0,
                         },{
@@ -334,7 +349,7 @@ $(function() {
                             duration: 600, 
                             easing: "easeInOutBack", 
                             complete: start});
-                }, 3000);
+                }, 2000);
             });
         }
     };

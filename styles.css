@@ -34,7 +34,7 @@ div {
 
 }
 
-#screensaver img {
+#screensaver-info {
 
     position: absolute;
     right: 0;
@@ -44,8 +44,18 @@ div {
     margin: auto;
     max-width: 100%;
     max-height: 100%;
-    overflow: auto;
+    width:600px;
+    height: 200px;
+    text-align: center;
+    line-height: 10px;
+    color: #333;
+}
+#screensaver-info span{
+    visibility: hidden;
+}
 
+.wf-active #screensaver-info span{
+    visibility: inherit;
 }
 
 #container {
@@ -127,13 +137,6 @@ div {
 
 }
 
-#logo {
-    position: absolute;
-    top: 45%;
-    left: 45%;
-}
-
-
 #globalization{
     position: absolute;
     top: -10px;
@@ -141,6 +144,7 @@ div {
     width: 0px;
     overflow: hidden;
     background: hsla(0, 0%, 0%, 0.45);
+    height: 700px;
 
 }
 
@@ -204,6 +208,40 @@ div {
 .location-gap {
     margin-top: 60px;
 
+}
+
+#logo {
+    position: absolute;
+    bottom: 10px;
+    width: 180px;
+    height: 100px;
+}
+
+#logo-cover-up {
+    position: absolute;
+    top: 32px;
+    height: 58px;
+    left: 10px;
+    width: 160px;
+    background-color: #000;
+}
+
+#logo-cover-side-1 {
+    position: absolute;
+    top: 90px;
+    height: 20px;
+    left: 10px;
+    width: 160px;
+    background-color: #000;
+}
+
+#logo-cover-side-2 {
+    position: absolute;
+    top: 25px;
+    height: 8px;
+    left: 10px;
+    width: 160px;
+    background-color: #000;
 }
 
 #globe{
@@ -349,22 +387,22 @@ div {
     margin: 0px;
     padding: 0px;
     font-weight:bold;
-    font-size: 20pt;
+    font-size: 18pt;
     line-height: 17pt;
 }
 #ticker-subtext{
     margin: 0px;
     vertical-align: top;
     padding: 0px;
-    font-size: 8pt;
+    font-size: 10pt;
     display: inline-block;
-    width: 30px;
+    width: 34px;
 }
 
 #ticker-lines{
     display: inline-block;
     vertical-align: top;
-    width: 38px;
+    width: 34px;
     margin: 0px;
     padding: 0px;
     overflow: hidden;

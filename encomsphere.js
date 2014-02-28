@@ -33,6 +33,7 @@
     };
 
     var drawCurvedRectangle = function(ctx, left, top, width, height, radius){
+        console.log("drawing");
 
        ctx.beginPath();
        ctx.moveTo(left + radius, top);
@@ -2720,46 +2721,15 @@
         this.points[label] = new SwirlPoint(label, Math.random() * 100, this.canvas);
     };
 
-    var drawText = function(ctx, offset, color, shadow){
+    var Logo = function(containerId, text){
 
-            ctx.beginPath();
-            ctx.font = "bold 133px Cantarell";
-            ctx.fillStyle = color;
-            ctx.fillText("Github", 32 + offset, 233 - 50 + offset);
-            if(shadow != undefined){
-                ctx.shadowColor = shadow;
-                ctx.shadowBlur = 25;
-                ctx.shadowOffsetX = 0;
-                ctx.shadowOffsetY = 0;
-
-            } else {
-                ctx.shadowBlur = 0;
-                ctx.shadowOffsetX = 0;
-                ctx.shadowOffsetY = 0;
-            }
-
-            ctx.fill();
-
-            ctx.strokeStyle=color;
-            ctx.beginPath();
-            ctx.moveTo(241 + offset, 100 + offset);
-            ctx.lineTo(241 + offset, 80 + offset);
-            ctx.quadraticCurveTo(240 + offset, 55 + offset, 265 + offset, 55 + offset);
-            ctx.lineTo(470-20 + offset, 55 + offset);
-            ctx.quadraticCurveTo(470 + offset, 55 + offset, 470 + offset, 75 + offset);
-            ctx.lineTo(470 + offset, 190 + offset);
-            ctx.quadraticCurveTo(470 + offset, 205 + offset, 460 + offset, 205 + offset);
-            ctx.lineTo(40 + offset, 205 + offset);
-            ctx.lineWidth = 16;
-            ctx.stroke();
-
-    };
-
-    var ScreenSaver = function(containerId){
+        if(typeof text == "undefined"){
+            text = "GITHUB";
+        }
 
         this.container = document.getElementById(containerId);
-        this.container.width = 510;
-        this.container.height = 225
+        this.container.width = 180;
+        this.container.height = 100
         this.canvas = document.createElement("canvas");
         this.canvas.width = this.container.width;
         this.canvas.height = this.container.height;
@@ -2769,45 +2739,37 @@
         this.width = this.container.width;
         this.height = this.container.height;
 
-        this.points = {};
+        this.context.strokeStyle = "#00eeee";
+        this.context.lineWidth = 3;
 
-        var backSplash = renderToCanvas(this.container.width, this.container.height, function(ctx){
-            drawText(ctx, -2, "#fff", "#6992bd");
-            drawText(ctx, -1, "#fff");
-            drawText(ctx, 2, "#333");
-            drawText(ctx, 1, "#333");
-            drawText(ctx, 0, "#6992bd");
+       this.context.font = "bold 18px Inconsolata";
+       var textWidth = this.context.measureText(text).width;
 
-        }.bind(this));
+       drawCurvedRectangle(this.context, (this.width - textWidth -24)/2, 30, textWidth + 24, 60, 3);
+       drawCurvedRectangle(this.context, (this.width - textWidth -10)/2, 65, textWidth + 10, 20, 3);
 
-        this.context.drawImage(backSplash, 0, 0);
+       this.context.textAlign = "center";
+       this.context.fillStyle="#00eeee";
+       this.context.textBaseline = "bottom";
+       this.context.fillText(text, this.width/2, 85);
 
-        this.context.globalCompositeOperation = "source-atop";
-        this.context.globalAlpha = .2;
-        this.context.fillStyle = "#bbb";
-        for(var i = 0; i< 20; i++){
-            this.context.fillRect(0, Math.random() * this.container.height, this.container.width, Math.floor(Math.random()*20));
-        }
 
-        this.context.globalAlpha = .2;
-        this.context.shadowColor = "#bbb";
-        this.context.shadowBlur = 10;
-        this.context.shadowOffsetX = 0;
-        this.context.shadowOffsetY = 0;
-        this.context.arc(this.container.width, this.container.height / 5, 200, 0, Math.PI * 2)
-        this.context.fill();
+       var buffer = 4;
+       var startPos = (this.width-textWidth-24)/2 + buffer + 2;
+       var barWidth = (textWidth + 20 - buffer * 6) / 5;
+
+       for(var i = 0; i < 5; i++){
+           var height = Math.floor(Math.random() * 25);
+           if(Math.random() < .5){
+               this.context.fillStyle = "#ffcc00";
+           } else {
+               this.context.fillStyle = "#ff9933";
+           }
+           this.context.fillRect(startPos + i * (barWidth + buffer), 36 + (25 - height), barWidth, height); 
+       }
+
 
     };
-
-
-    ScreenSaver.prototype.tick = function(){
-
-        if(!this.firstTick){
-            this.firstTick = new Date();
-        }
-        var timeSinceStarted = new Date() - this.firstTick;
-    };
-
 
     return {
         globe: globe,
@@ -2819,7 +2781,7 @@
         StockChartSmall: StockChartSmall,
         Box: Box,
         Swirls: Swirls,
-        ScreenSaver: ScreenSaver
+        Logo: Logo
 
     };
 

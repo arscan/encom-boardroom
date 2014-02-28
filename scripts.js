@@ -177,6 +177,18 @@ function start(){
         width: "1900px"
     }, 4000);
 
+    /*
+    var mediaWidth = $(".media-box").css("width");
+    var mediaHeight = $(".media-box").css("height");
+    $(".media-box").css("width","0").css("height","0");
+
+    $(".media-box").delay(2000).animate({
+        width: mediaWidth,
+        height: mediaHeight
+    }, 500);
+   */
+
+    console.log($("#media-bottom").css("height"));
     var interactionContainer = $("#interaction > div")[0];
 
     setTimeout(function(){

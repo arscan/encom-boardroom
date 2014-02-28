@@ -161,6 +161,10 @@ function start(){
         width: "450px"
     }, 500);
 
+    $("#bottom-border").delay(100).animate({
+        width: "1900px"
+    }, 500);
+
     var interactionContainer = $("#interaction > div")[0];
 
     setTimeout(function(){

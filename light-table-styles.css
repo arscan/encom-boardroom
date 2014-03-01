@@ -1,0 +1,27 @@
+body {
+    background-color: black;
+}
+
+.container-border{
+
+    border: 1px solid #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px #005b8e, inset 0 0 10px #005b8e;
+}
+#container-outside{
+    position:absolute;
+    width: 1000px;
+    height: 760px;
+    z-index: 10;
+
+}
+
+#container-inside {
+    position:absolute;
+    left: 40px;
+    top:20px;
+    width: 920px;
+    height: 720px;
+    z-index: 20;
+}
+

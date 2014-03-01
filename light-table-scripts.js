@@ -12,6 +12,13 @@ $(function(){
         'margin-top' : -outside.height()/2
     });
 
+    inside.css({
+        'position' : 'absolute',
+        'left' : '50%',
+        'top' : '50%',
+        'margin-left' : -inside.width()/2,
+        'margin-top' : -inside.height()/2
+    });
     var outsideOffset = outside.offset();
     var insideOffset = inside.offset();
 
@@ -21,83 +28,101 @@ $(function(){
     var insideWidth = inside.width();
     var insideHeight = inside.height();
 
-    var outsideBlockerTopLeft = $("<div>");
-    var outsideBlockerBottomRight = $("<div>");
+    var outsideBlockerTopRight = $("<div>");
+    var outsideBlockerBottomLeft = $("<div>");
     var insideBlockerTopRight = $("<div>");
     var insideBlockerBottomLeft = $("<div>");
 
-    $('body').append(outsideBlockerTopLeft)
-               .append(outsideBlockerBottomRight)
+    $('body').append(outsideBlockerTopRight)
+               .append(outsideBlockerBottomLeft)
                .append(insideBlockerTopRight)
                .append(insideBlockerBottomLeft);
 
-    outsideBlockerTopLeft.css({
-        "background-color": "#aa0000",
-        opacity: .5,
+    outsideBlockerTopRight.css({
+        "background-color": "#000",
+        // "background-color": "#aa0000",
+        // opacity: .5,
         position: "absolute",
-        top: outsideOffset.top - 8,
-        left: outsideOffset.left - 8,
-        width: outside.outerWidth(),
+        top: outsideOffset.top - 5,
+        left: outsideOffset.left - 5,
+        width: outside.outerWidth() + 10,
         height: outside.outerHeight(),
         "z-index": 15
     });
 
-    outsideBlockerBottomRight.css({
-        "background-color": "#00aa00",
-        opacity: .5,
+    outsideBlockerBottomLeft.css({
+        "background-color": "#000",
+        // "background-color": "#00aa00",
+        // opacity: .5,
         position: "absolute",
-        top: outsideOffset.top + 8,
-        left: outsideOffset.left + 8,
+        top: outsideOffset.top + 5,
+        left: outsideOffset.left - 5,
         width: outsideWidth,
         height: outsideHeight,
         "z-index": 15
     });
 
     insideBlockerTopRight.css({
-        "background-color": "#0000aa",
-        opacity: .5,
+        "background-color": "#000",
+        // "background-color": "#0000aa",
+        // opacity: .5,
         position: "absolute",
-        top: insideOffset.top-10,
-        left: insideOffset.left+10,
-        width: insideWidth,
+        top: insideOffset.top-5,
+        left: insideOffset.left-5,
+        width: insideWidth + 10,
         height: insideHeight,
         "z-index": 25
     });
 
     insideBlockerBottomLeft.css({
-        "background-color": "#aaaaaa",
-        opacity: .5,
+        "background-color": "#000",
+        // "background-color": "#aaaaaa",
+        // opacity: .5,
         position: "absolute",
-        top: insideOffset.top +10,
-        left: insideOffset.left -10,
+        top: insideOffset.top +5,
+        left: insideOffset.left -5,
         width: insideWidth,
         height: insideHeight,
         "z-index": 25
     });
 
-    outsideBlockerTopLeft.animate({
+    outsideBlockerTopRight.animate({
+        height: 10,
+    }, 500).animate({
         width: 0,
-        height: 0
-    }, 2000);
-
-    outsideBlockerBottomRight.animate({
-        width: 0,
+        
+    }, 500);
+    
+    outsideBlockerBottomLeft.animate({
+        width: 20,
+    }, 500)
+    outsideBlockerBottomLeft.delay(500).animate({
         height: 0,
         top: outsideOffset.top + outsideHeight,
-        left: outsideOffset.left + outsideWidth
-    }, 2000);
+    }, 500);
 
-    insideBlockerTopRight.animate({
-        width: 0,
-        height: 0,
-        left: insideOffset.left + insideWidth
-    }, 2000);
 
     insideBlockerBottomLeft.animate({
         width: 0,
-        height: 0,
-        top: insideOffset.top + insideHeight,
-    }, 2000);
+    }, 300);
+
+    insideBlockerTopRight.delay(300).animate({
+        height: 10,
+    }, 500);
+
+    insideBlockerTopRight.animate({
+        width: 0,
+        left: insideOffset.left + insideWidth
+    }, 500);
+
+    setTimeout(function(){
+        outsideBlockerTopRight.remove();
+        outsideBlockerBottomLeft.remove();
+        insideBlockerTopRight.remove();
+        insideBlockerBottomLeft.remove();
+    }, 3000);
+
+
 
     
 });

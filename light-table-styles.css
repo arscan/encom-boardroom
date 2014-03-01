@@ -1,17 +1,19 @@
 body {
     background-color: black;
+    font-family: 'Inconsolata', sans-serif;
+    font-size:6pt;
 }
 
 .container-border{
 
     border: 1px solid #fff;
     border-radius: 5px;
-    box-shadow: 0 0 10px #005b8e, inset 0 0 10px #005b8e;
+    box-shadow: 0 0 6px #005b8e, inset 0 0 6px #005b8e;
 }
 #container-outside{
     position:absolute;
     width: 1140px;
-    height: 614px;
+    height: 610px;
     z-index: 10;
 
 }
@@ -23,5 +25,82 @@ body {
     width: 1100px;
     height: 600px;
     z-index: 20;
+}
+
+.header{
+
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    box-shadow: 0 0 6px #005b8e, inset 0 0 6px #005b8e;
+    color: #fff;
+    padding: 2px 0;
+
+}
+
+.header-left-section {
+    float: left;
+    width: 48%;
+    background-color: #000;
+    margin-left: -5px;
+    padding: 0 8px;
+}
+
+.header-right-section {
+    float: right;
+    width: 45%;
+    background-color: #000;
+    text-align: right;
+    margin-right: -5px;
+    padding: 0 8px;
+}
+
+#header-top-left {
+    position: absolute;
+    left: 60px;
+    top: 25px;
+    width: 380px;
+}
+
+#header-top-right {
+    position: absolute;
+    left: 500px;
+    top: 25px;
+    width: 480px;
+}
+
+#header-bottom-left {
+    position: absolute;
+    left: 60px;
+    top: 540px;
+    width: 380px;
+}
+
+#header-bottom-right {
+    position: absolute;
+    left: 500px;
+    top: 540px;
+    width: 480px;
+}
+
+.header-animator-left {
+    position: absolute;
+    left: 60px;
+    top: 300px;
+    width: 380px;
+    height: 2px;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    box-shadow: 0 0 6px #005b8e, inset 0 0 6px #005b8e;
+}
+
+.header-animator-right {
+    position: absolute;
+    left: 500px;
+    top: 300px;
+    width: 480px;
+    height: 2px;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    box-shadow: 0 0 6px #005b8e, inset 0 0 6px #005b8e;
 }
 

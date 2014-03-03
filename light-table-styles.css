@@ -157,6 +157,8 @@ h2{
 #readme {
     position: absolute;
     top: 60px;
+    overflow: hidden;
+    opacity: 0;
 }
 
 #readme .content {

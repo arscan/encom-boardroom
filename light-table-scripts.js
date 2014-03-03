@@ -1,5 +1,8 @@
 $(function(){
 
+    $(".header").css("visibility", "hidden");
+    $(".content-container").css("visibility", "hidden");
+
     var animateContainers = function(){
         var outside = $("#container-outside");
         var inside = $("#container-inside");
@@ -53,28 +56,34 @@ $(function(){
 
         outsideBlockerBottomLeft.css({
             "background-color": "#000",
+            // "background-color": "#00aa00",
+            // opacity: .5,
             position: "absolute",
             top: outsideOffset.top + 5,
             left: outsideOffset.left - 5,
             width: outsideWidth,
-            height: outsideHeight,
+            height: outsideHeight + 10,
             "z-index": 15
         });
 
         insideBlockerTopRight.css({
             "background-color": "#000",
+            // "background-color": "#0000aa",
+            // opacity: .5,
             position: "absolute",
             top: insideOffset.top-3,
-            left: insideOffset.left-3,
-            width: insideWidth + 6,
+            left: insideOffset.left-5,
+            width: insideWidth + 15,
             height: insideHeight,
             "z-index": 25
         });
 
         insideBlockerBottomLeft.css({
             "background-color": "#000",
+            // "background-color": "#aa00aa",
+            // opacity: .5,
             position: "absolute",
-            top: insideOffset.top +3,
+            top: insideOffset.top +5,
             left: insideOffset.left -3,
             width: insideWidth,
             height: insideHeight,
@@ -90,10 +99,11 @@ $(function(){
         
         outsideBlockerBottomLeft.animate({
             width: 20,
-        }, 500)
+        }, 500);
+
         outsideBlockerBottomLeft.delay(500).animate({
             height: 0,
-            top: outsideOffset.top + outsideHeight,
+            top: (outsideOffset.top + outsideHeight)/2,
         }, 500);
 
 
@@ -121,23 +131,24 @@ $(function(){
 
     var animateHeaders = function() {
 
-        var container = $("#container-inside");
 
         setTimeout(function doHeaderAnimations(){
 
             $(".header-animator-outside").css({visibility: "visible"}).animate({
                 top: "25px",
-                height: "528px"
+                height: "538px"
             }, 500);
 
             $(".header-animator-inside").css({visibility: "visible"}).delay(100).animate({
                 top: "39px",
-                height: "500px"
+                height: "510px"
             }, 500);
         }, 500);
 
         setTimeout(function showHeaders(){
             $(".header").css("visibility", "visible");
+            
+            $(".content-container").css("visibility", "visible");
 
         }, 1000);
 

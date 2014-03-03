@@ -123,18 +123,23 @@ $(function(){
 
         var container = $("#container-inside");
 
-        var outsideBlockerTopRight = $("<div>");
-        var outsideBlockerBottomLeft = $("<div>");
-        var insideBlockerTopRight = $("<div>");
-        var insideBlockerBottomLeft = $("<div>");
+        setTimeout(function doHeaderAnimations(){
 
+            $(".header-animator-outside").css({visibility: "visible"}).animate({
+                top: "25px",
+                height: "528px"
+            }, 500);
 
-        // find center
-        // find left coords
-        // find finish coords
+            $(".header-animator-inside").css({visibility: "visible"}).delay(100).animate({
+                top: "39px",
+                height: "500px"
+            }, 500);
+        }, 500);
 
+        setTimeout(function showHeaders(){
+            $(".header").css("visibility", "visible");
 
-
+        }, 1000);
 
     };
 

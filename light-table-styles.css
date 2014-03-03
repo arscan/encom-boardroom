@@ -34,6 +34,7 @@ body {
     box-shadow: 0 0 6px #005b8e, inset 0 0 6px #005b8e;
     color: #fff;
     padding: 2px 0;
+    visibility: hidden;
 
 }
 
@@ -90,7 +91,8 @@ body {
     height: 2px;
     border-top: 1px solid #fff;
     border-bottom: 1px solid #fff;
-    box-shadow: 0 0 6px #005b8e, inset 0 0 6px #005b8e;
+    visibility: hidden;
+    /*box-shadow: 0 0 6px #005b8e, inset 0 0 6px #005b8e;*/
 }
 
 .header-animator-right {
@@ -101,6 +103,7 @@ body {
     height: 2px;
     border-top: 1px solid #fff;
     border-bottom: 1px solid #fff;
-    box-shadow: 0 0 6px #005b8e, inset 0 0 6px #005b8e;
+    visibility: hidden;
+    /*box-shadow: 0 0 6px #005b8e, inset 0 0 6px #005b8e;*/
 }
 

@@ -131,7 +131,6 @@ $(function(){
 
     var animateHeaders = function() {
 
-
         setTimeout(function doHeaderAnimations(){
 
             $(".header-animator-outside").css({visibility: "visible"}).animate({
@@ -147,10 +146,14 @@ $(function(){
 
         setTimeout(function showHeaders(){
             $(".header").css("visibility", "visible");
-            
             $(".content-container").css("visibility", "visible");
 
         }, 1000);
+
+        setTimeout(function hideAnimations(){
+            $(".header-animator-outside").css("display", "none");
+            $(".header-animator-inside").css("display", "none");
+        }, 1500);
 
     };
 
@@ -221,6 +224,99 @@ $(function(){
         }, 2000);
 
     };
+
+    var webglTick = (function(){
+        // console.log(canvas.height);
+        //     var scene = new THREE.Scene();
+        //     var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+        //     var renderer = new THREE.WebGLRenderer();
+        //     renderer.setSize(window.innerWidth, window.innerHeight);
+
+        //     var geometry = new THREE.CubeGeometry(1,1,1);
+        //     var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+        //     var cube = new THREE.Mesh(geometry, material);
+        //     scene.add(cube);
+
+        //     camera.position.z = 5;
+
+        //     var render = function () {
+        //         requestAnimationFrame(render);
+
+        //         cube.rotation.x += 0.1;
+        //         cube.rotation.y += 0.1;
+
+        //         renderer.render(scene, camera);
+        //     };
+        var canvas = document.getElementById('webglCanvas');
+        var renderer = new THREE.WebGLRenderer( { antialias : true, canvas: canvas } );
+        var cameraDistance = 100;
+        var camera = new THREE.PerspectiveCamera( 50, canvas.width / canvas.height, 1, 400 );
+        var cameraAngle=0;
+        var scene = new THREE.Scene();
+        var trackerGeometry = new THREE.Geometry();
+        var trackerMaterial = new THREE.LineBasicMaterial({
+            color: 0xBBE2FF,
+            opacity: 1,
+            transparent: true
+            });
+
+        var cameraUp = false;
+
+        renderer.setSize(canvas.width, canvas.height);
+        camera.position.z = cameraDistance;
+        camera.lookAt(scene.position);
+
+        lastRenderDate = new Date();
+
+        var calc = function(x){
+            return (x+200)*(x+100)*(x+280)*(x+10)*(x-300)*(x-250)*(x-150) / Math.pow(10,14)/1.5;
+        }
+
+        for(var i = 0; i< 500; i++){
+            var y = calc(i-250) * Math.sin(2 * Math.PI * (i % 6) / 6 + i/100) + Math.cos(i) * 5;
+            var z = calc(i-250) * Math.cos(2 * Math.PI * (i % 6) / 6 + i/100);
+            trackerGeometry.vertices.push(new THREE.Vector3(i - 250, y, z));
+        }
+        trackerGeometry.verticesNeedUpdate = true;
+
+        scene.add(new THREE.Line(trackerGeometry, trackerMaterial));
+
+
+        renderer.render( scene, camera );
+
+        return function tick(){
+            // renderer.render( this.scene, this.camera );
+            var renderTime = new Date() - lastRenderDate;
+            lastRenderDate = new Date();
+            var rotateCameraBy = (2 * Math.PI)/(10000/renderTime);
+
+            cameraAngle += rotateCameraBy;
+
+            if(Math.cos(cameraAngle) < 0 && cameraUp){
+                cameraUp = false;
+                camera.up.set(0,-1,0);
+            } else if(Math.cos(cameraAngle) >=0 && !cameraUp){
+                cameraUp = true;
+                camera.up.set(0,1,0);
+            }
+
+            
+            camera.position.x = Math.sin(cameraAngle) * 20;
+            camera.position.y = cameraDistance * Math.sin(cameraAngle/* + Math.sin(cameraAngle)/10*/);
+            camera.position.z = cameraDistance * Math.cos(cameraAngle/* + Math.cos(cameraAngle)/10*/);
+
+
+            // console.log(camera.position.z);
+            camera.lookAt(new THREE.Vector3(Math.sin(cameraAngle) * 20, 0, 0));
+            renderer.render(scene, camera );
+
+            requestAnimationFrame(tick);
+        };
+
+    })();
+
+    webglTick();
 
     setTimeout(animateHeaders, 500);
     animateContentBoxes($("#readme"), 0);

@@ -124,6 +124,7 @@ h2{
     border-radius: 2px;
     box-shadow: 0 0 6px #005b8e, inset 0 0 6px #005b8e;
     padding: 3px;
+    opacity: 0;
 }
 
 .content {
@@ -158,7 +159,6 @@ h2{
     position: absolute;
     top: 60px;
     overflow: hidden;
-    opacity: 0;
 }
 
 #readme .content {

@@ -206,29 +206,26 @@ $(function(){
 
     };
 
+    var animateKeyboard = function(){
+
+        var keyboard = $("#keyboard");
+        var spaceBar = $("#k-space");
+        var spaceBarWidth = spaceBar.width();
+
+        spaceBar.width(0);
+
+
+        keyboard.delay(2000).animate({
+            opacity: 1
+        }, 2000);
+
+        spaceBar.delay(2100).animate({
+            width: spaceBarWidth
+        },1000);
+
+    }
+
     var webglTick = (function(){
-        // console.log(canvas.height);
-        //     var scene = new THREE.Scene();
-        //     var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-
-        //     var renderer = new THREE.WebGLRenderer();
-        //     renderer.setSize(window.innerWidth, window.innerHeight);
-
-        //     var geometry = new THREE.CubeGeometry(1,1,1);
-        //     var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
-        //     var cube = new THREE.Mesh(geometry, material);
-        //     scene.add(cube);
-
-        //     camera.position.z = 5;
-
-        //     var render = function () {
-        //         requestAnimationFrame(render);
-
-        //         cube.rotation.x += 0.1;
-        //         cube.rotation.y += 0.1;
-
-        //         renderer.render(scene, camera);
-        //     };
         var canvas = document.getElementById('webglCanvas');
         var renderer = new THREE.WebGLRenderer( { antialias : true, canvas: canvas } );
         var cameraDistance = 100;
@@ -386,11 +383,6 @@ $(function(){
                break;
         }
 
-        
-
-        console.log(event.which);
-
-
     });
 
     setTimeout(webglTick, 2000);
@@ -400,4 +392,10 @@ $(function(){
     animateContentBoxes($("#bandwidth"), 100);
     animateContentBoxes($("#globalization"), 200);
     animateContainers();
+    animateKeyboard();
+
+    $("#keyboard div").mousedown(function(event){
+        event.preventDefault();
+        toggleKey($(this));
+    });
 });

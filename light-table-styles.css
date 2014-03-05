@@ -238,6 +238,7 @@ h2, p {
     position: absolute;
     top: 355px;
     width: 470px;
+    opacity: 0;
 }
 
 #keyboard div{

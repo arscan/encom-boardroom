@@ -176,16 +176,6 @@ $(function(){
             $(element).css("visibility", "hidden");
         });
 
-        item.css({
-            "border": "1px solid #fff",
-            "box-shadow": "none",
-        });
-
-        itemContent.css({
-            "border": "1px solid #fff",
-            "box-shadow": "none"
-        });
-
         item.height(0)
            .width(0)
            .css("top", top + height/2)
@@ -206,15 +196,6 @@ $(function(){
         }, 1500 + extraDelay);
 
         setTimeout(function(){
-            item.css({
-                "border": border,
-                "box-shadow": boxShadow
-            });
-            
-            itemContent.css({
-                "border": contentBorder,
-                "box-shadow": contentBoxShadow
-            });
 
             itemContent.children().each(function(index, element){
                 $(element).css("visibility", "visible");
@@ -254,9 +235,16 @@ $(function(){
         var camera = new THREE.PerspectiveCamera( 50, canvas.width / canvas.height, 1, 400 );
         var cameraAngle=0;
         var scene = new THREE.Scene();
-        var trackerGeometry = new THREE.Geometry();
-        var trackerMaterial = new THREE.LineBasicMaterial({
-            color: 0xBBE2FF,
+        var splineGeometry = new THREE.Geometry();
+        var splineMaterial = new THREE.LineBasicMaterial({
+            color: 0x6FC0BA,
+            opacity: 0,
+            transparent: true
+            });
+
+        var backdropGeometry = new THREE.Geometry();
+        var backdropMaterial = new THREE.LineBasicMaterial({
+            color: 0x1b2f2d,
             opacity: 1,
             transparent: true
             });
@@ -274,49 +262,138 @@ $(function(){
         }
 
         for(var i = 0; i< 500; i++){
-            var y = calc(i-250) * Math.sin(2 * Math.PI * (i % 6) / 6 + i/100) + Math.cos(i) * 5;
-            var z = calc(i-250) * Math.cos(2 * Math.PI * (i % 6) / 6 + i/100);
-            trackerGeometry.vertices.push(new THREE.Vector3(i - 250, y, z));
+            var y = calc(i-250) * Math.sin(2 * Math.PI * (i % 6) / 6 + i/500) + Math.cos(i) * 5;
+            var z = calc(i-250) * Math.cos(2 * Math.PI * (i % 6) / 6 + i/500);
+            splineGeometry.vertices.push(new THREE.Vector3(i - 250, y, z));
         }
-        trackerGeometry.verticesNeedUpdate = true;
+        splineGeometry.verticesNeedUpdate = true;
 
-        scene.add(new THREE.Line(trackerGeometry, trackerMaterial));
+        var splineLine = new THREE.Line(splineGeometry, splineMaterial);
+        scene.add(splineLine);
 
+        for(var i = 0; i< 25; i++){
+            backdropGeometry.vertices.push(new THREE.Vector3(-500,100-i*8,-100));
+            backdropGeometry.vertices.push(new THREE.Vector3(500,100-i*8,-100));
+        }
+        var backdropLine = new THREE.Line(backdropGeometry, backdropMaterial, THREE.LinePieces);
+        scene.add(backdropLine);
 
         renderer.render( scene, camera );
+        
+        var firstRun = null;
+        var introAnimationDone = false;
 
         return function tick(){
+
+            if(firstRun === null){
+                firstRun = Date.now();
+            }
             // renderer.render( this.scene, this.camera );
             var renderTime = new Date() - lastRenderDate;
+            var timeSinceStart = Date.now() - firstRun;
             lastRenderDate = new Date();
-            var rotateCameraBy = (2 * Math.PI)/(10000/renderTime);
 
+            var rotateCameraBy = (2 * Math.PI)/(10000/renderTime);
             cameraAngle += rotateCameraBy;
 
-            if(Math.cos(cameraAngle) < 0 && cameraUp){
-                cameraUp = false;
-                camera.up.set(0,-1,0);
-            } else if(Math.cos(cameraAngle) >=0 && !cameraUp){
-                cameraUp = true;
-                camera.up.set(0,1,0);
+            if(timeSinceStart < 2000){
+                backdropMaterial.opacity = Math.max(0,(timeSinceStart-1000)/3000);
+                splineMaterial.opacity = timeSinceStart/2000;
+            } else if(!introAnimationDone){
+                introAnimationDone = true;
+                backdropMaterial.opacity = .333;
+                splineMaterial.opacity = 1;
             }
 
             
             camera.position.x = Math.sin(cameraAngle) * 20;
-            camera.position.y = cameraDistance * Math.sin(cameraAngle/* + Math.sin(cameraAngle)/10*/);
-            camera.position.z = cameraDistance * Math.cos(cameraAngle/* + Math.cos(cameraAngle)/10*/);
-
-
-            // console.log(camera.position.z);
-            camera.lookAt(new THREE.Vector3(Math.sin(cameraAngle) * 20, 0, 0));
             renderer.render(scene, camera );
+
+            splineLine.rotation.x += .01;
 
             requestAnimationFrame(tick);
         };
 
     })();
 
-    webglTick();
+    var toggleKey = function(element){
+        element.css({
+            "background-color": "#fff",
+            "color": "#000"
+        });
+
+        setTimeout(function(){
+            element.css({
+                "background-color": "#888",
+                "color": "#888"
+            });
+        }, 200);
+        setTimeout(function(){
+            element.css({
+                "background-color": "#000",
+                "color": "#00eeee"
+            });
+        }, 300);
+
+    };
+
+    $(document).keydown(function(event){
+        var keycode = event.which;
+        event.preventDefault();
+        switch(true){
+            case (keycode > 64 && keycode < 91):
+                toggleKey($("#k-" + String.fromCharCode(keycode).toLowerCase()));
+                break;
+            case (keycode > 47 && keycode < 58):
+                toggleKey($("#k-" + (keycode - 48)));
+                break;
+            case (keycode === 27):
+                toggleKey($("#k-esc"));
+                break;
+            case (keycode === 189):
+               toggleKey($("#k--")); 
+               break;
+            case (keycode === 8):
+               toggleKey($("#k-back")); 
+               break;
+            case (keycode === 9):
+               toggleKey($("#k-tab")); 
+               break;
+            case (keycode === 16):
+               toggleKey($("#k-shift")); 
+               toggleKey($("#k-shift2")); 
+               break;
+            case (keycode === 221 || keycode === 219):
+               toggleKey($("#k-paren")); 
+               break;
+            case (keycode === 13):
+               toggleKey($("#k-enter")); 
+               break;
+            case (keycode === 32):
+               toggleKey($("#k-space")); 
+               break;
+            case (keycode === 186):
+               toggleKey($("#k-semi")); 
+               break;
+            case (keycode === 188):
+               toggleKey($("#k-comma")); 
+               break;
+            case (keycode === 190):
+               toggleKey($("#k-period")); 
+               break;
+            case (keycode === 191):
+               toggleKey($("#k-slash")); 
+               break;
+        }
+
+        
+
+        console.log(event.which);
+
+
+    });
+
+    setTimeout(webglTick, 2000);
 
     setTimeout(animateHeaders, 500);
     animateContentBoxes($("#readme"), 0);

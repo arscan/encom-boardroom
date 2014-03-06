@@ -313,6 +313,82 @@ $(function(){
 
     })();
 
+    var executeCommand = function(){
+        var command = $(".command-text").last().text();
+
+        if(command == "run github.exe"){
+
+            setTimeout(function(){
+                document.location = "http://streams.robscanlon.com/github/arscan/8311277";
+            }, 500);
+
+        } else if(command == "run wikipedia.exe"){
+
+            setTimeout(function(){
+                document.location = "http://streams.robscanlon.com/wikipedia/arscan/8311277";
+            }, 500);
+
+        } else {
+            $(".command-text").last().text("");
+        }
+
+    }
+
+    var keyBuffer = [];
+    var keysRunning = false;
+
+    var runKeySimulator = function(){
+        var key = keyBuffer.shift();
+        console.log("hi");
+
+        toggleKey($("#k-" + key));
+        var realKey = key;
+        if(realKey == "space"){
+            realKey = " ";
+        } else if (realKey == "period"){
+            realKey = ".";
+        } else if (realKey == "enter"){
+            realKey = "";
+            executeCommand();
+        }
+
+        $(".command-text").last().append(realKey);
+       
+
+        if(keyBuffer.length > 0){
+            setTimeout(runKeySimulator,100 + Math.random() * 100);
+        } else {
+            keysRunning = false;
+        }
+
+    }
+
+    var simulateKey = function(key){
+        keyBuffer.push(key);
+        if(!keysRunning){
+            keysRunning = true;
+            setTimeout(runKeySimulator,100);
+        }
+    };
+
+    var simulateCommand = function(command){
+        var cs = command.split("");
+        for(var i = 0; i < cs.length; i++){
+            var key = cs[i];
+            if(key == " "){
+                key = "space";
+
+            } else if (key == "."){
+                key = "period";
+
+            } else if (key == "\\"){
+                key = "enter";
+            }
+            simulateKey(key);
+        }
+
+    };
+
     var toggleKey = function(element){
         element.css({
             "background-color": "#fff",
@@ -337,21 +413,29 @@ $(function(){
     $(document).keydown(function(event){
         var keycode = event.which;
         event.preventDefault();
+        var txt = $(".command-text").last();
         switch(true){
             case (keycode > 64 && keycode < 91):
-                toggleKey($("#k-" + String.fromCharCode(keycode).toLowerCase()));
+                var key = String.fromCharCode(keycode).toLowerCase();
+                toggleKey($("#k-" + key));
+                txt.append(key)
                 break;
             case (keycode > 47 && keycode < 58):
                 toggleKey($("#k-" + (keycode - 48)));
+                txt.append(keycode-48)
                 break;
             case (keycode === 27):
                 toggleKey($("#k-esc"));
+                txt.text("");
                 break;
             case (keycode === 189):
                toggleKey($("#k--")); 
+               txt.append("-");
                break;
             case (keycode === 8):
                toggleKey($("#k-back")); 
+               txt.text(txt.text().substring(0, txt.text().length-1));
+               
                break;
             case (keycode === 9):
                toggleKey($("#k-tab")); 
@@ -365,24 +449,40 @@ $(function(){
                break;
             case (keycode === 13):
                toggleKey($("#k-enter")); 
+               executeCommand();
                break;
             case (keycode === 32):
                toggleKey($("#k-space")); 
+               txt.append(" ");
                break;
             case (keycode === 186):
                toggleKey($("#k-semi")); 
+               txt.append(";");
                break;
             case (keycode === 188):
                toggleKey($("#k-comma")); 
+               txt.append(",");
                break;
             case (keycode === 190):
                toggleKey($("#k-period")); 
+               txt.append(".");
                break;
             case (keycode === 191):
                toggleKey($("#k-slash")); 
+               txt.append("/");
                break;
         }
 
+    });
+
+    $("#launch-github").click(function(){
+        $(this).find(".folder-big").css("background-color", "#fff");
+        simulateCommand("run github.exe\\");
+    });
+
+    $("#launch-wikipedia").click(function(){
+        $(this).find(".folder-big").css("background-color", "#fff");
+        simulateCommand("run wikipedia.exe\\");
     });
 
     setTimeout(webglTick, 2000);
@@ -393,6 +493,12 @@ $(function(){
     animateContentBoxes($("#globalization"), 200);
     animateContainers();
     animateKeyboard();
+
+    setTimeout(function(){
+        $("<img src='github-screensaver.gif' />");
+
+
+    }, 4000);
 
     $("#keyboard div").mousedown(function(event){
         event.preventDefault();

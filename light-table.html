@@ -30,7 +30,7 @@
                         Hello <strong>User</strong>. Welcome to Encom's <strong>OS12</strong>, the worlds most secure operating system.
                         </p>
                         <p>
-                        If you have not seen Tron: Legacy, please familiarize yourself <a href="http://work.gmunk.com/TRON-Board-Room" target="_blank">this background material</a> before proceeding to the boardroom 
+                        If you have not seen Tron: Legacy, please familiarize yourself with <a href="http://work.gmunk.com/TRON-Board-Room" onclick="alert('please do not visit yet, dont want referals to show up'); return false" target="_blank">this background material</a> before proceeding to the boardroom 
                         visualization.  The boardroom is currently configured to display live data from <strong>Github</strong> and <strong>Wikipedia</strong>, 
                         with more live streams to come.  Click on the appropriate stream in the window to the right if 
                         you would like to continue.
@@ -83,11 +83,51 @@
                             <em>END. PROGRAM</em>
                         </h2>
 
-                        <p>
-                        <ul>
-                            <li> <a href="http://streams.robscanlon.com/github/arscan/8311277/">Github</a></li>
-                            <li><a href="http://streams.robscanlon.com/wikipedia/arscan/8311277/">Wikipedia</a></li>
-                        </ul>
+
+                        <div class="folder-container" id="launch-github">
+                            <div class="folder-label">
+                                Github Stream 
+                            </div>
+                            <div class="folder-big"></div>
+                        </div>
+                        <div id="command-line">
+                            <div id="command-line-header">
+                                Last Login: Wed Nov 26 11:26:49 on llvm992
+                            </div>
+
+                            <div id="command-lines">
+                                <div class="command"><span class="prompt">encom-OS:encom_root$&nbsp;</span><span class="command-text"></span></div>
+                            </div>
+
+                        </div>
+
+                        <div class="folder-container" id="launch-test">
+                            <div class="folder-label">
+                                Test Stream
+                            </div>
+                            <div class="folder-small"></div>
+                        </div>
+
+                        <div class="folder-container" id="launch-wikipedia">
+                            <div id="folder-2" class="folder-label">
+                                Wikipedia
+                            </div>
+                            <div class="folder-small"></div>
+                        </div>
+
+                        <div class="folder-container" id="launch-bitcoin">
+                            <div class="folder-label">
+                                Bitcoin
+                            </div>
+                            <div class="folder-small"></div>
+                        </div>
+
+                        <div class="folder-container" id="launch-unknown">
+                            <div id="folder-2" class="folder-label">
+                                Unknown
+                            </div>
+                            <div class="folder-small"></div>
+                        </div>
 
                     </div>
                 </div>
@@ -158,6 +198,14 @@
                 <div class="header-animator-right header-animator-inside"></div>
                 <div class="header-animator-right header-animator-outside"></div>
             </div>
+
+            <div id="far-right-column">
+                <div id="encom-logo">E N C O M</div>
+                <img id="thumbprint" src="thumbprint.png" />
+            </div>
+
+
+
 
         </div>
     </body>

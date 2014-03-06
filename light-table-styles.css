@@ -239,6 +239,74 @@ ul {
     overflow: hidden;
 }
 
+#command-line {
+    width: 300px;
+    float: left;
+    height: 100px;
+    margin-top: 10px;
+    padding: 5px;
+}
+
+#command-lines {
+    white-space: nowrap;
+
+}
+
+#command-line-header {
+    border-bottom: 1px dashed #fff;
+    padding-bottom: 3px;
+
+}
+
+.command {
+    padding-top: 5px;
+    font-size: 8pt;
+}
+
+.folder-container {
+    margin: 30px 18px 0px;
+    float: left;
+    cursor: pointer;
+}
+
+
+.folder-label{
+    background-color: #000;
+    color: #fff;
+    font-size: 10px;
+    margin-bottom: 5px;
+    padding: 1px;
+    width: 70px;
+    text-transform: uppercase;
+    border-radius: 2px;
+}
+
+.folder-container:hover .folder-label{
+    background-color: #feb400;
+    color: #000;
+}
+
+.selected-folder {
+    background-color: #feb400;
+    color: #000;
+}
+
+.folder-big {
+    background-image: url(encom_folder_big.png);
+    padding: 0px;
+    margin: 0px;
+    width:95px;
+    height: 63px;
+}
+
+.folder-small {
+    background-image: url(encom_folder_small.png);
+    padding: 0px;
+    margin: 0px;
+    width:80px;
+    height: 49px;
+}
+
 #keyboard {
     margin-left: 8px;
     position: absolute;
@@ -292,5 +360,33 @@ ul {
     margin-left: 80px;
 
 
+}
+
+#far-right-column {
+    position: absolute;
+    left: 1000px;
+    height: 600px;
+    width: 80px;
+
+}
+
+#encom-logo {
+    position: absolute;
+    font-size: 10px;
+    padding-left: 4px;
+    top: 25px;
+    left: 20px;
+    color: #6fc0ba;
+    border-left: 1px solid #6fc0ba;
+    border-top: 1px solid #6fc0ba;
+    border-bottom: 1px solid #6fc0ba;
+    border-radius: 4px;
+}
+
+#thumbprint {
+    position: absolute;
+    left: 15px;
+    top: 500px;
+    z-index: 200;
 }
 

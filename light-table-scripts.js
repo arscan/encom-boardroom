@@ -202,7 +202,7 @@ $(function(){
             });
 
             
-        }, 2000);
+        }, 2200);
 
     };
 
@@ -293,9 +293,9 @@ $(function(){
             var rotateCameraBy = (2 * Math.PI)/(10000/renderTime);
             cameraAngle += rotateCameraBy;
 
-            if(timeSinceStart < 2000){
-                backdropMaterial.opacity = Math.max(0,(timeSinceStart-1000)/3000);
-                splineMaterial.opacity = timeSinceStart/2000;
+            if(timeSinceStart < 3000){
+                backdropMaterial.opacity = Math.max(0,(timeSinceStart-2000)/3000);
+                splineMaterial.opacity = timeSinceStart/3000;
             } else if(!introAnimationDone){
                 introAnimationDone = true;
                 backdropMaterial.opacity = .333;
@@ -313,24 +313,119 @@ $(function(){
 
     })();
 
+    var writeResponse = function(txt){
+            $("#command-lines").append("<div class='response'>&gt;&gt;encom-sh: " + txt + "</div>");
+    };
+
+    var currentDir = "encom_root";
+
+    var writePrompt = function(){
+            $("#command-lines").append('<div class="command"><span class="prompt">encom-sh:' + currentDir + '$&nbsp;</span><span class="command-text"></span></div>');
+    };
+
+    var writeLs = function(exec){
+        var output = "";
+        if(typeof exec != "undefined"){
+            output = [
+                '<div class="ls">encom_root</div>',
+                '<div class="ls">bandwidth</div>',
+                '<div class="ls">framework</div>',
+                '<div class="ls">@arscan</div>',
+                '<div class="ls ls-exec">' + exec + '</div>',
+                '<div class="ls">webgl_test</div>',
+                '<div class="ls">flynn_5</div>',
+                '<div class="ls">&nbsp;</div>',
+                '<div class="ls">os12_demo</div>',
+                '<div class="ls">munkowitz</div>',
+            ].join('');
+
+        } else {
+            output = [
+                '<div class="ls ls-github">github</div>',
+                '<div class="ls ls-test">test</div>',
+                '<div class="ls ls-wikipedia">wikipedia</div>',
+                '<div class="ls ls-bitcoin">bitcoin</div>',
+                '<div class="ls ls-unknown">unknown</div>'
+            ].join('');
+        }
+
+        $("#command-lines").append(output);
+
+    };
+
+
+    /* I could make this much more involved, but i'm not really interested in spending time on this part of the app */
+    /* sorry for disappointing anybody looking at this to see how much functionality there is */
+    
     var executeCommand = function(){
         var command = $(".command-text").last().text();
 
         if(command == "run github.exe"){
+            if(currentDir == "github"){
+                $(".ls-exec").addClass("ls-highlight")
+                $(".container-border").animate({opacity: 0}, 500);
 
-            setTimeout(function(){
-                document.location = "http://streams.robscanlon.com/github/arscan/8311277";
-            }, 500);
+                setTimeout(function(){
+                    document.location = "http://streams.robscanlon.com/github/arscan/8311277";
+                }, 500);
+            } else {
+                writeResponse("<span class='alert'>Error:</span> No such file");
+                writePrompt();
+            }
 
         } else if(command == "run wikipedia.exe"){
+            if(currentDir == "wikipedia"){
+                $(".ls-exec").addClass("ls-highlight")
+                $(".container-border").animate({opacity: 0}, 500);
 
-            setTimeout(function(){
-                document.location = "http://streams.robscanlon.com/wikipedia/arscan/8311277";
-            }, 500);
+                setTimeout(function(){
+                    document.location = "http://streams.robscanlon.com/wikipedia/arscan/8311277";
+                }, 500);
 
+            } else {
+                writeResponse("<span class='alert'>Error:</span> No such file");
+                writePrompt();
+            }
+
+        } else if(command == "cd github"){
+            $(".ls-github").addClass("ls-highlight")
+            currentDir = "github";
+            $(".folder-label").removeClass("selected");
+            $("#launch-github .folder-label").addClass("selected");
+            writeResponse("Changed directory to <span class='highlight'>github</span>");
+            writePrompt();
+
+        } else if(command == "cd wikipedia"){
+            $(".ls-wikipedia").addClass("ls-highlight")
+            $(".folder-label").removeClass("selected");
+            $("#launch-wikipedia .folder-label").addClass("selected");
+            currentDir = "wikipedia";
+            writeResponse("Changed directory to <span class='highlight'>wikipedia</span>");
+            writePrompt();
+        } else if(command.indexOf("cd encom") == 0 || command == "cd /"){
+            currentDir = "encom_root";
+            writeResponse("Changed directory to <span class='highlight'>encom_root</span>");
+            writePrompt();
+        } else if(command.indexOf("cd ") == 0){
+            writeResponse("<span class='alert'>Access denied</span>");
+            writePrompt();
+        } else if(command.indexOf("ls") == 0 && currentDir == "encom_root"){
+            writeLs();
+            writePrompt();
+
+        } else if(command.indexOf("ls") == 0){
+            writeLs(currentDir + ".exe");
+            writePrompt();
+
+        } else if(command.indexOf("run") == 0){
+            writeResponse("<span class='alert'>Access denied</span>");
+            writePrompt();
         } else {
-            $(".command-text").last().text("");
+            writeResponse("command not found");
+            writePrompt();
         }
+        var cl = $("#command-lines");
+        $("#command-line").scrollTop(cl.height())
 
     }
 
@@ -339,24 +434,11 @@ $(function(){
 
     var runKeySimulator = function(){
         var key = keyBuffer.shift();
-        console.log("hi");
 
-        toggleKey($("#k-" + key));
-        var realKey = key;
-        if(realKey == "space"){
-            realKey = " ";
-        } else if (realKey == "period"){
-            realKey = ".";
-        } else if (realKey == "enter"){
-            realKey = "";
-            executeCommand();
-        }
-
-        $(".command-text").last().append(realKey);
-       
+        keyClick(key);
 
         if(keyBuffer.length > 0){
-            setTimeout(runKeySimulator,100 + Math.random() * 100);
+            setTimeout(runKeySimulator,10 + Math.random() * 150);
         } else {
             keysRunning = false;
         }
@@ -374,18 +456,24 @@ $(function(){
     var simulateCommand = function(command){
         var cs = command.split("");
         for(var i = 0; i < cs.length; i++){
-            var key = cs[i];
-            if(key == " "){
-                key = "space";
-
-            } else if (key == "."){
-                key = "period";
-
-            } else if (key == "\\"){
-                key = "enter";
-            }
-            simulateKey(key);
+            simulateKey(charToKeyCode(cs[i]));
         }
+
+    };
+
+    var charToKeyCode = function(char){
+        var cc = char.charCodeAt(0);
+        if(cc <= 122 && cc >=97){
+            return cc - 32;
+        } else if (char === "."){
+            return 190;
+        } else if (char === " "){
+            return 32;
+        } else if (char === "$"){
+            return 13;
+        }
+
+        return 0;
 
     };
 
@@ -407,82 +495,111 @@ $(function(){
                 "color": "#00eeee"
             });
         }, 300);
+    };
+
+    var writeKeyStroke = function(keycode){
+        var txt = $(".command-text").last();
+        switch(keycode){
+            case 8: 
+               txt.text(txt.text().substring(0,txt.text().length-1));
+               break;
+            case 27: 
+               txt.text("");
+               break;
+            case 13:
+               executeCommand();
+               break;
+            case 189:
+                txt.append("_");
+                break;
+            case 187:
+                txt.append("=");
+                break;
+            case 219:
+                txt.append("{");
+                break;
+            case 221:
+                txt.append("}");
+                break;
+            case 186:
+                txt.append(";");
+                break;
+            case 222:
+                txt.append("'");
+                break;
+            case 188:
+                txt.append(",");
+                break;
+            case 190:
+                txt.append(".");
+                break;
+            case 191:
+                txt.append("/");
+                break;
+            case 192:
+                txt.append("~");
+                break;
+            case 500:
+                txt.append("");
+                break;
+            default:
+                var key = String.fromCharCode(keycode).toLowerCase();
+                txt.append(key)
+        };
+
+    };
+
+    var keyClick = function(keycode){
+
+        // light up the keyboard
+        
+        toggleKey($("#k-" + keycode));
+
+        if(keycode === 16){
+            toggleKey($("#k-0"));
+        }
+
+        // write it to the screen
+        writeKeyStroke(keycode);
 
     };
 
     $(document).keydown(function(event){
+
+        console.log(event.which);
         var keycode = event.which;
         event.preventDefault();
-        var txt = $(".command-text").last();
-        switch(true){
-            case (keycode > 64 && keycode < 91):
-                var key = String.fromCharCode(keycode).toLowerCase();
-                toggleKey($("#k-" + key));
-                txt.append(key)
-                break;
-            case (keycode > 47 && keycode < 58):
-                toggleKey($("#k-" + (keycode - 48)));
-                txt.append(keycode-48)
-                break;
-            case (keycode === 27):
-                toggleKey($("#k-esc"));
-                txt.text("");
-                break;
-            case (keycode === 189):
-               toggleKey($("#k--")); 
-               txt.append("-");
-               break;
-            case (keycode === 8):
-               toggleKey($("#k-back")); 
-               txt.text(txt.text().substring(0, txt.text().length-1));
-               
-               break;
-            case (keycode === 9):
-               toggleKey($("#k-tab")); 
-               break;
-            case (keycode === 16):
-               toggleKey($("#k-shift")); 
-               toggleKey($("#k-shift2")); 
-               break;
-            case (keycode === 221 || keycode === 219):
-               toggleKey($("#k-paren")); 
-               break;
-            case (keycode === 13):
-               toggleKey($("#k-enter")); 
-               executeCommand();
-               break;
-            case (keycode === 32):
-               toggleKey($("#k-space")); 
-               txt.append(" ");
-               break;
-            case (keycode === 186):
-               toggleKey($("#k-semi")); 
-               txt.append(";");
-               break;
-            case (keycode === 188):
-               toggleKey($("#k-comma")); 
-               txt.append(",");
-               break;
-            case (keycode === 190):
-               toggleKey($("#k-period")); 
-               txt.append(".");
-               break;
-            case (keycode === 191):
-               toggleKey($("#k-slash")); 
-               txt.append("/");
-               break;
-        }
+        keyClick(keycode);
 
     });
 
     $("#launch-github").click(function(){
         $(this).find(".folder-big").css("background-color", "#fff");
-        simulateCommand("run github.exe\\");
+        simulateCommand("cd github$");
+        simulateCommand("ls$");
+        simulateCommand("run github.exe$");
     });
 
     $("#launch-wikipedia").click(function(){
         $(this).find(".folder-big").css("background-color", "#fff");
-        simulateCommand("run wikipedia.exe\\");
+        simulateCommand("cd wikipedia$");
+        simulateCommand("ls$");
+        simulateCommand("run wikipedia.exe$");
+    });
+
+    $("#launch-test").click(function(){
+        $(this).find(".folder-big").css("background-color", "#fff");
+        simulateCommand("cd test$");
+    });
+
+    $("#launch-bitcoin").click(function(){
+        $(this).find(".folder-big").css("background-color", "#fff");
+        simulateCommand("cd bitcoin$");
+    });
+
+    $("#launch-unknown").click(function(){
+        $(this).find(".folder-big").css("background-color", "#fff");
+        simulateCommand("cd unknown$");
     });
 
     setTimeout(webglTick, 2000);
@@ -494,14 +611,14 @@ $(function(){
     animateContainers();
     animateKeyboard();
 
-    setTimeout(function(){
-        $("<img src='github-screensaver.gif' />");
-
-
-    }, 4000);
-
     $("#keyboard div").mousedown(function(event){
         event.preventDefault();
-        toggleKey($(this));
+        keyClick(parseInt($(this).attr("id").split("-")[1]));
     });
+
+    /* preload this */
+    setTimeout(function(){
+        $("<img src='github-screensaver.gif' />");
+    }, 4000);
+
 });

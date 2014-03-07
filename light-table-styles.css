@@ -240,16 +240,16 @@ ul {
 }
 
 #command-line {
-    width: 300px;
+    width: 318px;
     float: left;
-    height: 100px;
-    margin-top: 10px;
+    height: 129px;
+    margin-top: 5px;
     padding: 5px;
+    overflow: hidden;
 }
 
 #command-lines {
     white-space: nowrap;
-
 }
 
 #command-line-header {
@@ -259,12 +259,45 @@ ul {
 }
 
 .command {
+    clear: both;
     padding-top: 5px;
     font-size: 8pt;
 }
 
+.command-text {
+    color: #aaa;
+
+}
+.response {
+    padding-top: 3px;
+    padding-left: 25px;
+    font-size: 7pt;
+}
+
+.response .alert{
+    font-color: #aa0000;
+}
+
+.response .highlight{
+    color: #ffcc00;
+}
+
+.ls {
+    float: left;
+    width: 40px;
+    padding: 2px;
+    margin-right: 25px;
+    margin-top: 5px;
+
+}
+
+.ls-highlight {
+    background-color: #fff;
+    color: #000;
+}
+
 .folder-container {
-    margin: 30px 18px 0px;
+    margin: 8px 18px 0;
     float: left;
     cursor: pointer;
 }
@@ -284,6 +317,15 @@ ul {
 .folder-container:hover .folder-label{
     background-color: #feb400;
     color: #000;
+}
+
+.folder-label.selected{
+    background-color: #feb400;
+    color: #000;
+}
+
+#launch-github {
+    margin-top: 30px;
 }
 
 .selected-folder {
@@ -330,27 +372,22 @@ ul {
     cursor: pointer;
 }
 
-#keyboard #k-tab{
-    clear: both;
-    margin-left:20px;
-}
-
-#keyboard #k-tab{
+#keyboard #k-9{
     clear: both;
     margin-left:10px;
 }
 
-#keyboard #k-caps{
+#keyboard #k-500{
     clear: both;
     margin-left:20px;
 }
 
-#keyboard #k-shift{
+#keyboard #k-16{
     clear: both;
     margin-left:5px;
 }
 
-#keyboard #k-space {
+#keyboard #k-32 {
     clear: both;
     width: 300px;
     height: 5px;

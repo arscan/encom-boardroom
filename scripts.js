@@ -277,9 +277,9 @@ function start(){
     
     setTimeout(function(){
         for(var i = 0; i< 2; i++){
-            for(var j = 0; j< 4; j++){
+            for(var j = 0; j< 3; j++){
                 
-                globe.addSatellite(50 * i - 30 + 15 * Math.random(), 90 * j - 120 + 30 * i, 1.3 + Math.random()/10);
+                globe.addSatellite(50 * i - 30 + 15 * Math.random(), 120 * j - 120 + 30 * i, 1.3 + Math.random()/10);
             }
         }
     }, 5000);

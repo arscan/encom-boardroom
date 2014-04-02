@@ -200,7 +200,7 @@ function start(){
                data.location = datain.location.name;
                if(datain.location.lat && datain.location.lng){
                    data.latlng = {"lat": datain.location.lat, "lng": datain.location.lng};
-                    globe.addMarker(datain.location.lat, datain.location.lng, datain.location.name);
+                    globe.addPin(datain.location.lat, datain.location.lng, datain.location.name);
                }
             }
             
@@ -289,7 +289,8 @@ function start(){
     }, 7000);
 
     setTimeout(function(){
-        globe.addConnectedPoints(49.25, -123.1, "Vancouver", 35.68, 129.69, "Tokyo");
+        globe.addMarker(49.25, -123.1, "Vancouver");
+        globe.addMarker(35.68, 129.69, "Tokyo", true);
     }, 2000);
 
     setInterval(function(){
@@ -332,7 +333,12 @@ $(function() {
               families: ['Inconsolata']
         },
         active: function(){
-            globe = new ENCOM.globe({containerId: "globe"});
+            globe = new ENCOM.Globe(600, 600, {
+                scale: 1.05
+                                   
+            });
+            $("#globe").append(globe.domElement);
+
 
             simpleclock = new ENCOM.SimpleClock("simpleclock");
 

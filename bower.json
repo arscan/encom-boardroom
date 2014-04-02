@@ -1,0 +1,29 @@
+{
+  "name": "encom-boardroom",
+  "version": "0.1.0",
+  "homepage": "https://github.com/arscan/encom-boardroom",
+  "authors": [
+    "Rob Scanlon <robscanlon@gmail.com>"
+  ],
+  "description": "Encom boardroom for Tron: Legacy",
+  "main": "index.html",
+  "keywords": [
+    "Encom",
+    "Tron:",
+    "Legacy",
+    "WebGL"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.0",
+    "encom-globe": "~0.6.2"
+  }
+}

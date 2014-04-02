@@ -334,7 +334,7 @@ ul {
 }
 
 .folder-big {
-    background-image: url(encom_folder_big.png);
+    background-image: url(../images/encom_folder_big.png);
     padding: 0px;
     margin: 0px;
     width:95px;
@@ -342,7 +342,7 @@ ul {
 }
 
 .folder-small {
-    background-image: url(encom_folder_small.png);
+    background-image: url(../images/encom_folder_small.png);
     padding: 0px;
     margin: 0px;
     width:80px;

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+
+        <title>GITHUB Boardroom</title>
+        <link href="css/boardroom-styles.css" rel="stylesheet" type="text/css" />
+
+        <script src="scripts/three.min.js"></script>
+        <!-- <script src="http://threejs.org/build/three.min.js"></script> -->
+        <script src="scripts/tween.min.js"></script>
+
+        <script src="scripts/moment.min.js"></script>
+        <script src="scripts/moment-timezone.min.js"></script>
+        <script src="scripts/moment-timezone-locations.js"></script>
+        <script src="scripts/stats.js"></script>
+        <script src="scripts/pusher.color.js"></script>
+        <script src="include/vec2.js"></script>
+        <script src="include/quadtree2.js"></script>
+        <script src="scripts/encom-boardroom.js"></script>
+        <script src="include/encom-globe.js"></script>
+        <script src="scripts/streamserver.v0.js"></script>
+        <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+        <script src="scripts/boardroom.js"></script>
+
+    </head>
+    <body>
+
+        <div id="container">
+
+            <div id="globalization">
+                <div class="header" id="globalization-header">GLOBALIZATION</div>
+                <canvas id="satbar" width="180px" height="36px"></canvas>
+                <div class="location-slider" id="location-slider-northamerica"">
+                    <span class="location-area" id="location-area-northamerica">No America</span>
+                    <span class="location-city" id="location-city-northamerica"></span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-southamerica" >
+                    <span class="location-area" id="location-area-southamerica">So America</span>
+                    <span class="location-city" id="location-city-southamerica"></span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-europe">
+                    <span class="location-area other" id="location-area-europe">Europe</span>
+                    <span class="location-city" id="location-city-europe"></span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-asia">
+                    <span class="location-area other" id="location-area-asia">Asia</span>
+                    <span class="location-city" id="location-city-asia"></span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-australia">
+                    <span class="location-area" id="location-area-australia">Australia</span>
+                    <span class="location-city" id="location-city-australia"></span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-africa">
+                    <span class="location-area other" id="location-area-africa">Africa</span>
+                    <span class="location-city" id="location-city-africa"></span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-antarctica">
+                    <span class="location-area other" id="location-area-antarctica">Antarctica</span>
+                    <span class="location-city" id="location-city-antarctica"></span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider location-gap" id="location-slider-other">
+                    <span class="location-area" id="location-area-other">Other</span>
+                    <span class="location-city" id="location-city-other"></span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-unknown">
+                    <span class="location-area" id="location-area-unknown">Location</span>
+                    <span class="location-city" id="location-city-unknown">Not Specified</span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div id="logo">
+                    <div id="logo-cover-up"></div>
+                    <div id="logo-cover-side-1"></div>
+                    <div id="logo-cover-side-2"></div>
+                </div>
+            </div>
+
+            <div id="globe"></div>
+            <div id="globe-footer">
+                <div id="footer-reveal"></div>
+                <div id="ms-stats"></div>
+                <div id="fps-stats"></div>
+            </div>
+
+            <div id="user-interaction">
+                <div class="header header-other" id="user-interaction-header">
+                    USER INTERACTION SCIENCE
+                </div>
+                <div id="user-interaction-container">
+                    <div id="interaction"> 
+                        <h3>Some fancy Interaction</h3>
+                        <div>
+
+                        </div>
+                    </div>
+                    <div id="interaction-overlay"></div>
+                    <div id="cube" width ="290" height="225"> 
+                        <div id="cube-labels">
+                            <div id="cube-label-1">Yeah</div>
+                            <div id="cube-label-2">Why</div>
+                            <div id="cube-label-3">Not</div>
+                        </div>
+                    </div>
+                    <div id="swirls"> 
+                    </div>
+                </div>
+            </div>
+            <div id="growth">
+                <div class="header header-other" id="growth-header">
+                    GROWTH PROJECTION
+                </div>
+                <div id="growth-container">
+                    <div id = "ticker">
+                        <div id="ticker-text">GITHUB</div>
+                        <div id="ticker-subtext">[INC]</div>
+                        <div id="ticker-lines">
+                            <div class="ticker-line" id="ticker-line-1">.</div>
+                            <div class="ticker-line" id="ticker-line-2">.</div>
+                        </div>
+                        <div id="ticker-value">
+                            +32.5%
+                        </div>
+                        <div id="ticker-ytd">
+                            YEAR-TO-DATE
+                        </div>
+                        <canvas id="stock-chart-small" width="72px" height="40px"></canvas>
+                    </div>
+                    <div id="stock-chart" width="500px" height="105px"></div>
+                    <div id = "stock-subcharts">
+                        <div class="stock-subchart">
+                            <div class="stock-subchart-label">
+                                OPEN
+                            </div>
+                            <div class="stock-subchart-chart">
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-10"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                            </div>
+
+                        </div>
+                        <div class="stock-subchart">
+                            <div class="stock-subchart-label">
+                                HIGH
+                            </div>
+                            <div class="stock-subchart-chart">
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-10"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                            </div>
+
+                        </div>
+                        <div class="stock-subchart">
+                            <div class="stock-subchart-label">
+                                LOW
+                            </div>
+                            <div class="stock-subchart-chart">
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-10"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                            </div>
+
+                        </div>
+                        <div class="stock-subchart">
+                            <div class="stock-subchart-label">
+                                CLOSE
+                            </div>
+                            <div class="stock-subchart-chart">
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-10"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                            </div>
+
+                        </div>
+                        <div class="stock-subchart">
+                            <div class="stock-subchart-label">
+                                VOLUME
+                            </div>
+                            <div class="stock-subchart-chart">
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-10"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="media">
+                <div class="header" id="media-header">
+                    USER SNAPSHOTS
+                </div>
+                <div id="media-container">
+                    <div id="media-top" class="media-box">
+                        <div class="media-scanlines"></div>
+                        <div class="user-pic larger"><span></span></div>
+                        <div class="user-pic"><span></span></div>
+                        <div class="user-pic"><span></span></div>
+                        <div class="user-pic"><span></span></div>
+                        <div class="user-pic"><span></span></div>
+                    </div>
+                    <div id="media-top-blinkies" class="media-blinkies">
+                        <h3>Some kind of title</h3>
+                        <div class="last bar border-20 border-yellow">hi</div>
+                        <div class="bar border-40 border-blue">hi</div>
+                        <div class="bar border-20 border-white">hi</div>
+                        <div class="bar border-25 border-yellow">hi</div>
+                        <div class="last bar border-35 border-blue">hi</div>
+                        <div class="blinkies-big-label">month</div>
+                        <div class="blinkies-small-label">num</div>
+                        <div class="blinkies-big-number">3</div>
+                        <div class="blinkies-small-number">1 4</div>
+                        <h3>yay blinkies!</h3>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blank"></div>
+
+                    </div>
+                    <div id="media-top-info" class="media-info">
+                        <span>i could put something useful here</span>
+                        <span>but i can't think</span>
+                        <span>of what</span>
+                        <span>I could possibly</span>
+                        <span>say</span>
+                    </div>
+                    <div id="media-bottom" class="media-box">
+                        <div class="media-scanlines"></div>
+                        <div class="user-pic larger"><span></span></div>
+                        <div class="user-pic"><span></span></div>
+                        <div class="user-pic"><span></span></div>
+                        <div class="user-pic"><span></span></div>
+                        <div class="user-pic"><span></span></div>
+                    </div>
+                    <div id="media-bottom-blinkies" class="media-blinkies">
+                        <h3>Some kind of title</h3>
+                        <div class="bar border-20 border-white">hi</div>
+                        <div class="bar border-40 border-yellow">hi</div>
+                        <div class="bar border-20 border-white">hi</div>
+                        <div class="last bar border-25 border-blue">hi</div>
+                        <div class="last bar border-35 border-blue">hi</div>
+                        <div class="blinkies-big-label">month</div>
+                        <div class="blinkies-small-label">num</div>
+                        <div class="blinkies-big-number">2</div>
+                        <div class="blinkies-small-number">1 4</div>
+                        <h3>yay blinkies!</h3>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky white"></div>
+                    </div>
+                    <div id="media-bottom-info" class="media-info">
+                        <span>all this bottom info</span>
+                        <span>something else interesting</span>
+                        <span>why?</span>
+                        <span>rob scanlon made this</span>
+                    </div>
+                </div>
+            </div>
+            <div id="timer">
+                <div class="header header-other2" id="timer-header">
+                    TIME SINCE START
+                </div>
+                <div id="clockbar">
+                    <div id="clock">
+                        00:00:00:00
+                    </div>
+                    <canvas id="simpleclock" width="80px" height="80px"></canvas>
+                </div>
+                <div id="timerbar">
+                    <div class="section-timerbar">
+                        <div class="buffer-timerbar">
+                            <small>San Francisco</small>
+                            <span id="san-francisco-time">12:32:91</span>
+                        </div>
+                    </div>
+                    <div class="section-timerbar">
+                        <div class="buffer-timerbar">
+                            <small>New York</small>
+                            <span id="new-york-time">12:32:91</span>
+                        </div>
+                    </div>
+                    <div class="section-timerbar">
+                        <div class="buffer-timerbar">
+                            <small>London</small>
+                            <span id="london-time">12:32:91</span>
+                        </div>
+                    </div>
+                    <div class="section-timerbar">
+                        <div class="buffer-timerbar">
+                            <small>Berlin</small>
+                            <span id="berlin-time">12:32:91</span>
+                        </div>
+                    </div>
+                    <div class="section-timerbar">
+                        <div class="buffer-timerbar">
+                            <small>Bangalore</small>
+                            <span id="bangalore-time">12:32:91</span>
+                        </div>
+                    </div>
+                    <div class="section-timerbar">
+                        <div class="buffer-timerbar">
+                            <small>Sydney</small>
+                            <span id="sydney-time">12:32:91</span>
+                        </div>
+                    </div>
+                </div>
+                <canvas id="timer-trees" width="490px" height="30px"></canvas>
+            </div>
+            <div id="bottom-border"></div>
+
+            <div id="screensaver">
+                <div id="screensaver-info">
+                    <img src="images/github-screensaver.gif">
+                    <span>Loading resources...</span>
+                </div>
+            </div>
+        </div>
+
+    <body>
+</html>
+

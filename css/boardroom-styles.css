@@ -556,7 +556,7 @@ div {
     position:absolute;
     width: 380px;
     height: 190px;
-    background: transparent url(scanlines.png) repeat;
+    background: transparent url(../images/scanlines.png) repeat;
     z-index: 5;
     opacity: .4;
 }

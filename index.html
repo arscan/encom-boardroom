@@ -7,8 +7,26 @@
         <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
         <link href="css/light-table-styles.css" rel="stylesheet" type="text/css" />
         <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
-        <script src="scripts/three.min.js"></script>
-        <script src="scripts/light-table.js"></script>
+        <script src="js/three.min.js"></script>
+        <script src="js/light-table.js"></script>
+        <script src="js/eventsource.js"></script>
+
+        <script>
+            var es = new EventSource("http://localhost:8081/events.js");
+            var listener = function (event) {
+                var div = document.createElement("div");
+                var type = event.type;
+                if(type === "message"){
+                    console.log(event.data);
+                } else {
+                    console.log(event.data);
+                }
+            };
+            es.addEventListener("open", listener);
+            es.addEventListener("message", listener);
+            es.addEventListener("error", listener);
+
+            </script>
     </head>
     <body>
         <div id="light-table">
@@ -38,8 +56,9 @@
                             </p>
 
                             <p>
-                            The boardroom visualization requires the use of <a href="http://get.webgl.org/" target="_blank">WebGL</a>.  The test below indicates the availability of WebGL 
-                            on this system.
+                            The boardroom visualization requires the use of <a href="http://get.webgl.org/" target="_blank">WebGL</a> 
+                            and <a href="http://www.w3.org/TR/eventsource/" target="_blank">Event Source</a>.  The test below indicates the availability of these features 
+                            on your system.
                             </p>
 
                             <p>

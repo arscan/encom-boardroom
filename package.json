@@ -1,11 +1,13 @@
 {
   "name": "webgl-encom-globe",
   "version": "0.0.0",
-  "description": "webgl-encom-globe =================",
-  "main": "encomsphere.js",
+  "description": "webgl-encom-globe",
+  "main": "app.js",
   "dependencies": {
     "grunt": "~0.4.2",
-    "quadtree2": "~0.5.3"
+    "encom-globe": "~0.3.1",
+    "github-timeline-stream": "~0.1.0",
+    "wikipedia-stream": "~0.1.0"
   },
   "devDependencies": {
     "grunt": "~0.4.2",
@@ -17,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com//arscan/webgl-encom-globe.git"
+    "url": "git://github.com/arscan/webgl-encom-globe.git"
   },
   "author": "rscanlon@mit.edu",
   "license": "MIT"

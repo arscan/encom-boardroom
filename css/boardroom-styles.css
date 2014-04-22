@@ -58,6 +58,7 @@ div {
     visibility: inherit;
 }
 
+/*
 #container {
     width: 1900px;
     height: 700px;
@@ -67,10 +68,21 @@ div {
     right: 0;
     bottom: 0;
     position:absolute;
-    /*border: 1px solid #00EEEE;*/
-    /*border-bottom: 1px solid #333;*/
 
 }
+*/
+#boardroom {
+    width: 1900px;
+    height: 700px;
+    margin: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position:absolute;
+
+}
+
 
 #bottom-border {
     position:absolute;

@@ -1,12 +1,13 @@
-$(function(){
+var LightTable = (function($, THREE){
+    console.log("GOINNNNG");
 
-    $(".header").css("visibility", "hidden");
-    $(".content-container").css("visibility", "hidden");
+    var webglTest;
 
-    var animateContainers = function(){
+    /* private functions */
+
+    var showContainer = function(){
         var outside = $("#lt-container-outside");
         var inside = $("#lt-container-inside");
-
 
         outside.css({
             'position' : 'absolute',
@@ -23,6 +24,7 @@ $(function(){
             'margin-left' : -inside.width()/2,
             'margin-top' : -inside.height()/2
         });
+
         var outsideOffset = outside.offset();
         var insideOffset = inside.offset();
 
@@ -129,7 +131,12 @@ $(function(){
 
     };
 
-    var animateHeaders = function() {
+    var hideContainer = function(){
+        $(".header").css("visibility", "hidden");
+        $(".content-container").css("visibility", "hidden");
+    };
+
+    var showHeaders = function() {
 
         setTimeout(function doHeaderAnimations(){
 
@@ -157,7 +164,7 @@ $(function(){
 
     };
 
-    var animateContentBoxes = function(item, extraDelay) {
+    var showContentBoxes = function(item, extraDelay) {
 
         var itemContent = item.find(".content");
 
@@ -206,7 +213,14 @@ $(function(){
 
     };
 
-    var animateKeyboard = function(){
+    var hideContentBoxes = function(){
+        var itemContent = item.find(".content");
+        itemContent.children().each(function(index, element){
+            $(element).css("visibility", "hidden");
+        });
+    };
+
+    var showKeyboard = function(){
 
         var keyboard = $("#lt-keyboard");
         var spaceBar = $("#k-space");
@@ -223,9 +237,17 @@ $(function(){
             width: spaceBarWidth
         },1000);
 
+    };
+
+    var hideKeyboard = function(){
+        var keyboard = $("#lt-keyboard");
+        keyboard.animate({
+            opacity: 0
+        }, 2000);
+
     }
 
-    var webglTick = (function(){
+    var createWebGlTest = function(){
         var canvas = document.getElementById('lt-webglCanvas');
         var renderer = new THREE.WebGLRenderer( { antialias : true, canvas: canvas } );
         var cameraDistance = 100;
@@ -280,38 +302,41 @@ $(function(){
         var firstRun = null;
         var introAnimationDone = false;
 
-        return function tick(){
+        return {
+            tick: function (){
+                if(firstRun === null){
+                    firstRun = Date.now();
+                }
+                // renderer.render( this.scene, this.camera );
+                var renderTime = new Date() - lastRenderDate;
+                var timeSinceStart = Date.now() - firstRun;
+                lastRenderDate = new Date();
 
-            if(firstRun === null){
-                firstRun = Date.now();
+                var rotateCameraBy = (2 * Math.PI)/(10000/renderTime);
+                cameraAngle += rotateCameraBy;
+
+                if(timeSinceStart < 3000){
+                    backdropMaterial.opacity = Math.max(0,(timeSinceStart-2000)/3000);
+                    splineMaterial.opacity = timeSinceStart/3000;
+                } else if(!introAnimationDone){
+                    introAnimationDone = true;
+                    backdropMaterial.opacity = .333;
+                    splineMaterial.opacity = 1;
+                }
+
+
+                camera.position.x = Math.sin(cameraAngle) * 20;
+                renderer.render(scene, camera );
+
+                splineLine.rotation.x += .01;
             }
-            // renderer.render( this.scene, this.camera );
-            var renderTime = new Date() - lastRenderDate;
-            var timeSinceStart = Date.now() - firstRun;
-            lastRenderDate = new Date();
-
-            var rotateCameraBy = (2 * Math.PI)/(10000/renderTime);
-            cameraAngle += rotateCameraBy;
-
-            if(timeSinceStart < 3000){
-                backdropMaterial.opacity = Math.max(0,(timeSinceStart-2000)/3000);
-                splineMaterial.opacity = timeSinceStart/3000;
-            } else if(!introAnimationDone){
-                introAnimationDone = true;
-                backdropMaterial.opacity = .333;
-                splineMaterial.opacity = 1;
-            }
-
-            
-            camera.position.x = Math.sin(cameraAngle) * 20;
-            renderer.render(scene, camera );
-
-            splineLine.rotation.x += .01;
-
-            requestAnimationFrame(tick);
         };
 
-    })();
+    };
+
+    var hideWebgl = function(){
+        $('#lt-bandwidth').css("opacity", 0);
+    };
 
     var writeResponse = function(txt){
             $("#lt-command-lines").append("<div class='response'>&gt;&gt;encom-sh: " + txt + "</div>");
@@ -564,14 +589,8 @@ $(function(){
 
     };
 
-    $(document).keydown(function(event){
 
-        console.log(event.which);
-        var keycode = event.which;
-        event.preventDefault();
-        keyClick(keycode);
-
-    });
+    /* set events */
 
     $("#lt-launch-github").click(function(){
         $(this).find(".folder-big").css("background-color", "#fff");
@@ -602,23 +621,68 @@ $(function(){
         simulateCommand("cd unknown$");
     });
 
-    setTimeout(webglTick, 2000);
-
-    setTimeout(animateHeaders, 500);
-    animateContentBoxes($("#lt-readme"), 0);
-    animateContentBoxes($("#lt-bandwidth"), 100);
-    animateContentBoxes($("#lt-globalization"), 200);
-    animateContainers();
-    animateKeyboard();
-
     $("#lt-keyboard div").mousedown(function(event){
         event.preventDefault();
         keyClick(parseInt($(this).attr("id").split("-")[1]));
     });
 
-    /* preload this */
-    setTimeout(function(){
-        $("<img src='github-screensaver.gif' />");
-    }, 4000);
+    /* public function */
 
-});
+    var init = function(cb){
+        $(".header").css("visibility", "hidden");
+        $(".content-container").css("visibility", "hidden");
+
+        $("#lt-keyboard").css("opacity", 0);
+
+        webglTest = createWebGlTest();
+
+        if(typeof cb == "function"){
+            cb();
+        }
+    };
+
+    var show = function(cb){
+
+        // do the intro animations
+        showContainer();
+        setTimeout(showHeaders, 500);
+        showContentBoxes($("#lt-readme"), 0);
+        showContentBoxes($("#lt-bandwidth"), 100);
+        showContentBoxes($("#lt-globalization"), 200);
+        showKeyboard();
+
+        if(typeof cb == "function"){
+            setTimeout(cb, 500);
+        }
+    };
+
+    var hide = function(cb) {
+        // reset everything
+
+        hideKeyboard();
+        hideContainer();
+        hideWebgl();
+
+        if(typeof cb == "function"){
+            cb();
+        }
+    };
+
+    var animate = function(){
+        webglTest.tick();
+    };
+
+
+    return {
+        init: init,
+        show: show,
+        hide: hide,
+        animate: animate
+    };
+
+
+})(jQuery, THREE);
+
+console.log("????????");
+console.log(".........");
+console.log(LightTable);

@@ -32,7 +32,7 @@ ul {
     border-radius: 5px;
     box-shadow: 0 0 2px #005b8e, inset 0 0 2px #005b8e;
 }
-#container-outside{
+#lt-container-outside{
     position:absolute;
     width: 1140px;
     height: 610px;
@@ -40,7 +40,7 @@ ul {
 
 }
 
-#container-inside {
+#lt-container-inside {
     position:absolute;
     left: 40px;
     top:20px;
@@ -49,13 +49,13 @@ ul {
     z-index: 20;
 }
 
-#left-column{
+#lt-left-column{
     position: absolute;
     left: 52px;
     width: 380px;
 }
 
-#right-column{
+#lt-right-column{
     position: absolute;
     left: 500px;
     width: 480px;
@@ -97,29 +97,29 @@ ul {
     color: #ffcc00;
 }
 
-#header-top-left {
+#lt-header-top-left {
     position: absolute;
     top: 25px;
 }
 
-#header-top-right {
+#lt-header-top-right {
     position: absolute;
     top: 25px;
 }
 
-#header-bottom-left {
+#lt-header-bottom-left {
     position: absolute;
     top: 550px;
 }
 
-#header-bottom-left .header-left-section{
+#lt-header-bottom-left .header-left-section{
     width: 45%
 }
-#header-bottom-left .header-right-section{
+#lt-header-bottom-left .header-right-section{
     width: 45%
 }
 
-#bottom-boxes-1 {
+#lt-bottom-boxes-1 {
     margin-top: 1px;
     float: right;
     border: 1px solid #6fc0ba;
@@ -128,7 +128,7 @@ ul {
     width: 35px;
 }
 
-#bottom-boxes-2 {
+#lt-bottom-boxes-2 {
     margin-top: 1px;
     margin-right: 20px;
     float: right;
@@ -138,7 +138,7 @@ ul {
     width: 25px;
 }
 
-#bottom-boxes-3 {
+#lt-bottom-boxes-3 {
     margin-top: 1px;
     margin-right: 4px;
     float: right;
@@ -149,7 +149,7 @@ ul {
 }
 
 
-#header-bottom-right {
+#lt-header-bottom-right {
     position: absolute;
     top: 550px;
 }
@@ -212,34 +212,34 @@ ul {
 
 }
 
-#readme {
+#lt-readme {
     position: absolute;
     top: 60px;
     overflow: hidden;
 }
 
-#readme .content {
+#lt-readme .content {
     height: 300px;
     overflow: hidden;
 }
 
-#bandwidth {
+#lt-bandwidth {
     position: absolute;
     top: 390px;
 }
 
-#globalization {
+#lt-globalization {
     position: absolute;
     top: 60px;
     width: 470px;
 }
 
-#globalization .content {
+#lt-globalization .content {
     height: 260px;
     overflow: hidden;
 }
 
-#command-line {
+#lt-command-line {
     width: 318px;
     float: left;
     height: 129px;
@@ -248,11 +248,11 @@ ul {
     overflow: hidden;
 }
 
-#command-lines {
+#lt-command-lines {
     white-space: nowrap;
 }
 
-#command-line-header {
+#lt-command-line-header {
     border-bottom: 1px dashed #fff;
     padding-bottom: 3px;
 
@@ -324,7 +324,7 @@ ul {
     color: #000;
 }
 
-#launch-github {
+#lt-launch-github {
     margin-top: 30px;
 }
 
@@ -349,15 +349,14 @@ ul {
     height: 49px;
 }
 
-#keyboard {
+#lt-keyboard {
     margin-left: 8px;
     position: absolute;
     top: 355px;
     width: 470px;
-    opacity: 0;
 }
 
-#keyboard div{
+#lt-keyboard div{
     background-color: rgba(255,255,255,0);
     border-radius: 5px;
     float: left;
@@ -372,22 +371,22 @@ ul {
     cursor: pointer;
 }
 
-#keyboard #k-9{
+#lt-keyboard #k-9{
     clear: both;
     margin-left:10px;
 }
 
-#keyboard #k-500{
+#lt-keyboard #k-500{
     clear: both;
     margin-left:20px;
 }
 
-#keyboard #k-16{
+#lt-keyboard #k-16{
     clear: both;
     margin-left:5px;
 }
 
-#keyboard #k-32 {
+#lt-keyboard #k-32 {
     clear: both;
     width: 300px;
     height: 5px;
@@ -399,7 +398,7 @@ ul {
 
 }
 
-#far-right-column {
+#lt-far-right-column {
     position: absolute;
     left: 1000px;
     height: 600px;
@@ -407,7 +406,7 @@ ul {
 
 }
 
-#encom-logo {
+#lt-encom-logo {
     position: absolute;
     font-size: 10px;
     padding-left: 4px;
@@ -420,7 +419,7 @@ ul {
     border-radius: 4px;
 }
 
-#thumbprint {
+#lt-thumbprint {
     position: absolute;
     left: 15px;
     top: 500px;

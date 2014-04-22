@@ -6,9 +6,11 @@
         <title>Github Boardroom Light table</title>
         <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
         <link href="css/light-table-styles.css" rel="stylesheet" type="text/css" />
+        <link href="css/boardroom-styles.css" rel="stylesheet" type="text/css" />
         <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
         <script src="js/three.min.js"></script>
-        <script src="js/light-table.js"></script>
+        <!-- <script src="js/light&#45;table.js"></script> -->
+        <script src="js/lt.js"></script>
         <script src="js/eventsource.js"></script>
 
         <script>
@@ -26,20 +28,32 @@
             es.addEventListener("message", listener);
             es.addEventListener("error", listener);
 
+            $(function(){
+
+                console.log("-----");
+                console.log(LightTable);
+                LightTable.init();
+                LightTable.show();
+
+                setTimeout(LightTable.hide,10000);
+                setTimeout(LightTable.show,12000);
+
+                });
+
             </script>
     </head>
     <body>
         <div id="light-table">
-            <div id="container-outside" class="container-border">
+            <div id="lt-container-outside" class="container-border">
             </div>
-            <div id="container-inside" class="container-border"> 
-                <div id="left-column">
-                    <div class="header" id="header-top-left">
+            <div id="lt-container-inside" class="container-border"> 
+                <div id="lt-left-column">
+                    <div class="header" id="lt-header-top-left">
                         <div class="header-left-section">ENCOM TOUCH APP <span class="alt-1">OS</span><span class="alt-2">12</span></div>
                         <div class="header-right-section">OS | 012</div>
                     </div>
 
-                    <div id="readme" class="content-container">
+                    <div id="lt-readme" class="content-container">
                         <div class="content">
                             <h2>
                                 README <span class="alt-1">.TXT</span>
@@ -68,35 +82,34 @@
                         </div>
                     </div>
 
-                    <div id="bandwidth" class="content-container">
+                    <div id="lt-bandwidth" class="content-container">
                         <div class="content">
                             <h2>
                                 WEBGL <span class="alt-1">.TEST</span>
                                 <em>END. PROGRAM</em>
                             </h2>
-                            <canvas height="100px" width= "367px" id="webglCanvas"/>
+                            <canvas height="100px" width= "367px" id="lt-webglCanvas"/>
                         </div>
                     </div>
 
-                    <div class="header" id="header-bottom-left">
+                    <div class="header" id="lt-header-bottom-left">
                         <div class="header-left-section">DOCKING CHANNEL</div>
                         <div class="header-right-section">
-                            <div id="bottom-boxes-1"></div>
-                            <div id="bottom-boxes-2"></div>
-                            <div id="bottom-boxes-3"></div>
+                            <div id="lt-bottom-boxes-1"></div>
+                            <div id="lt-bottom-boxes-2"></div>
+                            <div id="lt-bottom-boxes-3"></div>
                         </div>
                     </div>
 
-                    <!-- probably should remove these and have them created in the script-->
                     <div class="header-animator-left header-animator-inside"></div>
                     <div class="header-animator-left header-animator-outside"></div>
                 </div>
-                <div id="right-column">
-                    <div class="header" id="header-top-right">
+                <div id="lt-right-column">
+                    <div class="header" id="lt-header-top-right">
                         <div class="header-left-section">CENTRAL SYSTEM DATA ... <span class="alt-1">LAUNCH ENCOM GLOBALIZATION</span></div>
                         <div class="header-right-section">OIA | 012</div>
                     </div>
-                    <div id="globalization" class="content-container">
+                    <div id="lt-globalization" class="content-container">
                         <div class="content">
                             <h2>
                                 BOARDROOM VISUALIZATION ... PLEASE SELECT DATA <span class="alt-1">.STREAM</span>
@@ -104,46 +117,46 @@
                             </h2>
 
 
-                            <div class="folder-container" id="launch-github">
+                            <div class="folder-container" id="lt-launch-github">
                                 <div class="folder-label">
                                     Github Stream 
                                 </div>
                                 <div class="folder-big"></div>
                             </div>
-                            <div id="command-line">
-                                <div id="command-line-header">
+                            <div id="lt-command-line">
+                                <div id="lt-command-line-header">
                                     Last Login: Wed Nov 26 11:26:49 on llvm992
                                 </div>
 
-                                <div id="command-lines">
+                                <div id="lt-command-lines">
                                     <div class="command"><span class="prompt">encom-sh:encom_root$&nbsp;</span><span class="command-text"></span></div>
                                 </div>
 
                             </div>
 
-                            <div class="folder-container" id="launch-test">
+                            <div class="folder-container" id="lt-launch-test">
                                 <div class="folder-label">
                                     Test Stream
                                 </div>
                                 <div class="folder-small"></div>
                             </div>
 
-                            <div class="folder-container" id="launch-wikipedia">
-                                <div id="folder-2" class="folder-label">
+                            <div class="folder-container" id="lt-launch-wikipedia">
+                                <div id="lt-folder-2" class="folder-label">
                                     Wikipedia
                                 </div>
                                 <div class="folder-small"></div>
                             </div>
 
-                            <div class="folder-container" id="launch-bitcoin">
+                            <div class="folder-container" id="lt-launch-bitcoin">
                                 <div class="folder-label">
                                     Bitcoin
                                 </div>
                                 <div class="folder-small"></div>
                             </div>
 
-                            <div class="folder-container" id="launch-unknown">
-                                <div id="folder-2" class="folder-label">
+                            <div class="folder-container" id="lt-launch-unknown">
+                                <div id="lt-folder-2" class="folder-label">
                                     Unknown
                                 </div>
                                 <div class="folder-small"></div>
@@ -152,7 +165,7 @@
                         </div>
                     </div>
 
-                    <div id="keyboard">
+                    <div id="lt-keyboard">
                         <div id="k-27">ESC</div>
                         <div id="k-49">1</div>
                         <div id="k-50">2</div>
@@ -209,25 +222,477 @@
                         <div id="k-32"></div>
                     </div>
 
-                    <div class="header" id="header-bottom-right">
+                    <div class="header" id="lt-header-bottom-right">
                         <div class="header-left-section">TOUCHPOINT KEYBOARD ... <span class="alt-1">INTERACTION SEQUENCING</span></div>
                         <div class="header-right-section">SYS | O12</div>
                     </div>
 
-                    <!-- probably should remove these and have them created in the script-->
                     <div class="header-animator-right header-animator-inside"></div>
                     <div class="header-animator-right header-animator-outside"></div>
                 </div>
 
-                <div id="far-right-column">
-                    <div id="encom-logo">E N C O M</div>
-                    <img id="thumbprint" src="images/thumbprint.png" />
+                <div id="lt-far-right-column">
+                    <div id="lt-encom-logo">E N C O M</div>
+                    <img id="lt-thumbprint" src="images/thumbprint.png" />
                 </div>
 
 
 
 
             </div>
+        </div>
+        <div id="boardroom">
+
+            <div id="globalization">
+                <div class="header" id="globalization-header">GLOBALIZATION</div>
+                <canvas id="satbar" width="180px" height="36px"></canvas>
+                <div class="location-slider" id="location-slider-northamerica"">
+                    <span class="location-area" id="location-area-northamerica">No America</span>
+                    <span class="location-city" id="location-city-northamerica"></span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-southamerica" >
+                    <span class="location-area" id="location-area-southamerica">So America</span>
+                    <span class="location-city" id="location-city-southamerica"></span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-europe">
+                    <span class="location-area other" id="location-area-europe">Europe</span>
+                    <span class="location-city" id="location-city-europe"></span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-asia">
+                    <span class="location-area other" id="location-area-asia">Asia</span>
+                    <span class="location-city" id="location-city-asia"></span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-australia">
+                    <span class="location-area" id="location-area-australia">Australia</span>
+                    <span class="location-city" id="location-city-australia"></span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-africa">
+                    <span class="location-area other" id="location-area-africa">Africa</span>
+                    <span class="location-city" id="location-city-africa"></span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-antarctica">
+                    <span class="location-area other" id="location-area-antarctica">Antarctica</span>
+                    <span class="location-city" id="location-city-antarctica"></span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider location-gap" id="location-slider-other">
+                    <span class="location-area" id="location-area-other">Other</span>
+                    <span class="location-city" id="location-city-other"></span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div class="location-slider" id="location-slider-unknown">
+                    <span class="location-area" id="location-area-unknown">Location</span>
+                    <span class="location-city" id="location-city-unknown">Not Specified</span>
+                    <div class="location-line"></div>
+                    <ul>
+                    </ul>
+                    <div class="clear"></div>
+                </div>
+                <div id="logo">
+                    <div id="logo-cover-up"></div>
+                    <div id="logo-cover-side-1"></div>
+                    <div id="logo-cover-side-2"></div>
+                </div>
+            </div>
+
+            <div id="globe"></div>
+            <div id="globe-footer">
+                <div id="footer-reveal"></div>
+                <div id="ms-stats"></div>
+                <div id="fps-stats"></div>
+            </div>
+
+            <div id="user-interaction">
+                <div class="header header-other" id="user-interaction-header">
+                    USER INTERACTION SCIENCE
+                </div>
+                <div id="user-interaction-container">
+                    <div id="interaction"> 
+                        <h3>Some fancy Interaction</h3>
+                        <div>
+
+                        </div>
+                    </div>
+                    <div id="interaction-overlay"></div>
+                    <div id="cube" width ="290" height="225"> 
+                        <div id="cube-labels">
+                            <div id="cube-label-1">Yeah</div>
+                            <div id="cube-label-2">Why</div>
+                            <div id="cube-label-3">Not</div>
+                        </div>
+                    </div>
+                    <div id="swirls"> 
+                    </div>
+                </div>
+            </div>
+            <div id="growth">
+                <div class="header header-other" id="growth-header">
+                    GROWTH PROJECTION
+                </div>
+                <div id="growth-container">
+                    <div id = "ticker">
+                        <div id="ticker-text">GITHUB</div>
+                        <div id="ticker-subtext">[INC]</div>
+                        <div id="ticker-lines">
+                            <div class="ticker-line" id="ticker-line-1">.</div>
+                            <div class="ticker-line" id="ticker-line-2">.</div>
+                        </div>
+                        <div id="ticker-value">
+                            +32.5%
+                        </div>
+                        <div id="ticker-ytd">
+                            YEAR-TO-DATE
+                        </div>
+                        <canvas id="stock-chart-small" width="72px" height="40px"></canvas>
+                    </div>
+                    <div id="stock-chart" width="500px" height="105px"></div>
+                    <div id = "stock-subcharts">
+                        <div class="stock-subchart">
+                            <div class="stock-subchart-label">
+                                OPEN
+                            </div>
+                            <div class="stock-subchart-chart">
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-10"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                            </div>
+
+                        </div>
+                        <div class="stock-subchart">
+                            <div class="stock-subchart-label">
+                                HIGH
+                            </div>
+                            <div class="stock-subchart-chart">
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-10"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                            </div>
+
+                        </div>
+                        <div class="stock-subchart">
+                            <div class="stock-subchart-label">
+                                LOW
+                            </div>
+                            <div class="stock-subchart-chart">
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-10"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                            </div>
+
+                        </div>
+                        <div class="stock-subchart">
+                            <div class="stock-subchart-label">
+                                CLOSE
+                            </div>
+                            <div class="stock-subchart-chart">
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-10"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                            </div>
+
+                        </div>
+                        <div class="stock-subchart">
+                            <div class="stock-subchart-label">
+                                VOLUME
+                            </div>
+                            <div class="stock-subchart-chart">
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-10"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                                <div class="stock-subchart-bar subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-15 subchart-white"> </div>
+                                <div class="stock-subchart-bar subchart-5 subchart-yellow"> </div>
+                                <div class="stock-subchart-bar subchart-15"> </div>
+                                <div class="stock-subchart-bar subchart-20"> </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div id="media">
+                <div class="header" id="media-header">
+                    USER SNAPSHOTS
+                </div>
+                <div id="media-container">
+                    <div id="media-top" class="media-box">
+                        <div class="media-scanlines"></div>
+                        <div class="user-pic larger"><span></span></div>
+                        <div class="user-pic"><span></span></div>
+                        <div class="user-pic"><span></span></div>
+                        <div class="user-pic"><span></span></div>
+                        <div class="user-pic"><span></span></div>
+                    </div>
+                    <div id="media-top-blinkies" class="media-blinkies">
+                        <h3>Some kind of title</h3>
+                        <div class="last bar border-20 border-yellow">hi</div>
+                        <div class="bar border-40 border-blue">hi</div>
+                        <div class="bar border-20 border-white">hi</div>
+                        <div class="bar border-25 border-yellow">hi</div>
+                        <div class="last bar border-35 border-blue">hi</div>
+                        <div class="blinkies-big-label">month</div>
+                        <div class="blinkies-small-label">num</div>
+                        <div class="blinkies-big-number">3</div>
+                        <div class="blinkies-small-number">1 4</div>
+                        <h3>yay blinkies!</h3>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blank"></div>
+
+                    </div>
+                    <div id="media-top-info" class="media-info">
+                        <span>i could put something useful here</span>
+                        <span>but i can't think</span>
+                        <span>of what</span>
+                        <span>I could possibly</span>
+                        <span>say</span>
+                    </div>
+                    <div id="media-bottom" class="media-box">
+                        <div class="media-scanlines"></div>
+                        <div class="user-pic larger"><span></span></div>
+                        <div class="user-pic"><span></span></div>
+                        <div class="user-pic"><span></span></div>
+                        <div class="user-pic"><span></span></div>
+                        <div class="user-pic"><span></span></div>
+                    </div>
+                    <div id="media-bottom-blinkies" class="media-blinkies">
+                        <h3>Some kind of title</h3>
+                        <div class="bar border-20 border-white">hi</div>
+                        <div class="bar border-40 border-yellow">hi</div>
+                        <div class="bar border-20 border-white">hi</div>
+                        <div class="last bar border-25 border-blue">hi</div>
+                        <div class="last bar border-35 border-blue">hi</div>
+                        <div class="blinkies-big-label">month</div>
+                        <div class="blinkies-small-label">num</div>
+                        <div class="blinkies-big-number">2</div>
+                        <div class="blinkies-small-number">1 4</div>
+                        <h3>yay blinkies!</h3>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky white"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blue"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky blank"></div>
+                        <div class="blinky yellow"></div>
+                        <div class="blinky white"></div>
+                    </div>
+                    <div id="media-bottom-info" class="media-info">
+                        <span>all this bottom info</span>
+                        <span>something else interesting</span>
+                        <span>why?</span>
+                        <span>rob scanlon made this</span>
+                    </div>
+                </div>
+            </div>
+            <div id="timer">
+                <div class="header header-other2" id="timer-header">
+                    TIME SINCE START
+                </div>
+                <div id="clockbar">
+                    <div id="clock">
+                        00:00:00:00
+                    </div>
+                    <canvas id="simpleclock" width="80px" height="80px"></canvas>
+                </div>
+                <div id="timerbar">
+                    <div class="section-timerbar">
+                        <div class="buffer-timerbar">
+                            <small>San Francisco</small>
+                            <span id="san-francisco-time">12:32:91</span>
+                        </div>
+                    </div>
+                    <div class="section-timerbar">
+                        <div class="buffer-timerbar">
+                            <small>New York</small>
+                            <span id="new-york-time">12:32:91</span>
+                        </div>
+                    </div>
+                    <div class="section-timerbar">
+                        <div class="buffer-timerbar">
+                            <small>London</small>
+                            <span id="london-time">12:32:91</span>
+                        </div>
+                    </div>
+                    <div class="section-timerbar">
+                        <div class="buffer-timerbar">
+                            <small>Berlin</small>
+                            <span id="berlin-time">12:32:91</span>
+                        </div>
+                    </div>
+                    <div class="section-timerbar">
+                        <div class="buffer-timerbar">
+                            <small>Bangalore</small>
+                            <span id="bangalore-time">12:32:91</span>
+                        </div>
+                    </div>
+                    <div class="section-timerbar">
+                        <div class="buffer-timerbar">
+                            <small>Sydney</small>
+                            <span id="sydney-time">12:32:91</span>
+                        </div>
+                    </div>
+                </div>
+                <canvas id="timer-trees" width="490px" height="30px"></canvas>
+            </div>
+            <div id="bottom-border"></div>
+
+
         </div>
     </body>
 </html>

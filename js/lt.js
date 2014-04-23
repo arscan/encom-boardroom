@@ -1,6 +1,4 @@
 var LightTable = (function($, THREE){
-    console.log("GOINNNNG");
-
     var webglTest;
 
     /* private functions */
@@ -132,34 +130,34 @@ var LightTable = (function($, THREE){
     };
 
     var hideContainer = function(){
-        $(".header").css("visibility", "hidden");
-        $(".content-container").css("visibility", "hidden");
+        $(".lt-header").css("visibility", "hidden");
+        $(".content-container").css("opacity", 0);
     };
 
     var showHeaders = function() {
 
         setTimeout(function doHeaderAnimations(){
 
-            $(".header-animator-outside").css({visibility: "visible"}).animate({
+            $(".lt-header-animator-outside").css({visibility: "visible"}).animate({
                 top: "25px",
                 height: "538px"
             }, 500);
 
-            $(".header-animator-inside").css({visibility: "visible"}).delay(100).animate({
+            $(".lt-header-animator-inside").css({visibility: "visible"}).delay(100).animate({
                 top: "39px",
                 height: "510px"
             }, 500);
         }, 500);
 
         setTimeout(function showHeaders(){
-            $(".header").css("visibility", "visible");
+            $(".lt-header").css("visibility", "visible");
             $(".content-container").css("visibility", "visible");
 
         }, 1000);
 
         setTimeout(function hideAnimations(){
-            $(".header-animator-outside").css("display", "none");
-            $(".header-animator-inside").css("display", "none");
+            $(".lt-header-animator-outside").css("display", "none");
+            $(".lt-header-animator-inside").css("display", "none");
         }, 1500);
 
     };
@@ -172,6 +170,8 @@ var LightTable = (function($, THREE){
         var width = item.width();
         var left = item.position().left;
         var top = item.position().top;
+        
+        console.log(width);
 
         var border = item.css("border");
         var boxShadow = item.css("box-shadow");
@@ -223,8 +223,9 @@ var LightTable = (function($, THREE){
     var showKeyboard = function(){
 
         var keyboard = $("#lt-keyboard");
-        var spaceBar = $("#k-space");
+        var spaceBar = $("#k-32");
         var spaceBarWidth = spaceBar.width();
+        console.log(spaceBarWidth);
 
         spaceBar.width(0);
 
@@ -233,18 +234,15 @@ var LightTable = (function($, THREE){
             opacity: 1
         }, 2000);
 
-        spaceBar.delay(2100).animate({
+        spaceBar.delay(2200).animate({
             width: spaceBarWidth
-        },1000);
+        },500);
 
     };
 
     var hideKeyboard = function(){
         var keyboard = $("#lt-keyboard");
-        keyboard.animate({
-            opacity: 0
-        }, 2000);
-
+        keyboard.css("opacity", 0);
     }
 
     var createWebGlTest = function(){
@@ -305,7 +303,7 @@ var LightTable = (function($, THREE){
         return {
             tick: function (){
                 if(firstRun === null){
-                    firstRun = Date.now();
+                    firstRun = Date.now() + 2500;
                 }
                 // renderer.render( this.scene, this.camera );
                 var renderTime = new Date() - lastRenderDate;
@@ -329,6 +327,9 @@ var LightTable = (function($, THREE){
                 renderer.render(scene, camera );
 
                 splineLine.rotation.x += .01;
+            }, 
+            reset: function(){
+                firstRun = null;
             }
         };
 
@@ -339,7 +340,7 @@ var LightTable = (function($, THREE){
     };
 
     var writeResponse = function(txt){
-            $("#lt-command-lines").append("<div class='response'>&gt;&gt;encom-sh: " + txt + "</div>");
+        $("#lt-command-lines").append("<div class='response'>&gt;&gt;encom-sh: " + txt + "</div>");
     };
 
     var currentDir = "encom_root";
@@ -629,7 +630,7 @@ var LightTable = (function($, THREE){
     /* public function */
 
     var init = function(cb){
-        $(".header").css("visibility", "hidden");
+        $(".lt-header").css("visibility", "hidden");
         $(".content-container").css("visibility", "hidden");
 
         $("#lt-keyboard").css("opacity", 0);
@@ -643,13 +644,19 @@ var LightTable = (function($, THREE){
 
     var show = function(cb){
 
+        $("#light-table").css("opacity", 1);
         // do the intro animations
         showContainer();
         setTimeout(showHeaders, 500);
         showContentBoxes($("#lt-readme"), 0);
+
         showContentBoxes($("#lt-bandwidth"), 100);
         showContentBoxes($("#lt-globalization"), 200);
         showKeyboard();
+
+        if($("#lt-mobile-readme").width() > 0){
+            showContentBoxes($("#lt-mobile-readme"), 0);
+        }
 
         if(typeof cb == "function"){
             setTimeout(cb, 500);
@@ -659,9 +666,18 @@ var LightTable = (function($, THREE){
     var hide = function(cb) {
         // reset everything
 
-        hideKeyboard();
-        hideContainer();
-        hideWebgl();
+
+        $("#light-table").animate({
+            opacity: 0
+        }, 500);
+
+        setTimeout(function(){
+            hideKeyboard();
+            hideContainer();
+            hideWebgl();
+        }, 500);
+
+        webglTest.reset();
 
         if(typeof cb == "function"){
             cb();

@@ -27,7 +27,7 @@ module.exports = function(grunt) {
                 livereload: true
             },
             // tasks: ['concat'],
-            files: ['src/*.js', 'index.html', '*.html', 'styles.css', 'Gruntfile.js']
+            files: ['src/*.js', 'js/*', 'index.html', '*.html', 'css/*.css', 'Gruntfile.js']
         },
         copy: {
             main : {

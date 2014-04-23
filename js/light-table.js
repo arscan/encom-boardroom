@@ -281,14 +281,17 @@ $(function(){
         var introAnimationDone = false;
 
         return function tick(){
+            console.log(firstRun);
 
             if(firstRun === null){
-                firstRun = Date.now();
+                firstRun = Date.now() + 5000;;
+                console.log("asdfasdfasdasdfsad");
+                console.log(firstRun);
             }
             // renderer.render( this.scene, this.camera );
-            var renderTime = new Date() - lastRenderDate;
+            var renderTime = Date.now() - lastRenderDate;
             var timeSinceStart = Date.now() - firstRun;
-            lastRenderDate = new Date();
+            lastRenderDate = Date.now();
 
             var rotateCameraBy = (2 * Math.PI)/(10000/renderTime);
             cameraAngle += rotateCameraBy;
@@ -602,7 +605,6 @@ $(function(){
         simulateCommand("cd unknown$");
     });
 
-    setTimeout(webglTick, 2000);
 
     setTimeout(animateHeaders, 500);
     animateContentBoxes($("#lt-readme"), 0);

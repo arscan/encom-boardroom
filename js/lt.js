@@ -1,5 +1,7 @@
 var LightTable = (function($, THREE){
-    var webglTest;
+    var webglTest,
+       currentWidth = 0,
+       currentHeight = 0;
 
     /* private functions */
 
@@ -136,16 +138,21 @@ var LightTable = (function($, THREE){
 
     var showHeaders = function() {
 
+        var aHeight = $("#lt-header-bottom-right").position().top - 35;
+
+        console.log("adfadsfadsfasdfasdfasdasdfasfasfasdasefdasdf");
+        console.log(aHeight);
+
         setTimeout(function doHeaderAnimations(){
 
             $(".lt-header-animator-outside").css({visibility: "visible"}).animate({
                 top: "25px",
-                height: "538px"
+                height: aHeight + 28 + "px"
             }, 500);
 
             $(".lt-header-animator-inside").css({visibility: "visible"}).delay(100).animate({
                 top: "39px",
-                height: "510px"
+                height: aHeight + "px"
             }, 500);
         }, 500);
 
@@ -158,13 +165,19 @@ var LightTable = (function($, THREE){
         setTimeout(function hideAnimations(){
             $(".lt-header-animator-outside").css("display", "none");
             $(".lt-header-animator-inside").css("display", "none");
-        }, 1500);
+        }, 1000);
 
     };
 
     var showContentBoxes = function(item, extraDelay) {
 
         var itemContent = item.find(".content");
+
+        item.removeAttr("style");
+
+        console.log("***jj----");
+        console.log(item.width());
+        console.log("----");
 
         var height = item.height();
         var width = item.width();
@@ -192,7 +205,7 @@ var LightTable = (function($, THREE){
 
             item.animate({
                 height: height,
-                width: width,
+                width: "100%",
                 left: left,
                 top: top
                 
@@ -637,6 +650,9 @@ var LightTable = (function($, THREE){
 
         webglTest = createWebGlTest();
 
+        currentWidth = $(window).width();
+        currentHeight = $(window).height();
+
         if(typeof cb == "function"){
             cb();
         }
@@ -666,6 +682,10 @@ var LightTable = (function($, THREE){
     var hide = function(cb) {
         // reset everything
 
+        $("#lt-mobile-readme").attr("style","");
+        $("#k-32").attr("style","");
+        $(".lt-header-animator-right").attr("style","");
+        $(".lt-header-animator-left").attr("style","");
 
         $("#light-table").animate({
             opacity: 0
@@ -688,16 +708,34 @@ var LightTable = (function($, THREE){
         webglTest.tick();
     };
 
+    var resizing = false;
+    var resize = function(){
+        if(!resizing && 
+           (currentWidth > 1600 && $(window).width() <= 1600) || 
+           (currentWidth <= 1600 && $(window).width() > 1600) ||
+           (currentWidth > 1100 && $(window).width() <= 1100) || 
+           (currentWidth <= 1100 && $(window).width() > 1100)){
+            currentWidth = $(window).width();
+            resizing = true;
+            hide();
+            setTimeout(show,1000);
+            setTimeout(function(){
+                resizing = false;
+            }, 3000);
+        }
+    };
+
 
     return {
         init: init,
         show: show,
         hide: hide,
+        resize: resize,
         animate: animate
     };
 
 
-})(jQuery, THREE);
+})(jQuery, THREE, window);
 
 console.log("????????");
 console.log(".........");

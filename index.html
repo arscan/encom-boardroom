@@ -51,6 +51,7 @@
 
                 animate();
 
+                /*
                 setTimeout(function(){
                     LightTable.hide();
                     active = "br-gh";
@@ -59,9 +60,20 @@
                     LightTable.show();
                     active = "lt";
                 }, 10000);
+                */
 
                 //setTimeout(LightTable.hide,5000);
                 //setTimeout(LightTable.show,7000);
+
+                var timeout = 0;
+                function onWindowResize(){
+
+                    if(active === "lt"){
+                        LightTable.resize();
+                    }
+                }
+
+                window.addEventListener( 'resize', onWindowResize, false );
 
                 });
 

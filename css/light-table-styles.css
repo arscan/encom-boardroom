@@ -472,8 +472,6 @@ ul {
 
     #lt-keyboard {
         display: none;
-
-
     }
 
     #lt-container-inside {
@@ -518,9 +516,199 @@ ul {
         width: 320px;
     }
 
-    
+}
+
+@media (min-width: 1600px) { 
+
+    body {
+        font-size:8pt;
+    }
 
 
+    h2, p, li {
+        font-size: 12pt;
+        line-height: 16pt;
+    }
+
+    #lt-container-outside{
+        position:absolute;
+        /* width: 1140px; */
+        /* height: 610px; */
+        width: 1540px;
+        height: 760px;
+
+    }
+
+    #lt-container-inside {
+        /* width: 1100px; */
+        /* height: 600px; */
+        width: 1500px;
+        height: 750px;
+    }
+
+    #lt-left-column{
+        /*width: 380px;*/
+        width: 580px;
+    }
+
+    #lt-right-column{
+        position: absolute;
+        left: 700px;
+        width: 680px;
+    }
+
+
+    .lt-header-right-section {
+        float: right;
+        width: 10%;
+        background-color: #000;
+        text-align: right;
+        margin-right: -5px;
+        padding: 0 8px;
+    }
+
+    #lt-header-bottom-left {
+        position: absolute;
+        top: 700px;
+    }
+
+    #lt-bottom-boxes-1 {
+        margin-top: 3px;
+        height: 6px;
+        width: 35px;
+    }
+
+    #lt-bottom-boxes-2 {
+        margin-top: 3px;
+        height: 6px;
+        width: 30px;
+    }
+
+    #lt-bottom-boxes-3 {
+        margin-top: 3px;
+        margin-right: 8px;
+        height: 6px;
+        width: 35px;
+    }
+
+    #lt-header-bottom-right {
+        position: absolute;
+        top: 700px;
+    }
+
+    .lt-header-animator-left {
+        top: 350px;
+    }
+
+    .lt-header-animator-right {
+        top: 350px;
+    }
+
+    #lt-readme .content {
+        height: 380px;
+    }
+    #lt-readme .content p{
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 8px;
+    }
+
+    #lt-bandwidth {
+        top: 490px;
+        width: 570px;
+    }
+
+    #lt-globalization {
+        width: 680px;
+    }
+
+    #lt-globalization .content {
+        height: 360px;
+    }
+
+    #lt-command-line {
+        width: 440px;
+        height: 200px;
+        margin-top:20px;
+    }
+
+    .response {
+        padding-top: 3px;
+        padding-left: 25px;
+        font-size: 7pt;
+    }
+
+    .response .alert{
+        font-color: #aa0000;
+    }
+
+    .response .highlight{
+        color: #ffcc00;
+    }
+
+    .ls {
+        float: left;
+        width: 40px;
+        padding: 2px;
+        margin-right: 25px;
+        margin-top: 5px;
+
+    }
+
+    .ls-highlight {
+        background-color: #fff;
+        color: #000;
+    }
+
+    .folder-container {
+        margin: 18px 38px 0;
+    }
+
+
+    #lt-launch-github {
+        margin-top: 120px;
+    }
+
+    #lt-keyboard {
+        margin-left: 60px;
+        top: 455px;
+        width: 600px;
+    }
+
+    #lt-keyboard div{
+        width: 45px;
+        height: 30px;
+        font-size: 16px;
+    }
+
+
+    #lt-keyboard #k-32 {
+        width: 400px;
+        height: 12px;
+        margin-top: 15px;
+    }
+
+    #lt-far-right-column {
+        position: absolute;
+        left: 1400px;
+        height: 700px;
+        width: 80px;
+
+    }
+
+    #lt-encom-logo {
+        font-size: 12px;
+        top: 35px;
+    }
+
+    #lt-thumbprint {
+        top: 630px;
+    }
+
+    #lt-bandwidth canvas {
+        width: 100%;
+
+    }
 
 
 }

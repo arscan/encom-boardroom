@@ -1,7 +1,8 @@
 var LightTable = (function($, THREE){
     var webglTest,
        currentWidth = 0,
-       currentHeight = 0;
+       currentHeight = 0,
+       hideFn = function(){};
 
     /* private functions */
 
@@ -405,7 +406,7 @@ var LightTable = (function($, THREE){
                 $(".container-border").animate({opacity: 0}, 500);
 
                 setTimeout(function(){
-                    document.location = "http://streams.robscanlon.com/github/arscan/8311277";
+                    hideFn("github");
                 }, 500);
             } else {
                 writeResponse("<span class='alert'>Error:</span> No such file");
@@ -418,7 +419,7 @@ var LightTable = (function($, THREE){
                 $(".container-border").animate({opacity: 0}, 500);
 
                 setTimeout(function(){
-                    document.location = "http://streams.robscanlon.com/wikipedia/arscan/8311277";
+                    hideFn("wikipedia");
                 }, 500);
 
             } else {
@@ -608,7 +609,10 @@ var LightTable = (function($, THREE){
 
     /* public function */
 
-    var init = function(cb){
+    var init = function(_hideFn){
+
+        hideFn = _hideFn;
+
         $(".lt-header").css("visibility", "hidden");
         $(".content-container").css("visibility", "hidden");
 
@@ -618,6 +622,7 @@ var LightTable = (function($, THREE){
 
         currentWidth = $(window).width();
         currentHeight = $(window).height();
+
 
         /* set events */
 
@@ -654,10 +659,6 @@ var LightTable = (function($, THREE){
             event.preventDefault();
             keyClick(parseInt($(this).attr("id").split("-")[1]));
         });
-
-        if(typeof cb == "function"){
-            cb();
-        }
     };
 
     var show = function(cb){

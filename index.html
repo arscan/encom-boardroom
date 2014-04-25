@@ -29,12 +29,28 @@
             es.addEventListener("message", listener);
             es.addEventListener("error", listener);
 
+            var onSwitch = function(view){
 
+                if(view === "github"){
+
+                    LightTable.hide();
+
+
+                    } else if (view === "wikipedia"){
+                    LightTable.hide();
+
+                    } else if (view === "lighttable") {
+
+
+                }
+
+
+            };
             $(function(){
 
                 console.log("-----");
                 console.log(LightTable);
-                LightTable.init();
+                LightTable.init(onSwitch);
                 LightTable.show();
 
                 var animate = function(){

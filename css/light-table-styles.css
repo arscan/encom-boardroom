@@ -224,15 +224,14 @@ ul {
 }
 #lt-mobile-readme {
     position: absolute;
-    top: 320px;
+    top: 260px;
     overflow: hidden;
     visibility: hidden;
     width: 0;
 }
 
 #lt-mobile-readme .content {
-    height: 220px;
-    overflow: scroll;
+    height: 290px;
 }
 
 #lt-bandwidth {
@@ -337,7 +336,7 @@ ul {
 }
 
 #lt-launch-github {
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
 .selected-folder {
@@ -460,6 +459,11 @@ ul {
     #lt-globalization {
         top: 30px;
         width: 320px;
+        height: 200px;
+    }
+
+    #lt-globalization .content{
+        height: 200px;
     }
     #lt-container-outside{
         top: 0;
@@ -514,6 +518,30 @@ ul {
 
     #lt-mobile-readme {
         width: 320px;
+    }
+
+    .folder-big {
+        background-image: url(../images/encom_folder_small.png);
+        width:80px;
+        height: 49px;
+        margin: 0;
+    }
+
+    #lt-launch-github {
+        margin-top: 8px;
+    }
+
+    .folder-small {
+        background-image: url(../images/encom_folder_small.png);
+        width:80px;
+        height: 49px;
+        margin: 0;
+    }
+
+    .folder-container {
+        margin: 8px 12px;
+
+
     }
 
 }
@@ -628,7 +656,7 @@ ul {
 
     #lt-command-line {
         width: 440px;
-        height: 200px;
+        height: 185px;
         margin-top:20px;
     }
 
@@ -661,12 +689,17 @@ ul {
     }
 
     .folder-container {
-        margin: 18px 38px 0;
+        margin: 8px 30px 0;
+    }
+
+    .folder-label{
+        font-size: 10pt;
+        width: 92px;
     }
 
 
     #lt-launch-github {
-        margin-top: 120px;
+        margin-top: 60px;
     }
 
     #lt-keyboard {
@@ -681,11 +714,19 @@ ul {
         font-size: 16px;
     }
 
+    #lt-keyboard #k-9{
+        margin-left:20px;
+    }
+
 
     #lt-keyboard #k-32 {
         width: 400px;
         height: 12px;
         margin-top: 15px;
+    }
+
+    #lt-keyboard #k-500{
+        margin-left:40px;
     }
 
     #lt-far-right-column {
@@ -708,6 +749,18 @@ ul {
     #lt-bandwidth canvas {
         width: 100%;
 
+    }
+
+    .folder-big {
+        background-image: url(../images/encom_folder_xl.png);
+        width:140px;
+        height: 93px;
+    }
+
+    .folder-small {
+        background-image: url(../images/encom_folder_big.png);
+        width:95px;
+        height: 63px;
     }
 
 

@@ -604,41 +604,7 @@ var LightTable = (function($, THREE){
     };
 
 
-    /* set events */
 
-    $("#lt-launch-github").click(function(){
-        $(this).find(".folder-big").css("background-color", "#fff");
-        simulateCommand("cd github$");
-        simulateCommand("ls$");
-        simulateCommand("run github.exe$");
-    });
-
-    $("#lt-launch-wikipedia").click(function(){
-        $(this).find(".folder-big").css("background-color", "#fff");
-        simulateCommand("cd wikipedia$");
-        simulateCommand("ls$");
-        simulateCommand("run wikipedia.exe$");
-    });
-
-    $("#lt-launch-test").click(function(){
-        $(this).find(".folder-big").css("background-color", "#fff");
-        simulateCommand("cd test$");
-    });
-
-    $("#lt-launch-bitcoin").click(function(){
-        $(this).find(".folder-big").css("background-color", "#fff");
-        simulateCommand("cd bitcoin$");
-    });
-
-    $("#lt-launch-unknown").click(function(){
-        $(this).find(".folder-big").css("background-color", "#fff");
-        simulateCommand("cd unknown$");
-    });
-
-    $("#lt-keyboard div").mousedown(function(event){
-        event.preventDefault();
-        keyClick(parseInt($(this).attr("id").split("-")[1]));
-    });
 
     /* public function */
 
@@ -652,6 +618,42 @@ var LightTable = (function($, THREE){
 
         currentWidth = $(window).width();
         currentHeight = $(window).height();
+
+        /* set events */
+
+        $("#lt-launch-github").click(function(){
+            $(this).find(".folder-big").css("background-color", "#fff");
+            simulateCommand("cd github$");
+            simulateCommand("ls$");
+            simulateCommand("run github.exe$");
+        });
+
+        $("#lt-launch-wikipedia").click(function(){
+            $(this).find(".folder-big").css("background-color", "#fff");
+            simulateCommand("cd wikipedia$");
+            simulateCommand("ls$");
+            simulateCommand("run wikipedia.exe$");
+        });
+
+        $("#lt-launch-test").click(function(){
+            $(this).find(".folder-big").css("background-color", "#fff");
+            simulateCommand("cd test$");
+        });
+
+        $("#lt-launch-bitcoin").click(function(){
+            $(this).find(".folder-big").css("background-color", "#fff");
+            simulateCommand("cd bitcoin$");
+        });
+
+        $("#lt-launch-unknown").click(function(){
+            $(this).find(".folder-big").css("background-color", "#fff");
+            simulateCommand("cd unknown$");
+        });
+
+        $("#lt-keyboard div").mousedown(function(event){
+            event.preventDefault();
+            keyClick(parseInt($(this).attr("id").split("-")[1]));
+        });
 
         if(typeof cb == "function"){
             cb();
@@ -673,6 +675,14 @@ var LightTable = (function($, THREE){
         if($("#lt-mobile-readme").width() > 0){
             showContentBoxes($("#lt-mobile-readme"), 0);
         }
+
+        $(document).keydown(function(event){
+
+            var keycode = event.which;
+            event.preventDefault();
+            keyClick(keycode);
+
+        });
 
         if(typeof cb == "function"){
             setTimeout(cb, 500);
@@ -698,6 +708,8 @@ var LightTable = (function($, THREE){
         }, 500);
 
         webglTest.reset();
+
+        $(document).removeAttr("keydown");
 
         if(typeof cb == "function"){
             cb();

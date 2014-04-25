@@ -678,10 +678,11 @@ var LightTable = (function($, THREE){
 
         $(document).keydown(function(event){
 
-            var keycode = event.which;
-            event.preventDefault();
-            keyClick(keycode);
-
+            if(!event.ctrlKey){
+                var keycode = event.which;
+                event.preventDefault();
+                keyClick(keycode);
+            }
         });
 
         if(typeof cb == "function"){

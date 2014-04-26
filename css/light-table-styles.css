@@ -275,6 +275,21 @@ ul {
     font-size: 8pt;
 }
 
+.command-blinker {
+    background-color: #00eeee;
+}
+
+.blink {
+    animation: blink 1s steps(2, start) infinite;
+    -webkit-animation: blink 1s steps(2, start) infinite;
+}
+@keyframes blink {
+    to { visibility: hidden; }
+}
+@-webkit-keyframes blink {
+    to { visibility: hidden; }
+}
+
 .command-text {
     color: #aaa;
 

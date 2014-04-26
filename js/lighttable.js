@@ -360,7 +360,9 @@ var LightTable = (function($, THREE){
     var currentDir = "encom_root";
 
     var writePrompt = function(){
-            $("#lt-command-lines").append('<div class="command"><span class="prompt">encom-sh:' + currentDir + '$&nbsp;</span><span class="command-text"></span></div>');
+        $(".command-blinker").removeClass("blink").removeClass("command-blinker");
+
+        $("#lt-command-lines").append('<div class="command"><span class="prompt">encom-sh:' + currentDir + '$&nbsp;</span><span class="command-text"></span><span class="blink command-blinker">&nbsp;</span></div>');
     };
 
     var writeLs = function(exec){

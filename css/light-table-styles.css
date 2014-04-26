@@ -1,6 +1,5 @@
 body {
     background-color: black;
-    font-family: 'Inconsolata', sans-serif;
     font-size:6pt;
     /* color: #6fc0ba; */
     color: #fff;
@@ -433,15 +432,16 @@ ul {
 }
 
 #lt-encom-logo {
+    font-family: 'Terminator';
     position: absolute;
-    font-size: 10px;
-    padding-left: 4px;
+    font-size: 8pt;
+    padding-left: 2px;
     top: 25px;
     left: 20px;
     color: #6fc0ba;
-    border-left: 1px solid #6fc0ba;
-    border-top: 1px solid #6fc0ba;
-    border-bottom: 1px solid #6fc0ba;
+    border-left: 2px solid #6fc0ba;
+    border-top: 2px solid #6fc0ba;
+    border-bottom: 2px solid #6fc0ba;
     border-radius: 4px;
 }
 
@@ -450,6 +450,23 @@ ul {
     left: 15px;
     top: 500px;
     z-index: 200;
+    -webkit-animation: pulsate 5s;
+    -webkit-animation-iteration-count: 100; 
+    animation: pulsate 5s ease-out;
+    animation-iteration-count: 100; 
+}
+
+@-webkit-keyframes pulsate { 
+    0% {opacity: .3;}
+    50% {opacity: 1.0;}
+    100% {opacity: 0.3;}
+}
+
+@keyframes pulsate { 
+    0% {opacity: 0.3;}
+    50% {opacity: 1.0;}
+    100% {opacity: 0.3;}
+}
 }
 
 
@@ -753,7 +770,6 @@ ul {
     }
 
     #lt-encom-logo {
-        font-size: 12px;
         top: 35px;
     }
 

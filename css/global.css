@@ -1,0 +1,10 @@
+
+/* 
+    terminator font:
+    Allen R. Walden's Friendly Fonts (Unprotected. Please distribute freely.) | Software Friends, Inc. © 1993 (Friendly Fonts)
+    From: http://www.fontspace.com/allen-r-walden/terminator-cyr
+*/
+@font-face {
+    font-family: 'terminator';
+    src: url('terminator.woff') format('woff');
+}

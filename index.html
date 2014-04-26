@@ -5,8 +5,10 @@
         <meta charset="utf-8">
         <title>Github Boardroom Light table</title>
         <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
+        <link href="css/global.css" rel="stylesheet" type="text/css" />
         <link href="css/light-table-styles.css" rel="stylesheet" type="text/css" />
         <link href="css/boardroom-styles.css" rel="stylesheet" type="text/css" />
+        </style>
         <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
         <script src="js/three.min.js"></script>
         <!-- <script src="js/light&#45;table.js"></script> -->
@@ -34,7 +36,6 @@
                 if(view === "github"){
 
                     LightTable.hide();
-
 
                     } else if (view === "wikipedia"){
                     LightTable.hide();
@@ -138,7 +139,7 @@
                     <div id="lt-bandwidth" class="content-container">
                         <div class="content">
                             <h2>
-                                WEBGL <span class="alt-1">.TEST</span>
+                                WEBGL <span class="alt-1" id="test-result">.TEST</span>
                                 <em>END. PROGRAM</em>
                             </h2>
                             <canvas height="100px" width= "367px" id="lt-webglCanvas"/>
@@ -310,7 +311,7 @@
                 </div>
 
                 <div id="lt-far-right-column">
-                    <div id="lt-encom-logo">E N C O M</div>
+                    <div id="lt-encom-logo">ENCOM</div>
                     <img id="lt-thumbprint" src="images/thumbprint.png" />
                 </div>
 

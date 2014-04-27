@@ -5,7 +5,7 @@ var $ = require("jquery"),
 console.log(Boardroom);
 
 
-var active = "lt";
+var active = "br";
 var es = new EventSource("http://localhost:8081/events.js");
 var listener = function (event) {
     var div = document.createElement("div");

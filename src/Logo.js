@@ -21,7 +21,7 @@ var Logo = function(containerId, text){
     this.context.strokeStyle = "#00eeee";
     this.context.lineWidth = 3;
 
-    this.context.font = "bold 18px Inconsolata";
+    this.context.font = "14px Terminator";
     var textWidth = this.context.measureText(text).width;
 
     Utils.drawCurvedRectangle(this.context, (this.width - textWidth -24)/2, 30, textWidth + 24, 60, 3);

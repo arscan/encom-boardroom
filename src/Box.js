@@ -125,9 +125,9 @@ var Box = function(opts){
                                                                         return function(time){
                                                                             var posTime = Math.max(time, 3000);
                                                                             geo.vertices[a-2].x = Math.max(-w*rand3/2,Math.min(w*rand3/2, w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
-                                                                            geo.vertices[a-2].z = sCurve(Math.min(1, time/2000)) * d/2;
+                                                                            geo.vertices[a-2].z = Utils.sCurve(Math.min(1, time/2000)) * d/2;
                                                                             geo.vertices[a-1].x = Math.max(-w*rand3/2,Math.min(w*rand3/2, w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
-                                                                            geo.vertices[a-1].z = -sCurve(Math.min(1, time/2000)) * d/2;
+                                                                            geo.vertices[a-1].z = -Utils.sCurve(Math.min(1, time/2000)) * d/2;
                                                                             geo.verticesNeedUpdate = true;
 
                                                                             balls[l-1].position.set(geo.vertices[a-2].x, geo.vertices[a-2].y, geo.vertices[a-2].z);
@@ -154,9 +154,9 @@ var Box = function(opts){
                                                                             return function(time){
                                                                                 var posTime = Math.max(time, 3000);
                                                                                 geo.vertices[a-2].x = Math.max(-w*rand3/2,Math.min(w*rand3/2,w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
-                                                                                geo.vertices[a-2].y = sCurve(Math.min(1, time/2000)) * h/2 + h/2;
+                                                                                geo.vertices[a-2].y = Utils.sCurve(Math.min(1, time/2000)) * h/2 + h/2;
                                                                                 geo.vertices[a-1].x = Math.max(-w*rand3/2, Math.min(w*rand3/2,w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
-                                                                                geo.vertices[a-1].y = h/2 -sCurve(Math.min(1, time/2000)) * h/2;
+                                                                                geo.vertices[a-1].y = h/2 -Utils.sCurve(Math.min(1, time/2000)) * h/2;
                                                                                 geo.verticesNeedUpdate = true;
 
                                                                                 balls[l-1].position.set(geo.vertices[a-2].x, geo.vertices[a-2].y, geo.vertices[a-2].z);
@@ -182,9 +182,9 @@ var Box = function(opts){
                                                                             return function(time){
                                                                                 var posTime = Math.max(time, 3000);
                                                                                 geo.vertices[a-2].x = Math.max(-w*rand3/2,Math.min(w*rand3/2,w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
-                                                                                geo.vertices[a-2].y = sCurve(Math.min(1, time/2000)) * h/2 + h/2;
+                                                                                geo.vertices[a-2].y = Utils.sCurve(Math.min(1, time/2000)) * h/2 + h/2;
                                                                                 geo.vertices[a-1].x = Math.max(-w*rand3/2,Math.min(w*rand3/2,w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
-                                                                                geo.vertices[a-1].y = h/2-sCurve(Math.min(1, time/2000)) * h/2;
+                                                                                geo.vertices[a-1].y = h/2-Utils.sCurve(Math.min(1, time/2000)) * h/2;
                                                                                 geo.verticesNeedUpdate = true;
 
                                                                                 balls[l-1].position.set(geo.vertices[a-2].x, 0, geo.vertices[a-2].z);
@@ -214,8 +214,8 @@ var Box = function(opts){
                                                                             var posTime = Math.max(time, 3000);
                                                                             geo.vertices[a-2].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + posTime/1000)) / 2));
                                                                             geo.vertices[a-1].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + posTime/1000)) / 2));
-                                                                            geo.vertices[a-2].x = sCurve(Math.min(1, time/2000)) * w/2;
-                                                                            geo.vertices[a-1].x = -sCurve(Math.min(1, time/2000)) * w/2
+                                                                            geo.vertices[a-2].x = Utils.sCurve(Math.min(1, time/2000)) * w/2;
+                                                                            geo.vertices[a-1].x = -Utils.sCurve(Math.min(1, time/2000)) * w/2
                                                                             geo.verticesNeedUpdate = true;
 
                                                                             balls[l-1].position.set(geo.vertices[a-2].x, geo.vertices[a-2].y, geo.vertices[a-2].z);
@@ -242,8 +242,8 @@ var Box = function(opts){
                                                                                 var posTime = Math.max(time, 3000);
                                                                                 geo.vertices[a-2].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + posTime/1000)) / 2));
                                                                                 geo.vertices[a-1].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + posTime/1000)) / 2));
-                                                                                geo.vertices[a-2].y = h/2 + sCurve(Math.min(1, time/2000)) * h/2;
-                                                                                geo.vertices[a-1].y = h/2 - sCurve(Math.min(1, time/2000)) * h/2;
+                                                                                geo.vertices[a-2].y = h/2 + Utils.sCurve(Math.min(1, time/2000)) * h/2;
+                                                                                geo.vertices[a-1].y = h/2 - Utils.sCurve(Math.min(1, time/2000)) * h/2;
                                                                                 geo.verticesNeedUpdate = true;
 
                                                                                 balls[l-1].position.set(geo.vertices[a-2].x, geo.vertices[a-2].y, geo.vertices[a-2].z);
@@ -270,8 +270,8 @@ var Box = function(opts){
                                                                                 var posTime = Math.max(time, 3000);
                                                                                 geo.vertices[a-2].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + time/1000)) / 2));
                                                                                 geo.vertices[a-1].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + time/1000)) / 2));
-                                                                                geo.vertices[a-2].y = h/2 + sCurve(Math.min(1, time/2000)) * h/2;
-                                                                                geo.vertices[a-1].y = h/2 - sCurve(Math.min(1, time/2000)) * h/2;
+                                                                                geo.vertices[a-2].y = h/2 + Utils.sCurve(Math.min(1, time/2000)) * h/2;
+                                                                                geo.vertices[a-1].y = h/2 - Utils.sCurve(Math.min(1, time/2000)) * h/2;
                                                                                 geo.verticesNeedUpdate = true;
 
                                                                                 balls[l-1].position.set(geo.vertices[a-2].x, geo.vertices[a-2].y, geo.vertices[a-2].z);
@@ -519,7 +519,7 @@ Box.prototype.tick = function(){
 
         /* do the sides */
 
-        this.trackerBallMaterial.opacity = sCurve(percentComplete);
+        this.trackerBallMaterial.opacity = Utils.sCurve(percentComplete);
 
         if(totalRunTime > 1000){
             this.sideMaterial.opacity = Math.pow((Math.min(totalRunTime, maxTime)-1000) / (maxTime-1000), 2);
@@ -547,7 +547,7 @@ Box.prototype.tick = function(){
 
         // fix that 36...
         if(!this.animationsDone){
-            this.shaderAttributes.opacity.value[i] = Math.min(1,(36 - Math.sqrt(Math.pow(x,2) + Math.pow(z,2)))/36 * sCurve(percentComplete) + Math.max(y,0)/10);
+            this.shaderAttributes.opacity.value[i] = Math.min(1,(36 - Math.sqrt(Math.pow(x,2) + Math.pow(z,2)))/36 * Utils.sCurve(percentComplete) + Math.max(y,0)/10);
         }
         this.shaderAttributes.color.value[i] = this.particleColors[Math.min(maxColors,Math.max(0,Math.floor(y)))];
     }

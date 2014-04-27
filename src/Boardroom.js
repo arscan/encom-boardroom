@@ -1,7 +1,6 @@
 var $ = require("jquery"),
     pushercolor = require("pusher.color"),
     moment = require("moment"),
-    moment.tz = require("moment-timezone"),
     EncomGlobe = require("encom-globe"),
     SimpleClock = require("./SimpleClock.js"),
     Box = require("./Box.js"),
@@ -11,6 +10,8 @@ var $ = require("jquery"),
     StockChartSmall = require("./StockChartSmall.js"),
     Swirls = require("./Swirls.js"),
     Logo = require("./Logo.js");
+
+moment.tz = require("moment-timezone");
 
 var boardroomActive = false, 
     globe, 
@@ -83,7 +84,6 @@ boardroom.init = function(){
 };
 
 boardroom.show = function(){
-    boardroomActive = true;
     startDate = new Date();
     lastTime = Date.now();
 
@@ -163,8 +163,7 @@ boardroom.show = function(){
     }, 2000);
 
     globe = new EncomGlobe(600, 600, {
-        scale: 1.05
-
+        tiles: grid.tiles,
     });
     $("#globe").append(globe.domElement);
 
@@ -181,7 +180,9 @@ boardroom.show = function(){
         stockchartsmall = new StockChartSmall("stock-chart-small");
         swirls = new Swirls("swirls");
         logo = new Logo("logo");
+        boardroomActive = true;
 
+        /*
         var screenSaver = $("#screensaver-info");
 
         $("#screensaver-info span").text("Initializing...");
@@ -197,6 +198,7 @@ boardroom.show = function(){
                 easing: "easeInOutBack", 
                 complete: start});
         }, 2000);
+       */
     });
 
 };
@@ -225,20 +227,20 @@ animate: animate
 */
 
 boardroom.animate = function(){
-    var animateTime = Date.now() - lastTime;
-    lastTime = Date.now();
+    if(boardroomActive){
+        var animateTime = Date.now() - lastTime;
+        lastTime = Date.now();
 
-    globe.tick();
-    satbar.tick();
-    $("#clock").text(getTime());
-    simpleclock.tick();
-    box.tick();
-    stockchart.tick();
-    swirls.tick();
+        globe.tick();
+        satbar.tick();
+        $("#clock").text(getTime());
+        simpleclock.tick();
+        box.tick();
+        stockchart.tick();
+        swirls.tick();
+        updateSliders(animateTime);
+    }
 
-    updateSliders(animateTime);
-
-    requestAnimationFrame(animate);
 };
 
 

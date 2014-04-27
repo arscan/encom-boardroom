@@ -1,3 +1,5 @@
+var Utils = require("./Utils.js");
+
 var SatBar = function(canvasId){
     this.canvas = document.getElementById(canvasId);
     this.width = this.canvas.width;
@@ -113,7 +115,7 @@ function drawLines(context,x,width, percent){
     context.stroke();
 
     if(percent >.8){
-        context.fillStyle=shadeColor("#000000",100*(percent*percent));
+        context.fillStyle=Utils.shadeColor("#000000",100*(percent*percent));
         context.fillText("satellite", 35 + (width-35)/6, 25);
         context.fillText("data", 35+percent*(width-35)/2, 25);
         context.fillText("uplink", 35+percent*5*(width-35)/6, 25);

@@ -40660,7 +40660,7 @@ Globe.prototype.init = function(cb){
     this.camera = new THREE.PerspectiveCamera( 50, this.width / this.height, 1, this.cameraDistance + 250 );
     this.camera.position.z = this.cameraDistance;
 
-    this.cameraAngle=(Math.PI * 4);
+    this.cameraAngle=(Math.PI);
 
     // create the scene
     this.scene = new THREE.Scene();
@@ -63516,11 +63516,10 @@ module.exports = Quadtree2Validator;
 },{"./quadtree2helper":27,"vec2":25}],30:[function(require,module,exports){
 module.exports=require(6)
 },{}],31:[function(require,module,exports){
-var EncomGlobe = require("encom-globe")
-    $ = require("jquery"),
+var $ = require("jquery"),
     pushercolor = require("pusher.color"),
     moment = require("moment"),
-    moment.tz = require("moment-timezone"),
+    EncomGlobe = require("encom-globe"),
     SimpleClock = require("./SimpleClock.js"),
     Box = require("./Box.js"),
     SatBar = require("./SatBar.js"),
@@ -63529,6 +63528,8 @@ var EncomGlobe = require("encom-globe")
     StockChartSmall = require("./StockChartSmall.js"),
     Swirls = require("./Swirls.js"),
     Logo = require("./Logo.js");
+
+moment.tz = require("moment-timezone");
 
 var boardroomActive = false, 
     globe, 
@@ -63601,7 +63602,6 @@ boardroom.init = function(){
 };
 
 boardroom.show = function(){
-    boardroomActive = true;
     startDate = new Date();
     lastTime = Date.now();
 
@@ -63681,8 +63681,7 @@ boardroom.show = function(){
     }, 2000);
 
     globe = new EncomGlobe(600, 600, {
-        scale: 1.05
-
+        tiles: grid.tiles,
     });
     $("#globe").append(globe.domElement);
 
@@ -63699,7 +63698,9 @@ boardroom.show = function(){
         stockchartsmall = new StockChartSmall("stock-chart-small");
         swirls = new Swirls("swirls");
         logo = new Logo("logo");
+        boardroomActive = true;
 
+        /*
         var screenSaver = $("#screensaver-info");
 
         $("#screensaver-info span").text("Initializing...");
@@ -63715,6 +63716,7 @@ boardroom.show = function(){
                 easing: "easeInOutBack", 
                 complete: start});
         }, 2000);
+       */
     });
 
 };
@@ -63743,20 +63745,20 @@ animate: animate
 */
 
 boardroom.animate = function(){
-    var animateTime = Date.now() - lastTime;
-    lastTime = Date.now();
+    if(boardroomActive){
+        var animateTime = Date.now() - lastTime;
+        lastTime = Date.now();
 
-    globe.tick();
-    satbar.tick();
-    $("#clock").text(getTime());
-    simpleclock.tick();
-    box.tick();
-    stockchart.tick();
-    swirls.tick();
+        globe.tick();
+        satbar.tick();
+        $("#clock").text(getTime());
+        simpleclock.tick();
+        box.tick();
+        stockchart.tick();
+        swirls.tick();
+        updateSliders(animateTime);
+    }
 
-    updateSliders(animateTime);
-
-    requestAnimationFrame(animate);
 };
 
 
@@ -64058,9 +64060,9 @@ var Box = function(opts){
                                                                         return function(time){
                                                                             var posTime = Math.max(time, 3000);
                                                                             geo.vertices[a-2].x = Math.max(-w*rand3/2,Math.min(w*rand3/2, w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
-                                                                            geo.vertices[a-2].z = sCurve(Math.min(1, time/2000)) * d/2;
+                                                                            geo.vertices[a-2].z = Utils.sCurve(Math.min(1, time/2000)) * d/2;
                                                                             geo.vertices[a-1].x = Math.max(-w*rand3/2,Math.min(w*rand3/2, w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
-                                                                            geo.vertices[a-1].z = -sCurve(Math.min(1, time/2000)) * d/2;
+                                                                            geo.vertices[a-1].z = -Utils.sCurve(Math.min(1, time/2000)) * d/2;
                                                                             geo.verticesNeedUpdate = true;
 
                                                                             balls[l-1].position.set(geo.vertices[a-2].x, geo.vertices[a-2].y, geo.vertices[a-2].z);
@@ -64087,9 +64089,9 @@ var Box = function(opts){
                                                                             return function(time){
                                                                                 var posTime = Math.max(time, 3000);
                                                                                 geo.vertices[a-2].x = Math.max(-w*rand3/2,Math.min(w*rand3/2,w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
-                                                                                geo.vertices[a-2].y = sCurve(Math.min(1, time/2000)) * h/2 + h/2;
+                                                                                geo.vertices[a-2].y = Utils.sCurve(Math.min(1, time/2000)) * h/2 + h/2;
                                                                                 geo.vertices[a-1].x = Math.max(-w*rand3/2, Math.min(w*rand3/2,w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
-                                                                                geo.vertices[a-1].y = h/2 -sCurve(Math.min(1, time/2000)) * h/2;
+                                                                                geo.vertices[a-1].y = h/2 -Utils.sCurve(Math.min(1, time/2000)) * h/2;
                                                                                 geo.verticesNeedUpdate = true;
 
                                                                                 balls[l-1].position.set(geo.vertices[a-2].x, geo.vertices[a-2].y, geo.vertices[a-2].z);
@@ -64115,9 +64117,9 @@ var Box = function(opts){
                                                                             return function(time){
                                                                                 var posTime = Math.max(time, 3000);
                                                                                 geo.vertices[a-2].x = Math.max(-w*rand3/2,Math.min(w*rand3/2,w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
-                                                                                geo.vertices[a-2].y = sCurve(Math.min(1, time/2000)) * h/2 + h/2;
+                                                                                geo.vertices[a-2].y = Utils.sCurve(Math.min(1, time/2000)) * h/2 + h/2;
                                                                                 geo.vertices[a-1].x = Math.max(-w*rand3/2,Math.min(w*rand3/2,w * Math.cos(rand2 * (rand * w + posTime/1000)) / 2));
-                                                                                geo.vertices[a-1].y = h/2-sCurve(Math.min(1, time/2000)) * h/2;
+                                                                                geo.vertices[a-1].y = h/2-Utils.sCurve(Math.min(1, time/2000)) * h/2;
                                                                                 geo.verticesNeedUpdate = true;
 
                                                                                 balls[l-1].position.set(geo.vertices[a-2].x, 0, geo.vertices[a-2].z);
@@ -64147,8 +64149,8 @@ var Box = function(opts){
                                                                             var posTime = Math.max(time, 3000);
                                                                             geo.vertices[a-2].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + posTime/1000)) / 2));
                                                                             geo.vertices[a-1].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + posTime/1000)) / 2));
-                                                                            geo.vertices[a-2].x = sCurve(Math.min(1, time/2000)) * w/2;
-                                                                            geo.vertices[a-1].x = -sCurve(Math.min(1, time/2000)) * w/2
+                                                                            geo.vertices[a-2].x = Utils.sCurve(Math.min(1, time/2000)) * w/2;
+                                                                            geo.vertices[a-1].x = -Utils.sCurve(Math.min(1, time/2000)) * w/2
                                                                             geo.verticesNeedUpdate = true;
 
                                                                             balls[l-1].position.set(geo.vertices[a-2].x, geo.vertices[a-2].y, geo.vertices[a-2].z);
@@ -64175,8 +64177,8 @@ var Box = function(opts){
                                                                                 var posTime = Math.max(time, 3000);
                                                                                 geo.vertices[a-2].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + posTime/1000)) / 2));
                                                                                 geo.vertices[a-1].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + posTime/1000)) / 2));
-                                                                                geo.vertices[a-2].y = h/2 + sCurve(Math.min(1, time/2000)) * h/2;
-                                                                                geo.vertices[a-1].y = h/2 - sCurve(Math.min(1, time/2000)) * h/2;
+                                                                                geo.vertices[a-2].y = h/2 + Utils.sCurve(Math.min(1, time/2000)) * h/2;
+                                                                                geo.vertices[a-1].y = h/2 - Utils.sCurve(Math.min(1, time/2000)) * h/2;
                                                                                 geo.verticesNeedUpdate = true;
 
                                                                                 balls[l-1].position.set(geo.vertices[a-2].x, geo.vertices[a-2].y, geo.vertices[a-2].z);
@@ -64203,8 +64205,8 @@ var Box = function(opts){
                                                                                 var posTime = Math.max(time, 3000);
                                                                                 geo.vertices[a-2].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + time/1000)) / 2));
                                                                                 geo.vertices[a-1].z = Math.max(-d*rand3/2, Math.min(d*rand3/2, d * Math.cos(rand2 * (rand * d + time/1000)) / 2));
-                                                                                geo.vertices[a-2].y = h/2 + sCurve(Math.min(1, time/2000)) * h/2;
-                                                                                geo.vertices[a-1].y = h/2 - sCurve(Math.min(1, time/2000)) * h/2;
+                                                                                geo.vertices[a-2].y = h/2 + Utils.sCurve(Math.min(1, time/2000)) * h/2;
+                                                                                geo.vertices[a-1].y = h/2 - Utils.sCurve(Math.min(1, time/2000)) * h/2;
                                                                                 geo.verticesNeedUpdate = true;
 
                                                                                 balls[l-1].position.set(geo.vertices[a-2].x, geo.vertices[a-2].y, geo.vertices[a-2].z);
@@ -64452,7 +64454,7 @@ Box.prototype.tick = function(){
 
         /* do the sides */
 
-        this.trackerBallMaterial.opacity = sCurve(percentComplete);
+        this.trackerBallMaterial.opacity = Utils.sCurve(percentComplete);
 
         if(totalRunTime > 1000){
             this.sideMaterial.opacity = Math.pow((Math.min(totalRunTime, maxTime)-1000) / (maxTime-1000), 2);
@@ -64480,7 +64482,7 @@ Box.prototype.tick = function(){
 
         // fix that 36...
         if(!this.animationsDone){
-            this.shaderAttributes.opacity.value[i] = Math.min(1,(36 - Math.sqrt(Math.pow(x,2) + Math.pow(z,2)))/36 * sCurve(percentComplete) + Math.max(y,0)/10);
+            this.shaderAttributes.opacity.value[i] = Math.min(1,(36 - Math.sqrt(Math.pow(x,2) + Math.pow(z,2)))/36 * Utils.sCurve(percentComplete) + Math.max(y,0)/10);
         }
         this.shaderAttributes.color.value[i] = this.particleColors[Math.min(maxColors,Math.max(0,Math.floor(y)))];
     }
@@ -64529,7 +64531,7 @@ var Logo = function(containerId, text){
     this.context.strokeStyle = "#00eeee";
     this.context.lineWidth = 3;
 
-    this.context.font = "bold 18px Inconsolata";
+    this.context.font = "14px Terminator";
     var textWidth = this.context.measureText(text).width;
 
     Utils.drawCurvedRectangle(this.context, (this.width - textWidth -24)/2, 30, textWidth + 24, 60, 3);
@@ -64561,6 +64563,8 @@ var Logo = function(containerId, text){
 module.exports = Logo;
 
 },{"./Utils.js":40}],34:[function(require,module,exports){
+var Utils = require("./Utils.js");
+
 var SatBar = function(canvasId){
     this.canvas = document.getElementById(canvasId);
     this.width = this.canvas.width;
@@ -64676,7 +64680,7 @@ function drawLines(context,x,width, percent){
     context.stroke();
 
     if(percent >.8){
-        context.fillStyle=shadeColor("#000000",100*(percent*percent));
+        context.fillStyle=Utils.shadeColor("#000000",100*(percent*percent));
         context.fillText("satellite", 35 + (width-35)/6, 25);
         context.fillText("data", 35+percent*(width-35)/2, 25);
         context.fillText("uplink", 35+percent*5*(width-35)/6, 25);
@@ -64687,7 +64691,7 @@ function drawLines(context,x,width, percent){
 
 module.exports = SatBar;
 
-},{}],35:[function(require,module,exports){
+},{"./Utils.js":40}],35:[function(require,module,exports){
 var Utils = require("./Utils");
 
 var SimpleClock = function(canvasId){
@@ -65432,7 +65436,7 @@ var $ = require("jquery"),
 console.log(Boardroom);
 
 
-var active = "lt";
+var active = "br";
 var es = new EventSource("http://localhost:8081/events.js");
 var listener = function (event) {
     var div = document.createElement("div");

@@ -141,9 +141,6 @@ var LightTable = (function($, THREE){
 
         var aHeight = $("#lt-header-bottom-right").position().top - 35;
 
-        console.log("adfadsfadsfasdfasdfasdasdfasfasfasdasefdasdf");
-        console.log(aHeight);
-
         setTimeout(function doHeaderAnimations(){
 
             $(".lt-header-animator-outside").css({visibility: "visible"}).animate({
@@ -176,17 +173,11 @@ var LightTable = (function($, THREE){
 
         item.removeAttr("style");
 
-        console.log("***jj----");
-        console.log(item.width());
-        console.log("----");
-
         var height = item.height();
         var width = item.width();
         var left = item.position().left;
         var top = item.position().top;
         
-        console.log(width);
-
         var border = item.css("border");
         var boxShadow = item.css("box-shadow");
 
@@ -239,7 +230,6 @@ var LightTable = (function($, THREE){
         var keyboard = $("#lt-keyboard");
         var spaceBar = $("#k-32");
         var spaceBarWidth = spaceBar.width();
-        console.log(spaceBarWidth);
 
         spaceBar.width(0);
 
@@ -752,7 +742,3 @@ var LightTable = (function($, THREE){
 
 
 })(jQuery, THREE, window);
-
-console.log("????????");
-console.log(".........");
-console.log(LightTable);

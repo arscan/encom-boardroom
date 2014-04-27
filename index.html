@@ -8,93 +8,7 @@
         <link href="css/global.css" rel="stylesheet" type="text/css" />
         <link href="css/light-table-styles.css" rel="stylesheet" type="text/css" />
         <link href="css/boardroom-styles.css" rel="stylesheet" type="text/css" />
-        </style>
-        <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
-        <script src="js/three.min.js"></script>
-        <!-- <script src="js/light&#45;table.js"></script> -->
-        <script src="js/lighttable.js"></script>
-        <script src="js/eventsource.js"></script>
-
-        <script>
-            var active = "lt";
-            var es = new EventSource("http://localhost:8081/events.js");
-            var listener = function (event) {
-                var div = document.createElement("div");
-                var type = event.type;
-                if(type === "message"){
-                    console.log(event.data);
-                } else {
-                    console.log(event.data);
-                }
-            };
-            es.addEventListener("open", listener);
-            es.addEventListener("message", listener);
-            es.addEventListener("error", listener);
-
-            var onSwitch = function(view){
-
-                if(view === "github"){
-
-                    LightTable.hide();
-
-                    } else if (view === "wikipedia"){
-                    LightTable.hide();
-
-                    } else if (view === "lighttable") {
-
-
-                }
-
-
-            };
-            $(function(){
-
-                console.log("-----");
-                console.log(LightTable);
-                LightTable.init(onSwitch);
-                LightTable.show();
-
-                var animate = function(){
-
-                    if(active === "lt"){
-                        LightTable.animate();
-                    } else {
-                        // BoardRoom.animate
-
-                    }
-
-                    requestAnimationFrame(animate);
-                };
-
-                animate();
-
-                /*
-                setTimeout(function(){
-                    LightTable.hide();
-                    active = "br-gh";
-                }, 5000);
-                setTimeout(function(){
-                    LightTable.show();
-                    active = "lt";
-                }, 10000);
-                */
-
-                //setTimeout(LightTable.hide,5000);
-                //setTimeout(LightTable.show,7000);
-
-                var timeout = 0;
-                function onWindowResize(){
-
-                    if(active === "lt"){
-                        LightTable.resize();
-                    }
-                }
-
-                window.addEventListener( 'resize', onWindowResize, false );
-
-                });
-
-            </script>
+        <script src="build/encom-boardroom.js"></script>
     </head>
     <body>
         <div id="light-table">
@@ -320,6 +234,7 @@
 
             </div>
         </div>
+        <div class="center"><div id="screensaver"></div></div>
         <div id="boardroom">
 
             <div id="globalization">

@@ -1,62 +1,21 @@
 module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        /*
-        concat: {
-            options: {
-                separator: "\n",
-                banner: ";var ENCOM = (function(ENCOM, THREE, document){\n\n",
-                footer: "\nENCOM.Globe = Globe; return ENCOM;\n\n})(ENCOM || {}, THREE, document);"
-            },
-            dist: {
-                src: [
-                    'src/utils.js',
-                    'src/TextureAnimator.js',
-                    'src/Satellite.js',
-                    'src/SmokeProvider.js',
-                    'src/Pin.js',
-                    'src/!(Globe).js',
-                    'src/Globe.js'
-                ],
-                dest: 'build/<%= pkg.name %>.js'
-            }
-        },
-       */
         watch: {
             options: {
                 livereload: true
             },
-            // tasks: ['concat'],
-            files: ['src/*.js', 'js/*', 'index.html', '*.html', 'css/*.css', 'Gruntfile.js']
+            tasks: ['browserify'],
+            files: ['src/*.js', 'index.html', 'css/*', 'Gruntfile.js', 'browserify.js']
         },
-        copy: {
-            main : {
-                files: [
-                {
-                    src: 'bower_components/quadtree2/quadtree2.js',
-                    dest: 'include/quadtree2.js'
-                },
-                {
-                    src: 'bower_components/vec2/vec2.js',
-                    dest: 'include/vec2.js'
-                },
-                {
-                    src: 'bower_components/encom-globe/build/encom-globe.js',
-                    dest: 'include/encom-globe.js'
-                },
-                {
-                    src: 'bower_components/encom-globe/resources/equirectangle_projection.png',
-                    dest: 'resources/equirectangle_projection.png'
-                }
-                ]
-            }
+        browserify: {
+            'build/<%= pkg.name %>.js': ['src/app.js']
         }
     });
 
-
-    // grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-browserify');
 
 
 };

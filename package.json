@@ -1,18 +1,26 @@
 {
-  "name": "webgl-encom-globe",
+  "name": "encom-boardroom",
   "version": "0.0.0",
-  "description": "webgl-encom-globe",
-  "main": "app.js",
+  "description": "encom-boardroom",
+  "main": "index.html",
   "dependencies": {
     "grunt": "~0.4.2",
     "encom-globe": "~0.3.1",
     "github-timeline-stream": "~0.1.0",
-    "wikipedia-stream": "~0.1.0"
+    "wikipedia-stream": "~0.1.0",
+    "pusher.color": "~0.2.4",
+    "three": "~0.66.2",
+    "jquery": "~2.1.0",
+    "event-source": "~0.1.0",
+    "moment": "~2.6.0",
+    "moment-timezone": "0.0.6"
   },
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-contrib-watch": "~0.5.3",
-    "grunt-contrib-copy": "~0.5.0"
+    "grunt-contrib-copy": "~0.5.0",
+    "browserify": "~3.44.2",
+    "grunt-browserify": "~2.0.8"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

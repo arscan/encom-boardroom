@@ -8,3 +8,40 @@
     font-family: 'terminator';
     src: url('terminator.woff') format('woff');
 }
+
+.center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%); /* Yep! */
+    width: 48%;
+    height: 59%;
+}
+#screensaver {
+    display:inline-block;
+    font-family: 'terminator';
+    font-size: 30pt;
+    color: #6fc0ba;
+    border: 6px solid #6fc0ba;
+    border-radius: 12px;
+    padding: 0 10px;
+    visibility: hidden;
+
+    -webkit-animation: pusate 1s infinite alternate;
+    -moz-animation: pusate 1s infinite alternate;
+    -animation: pusate 1s infinite alternate;
+    text-shadow: 0 0 8px #ccc;
+
+}
+@-webkit-keyframes pusate {
+    from { box-shadow: 0 0 10px #333; text-shadow: 0 0 8px #ccc; }
+    to { box-shadow: 0 0 20px #ccc; text-shadow: 0 0 16px #ccc}
+}
+@-moz-keyframes pusate {
+    from { box-shadow: 0 0 10px #333; text-shadow: 0 0 8px #ccc; }
+    to { box-shadow: 0 0 20px #ccc; text-shadow: 0 0 16px #ccc}
+}
+@keyframes pusate {
+    from { box-shadow: 0 0 10px #333; text-shadow: 0 0 8px #ccc; }
+    to { box-shadow: 0 0 20px #ccc; text-shadow: 0 0 16px #ccc}
+}

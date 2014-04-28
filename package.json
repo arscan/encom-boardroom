@@ -29,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/arscan/webgl-encom-globe.git"
+    "url": "git://github.com/arscan/encom-boardroom.git"
   },
   "author": "rscanlon@mit.edu",
   "license": "MIT"

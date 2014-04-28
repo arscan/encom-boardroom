@@ -1,4 +1,4 @@
-var PORT = 8081;
+var PORT = Number(process.env.PORT || 5000);
 var LOCATIONLOOKUP = "http://loc.robscanlon.com:8080/";
 
 var request = require("request");

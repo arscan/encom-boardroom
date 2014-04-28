@@ -43,7 +43,6 @@ http.createServer(function (request, response) {
 
     var count = 0;
     var sendData = function(data){
-        console.log(count);
         count++;
 
         if(data.actor_attributes && data.actor_attributes.location){

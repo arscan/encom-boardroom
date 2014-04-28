@@ -4,11 +4,9 @@ var $ = require("jquery"),
 
 require("jquery-ui");
 
-console.log(Boardroom);
-
 
 var active = "lt";
-var es = new EventSource("http://localhost:8081/events.js");
+var es = new EventSource("http://encom-streams.robscanlon.com/events.js");
 var listener = function (event) {
     var div = document.createElement("div");
     var type = event.type;

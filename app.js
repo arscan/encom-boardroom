@@ -1,10 +1,28 @@
 var PORT = 8081;
+var LOCATIONLOOKUP = "http://loc.robscanlon.com:8080/";
 
+var request = require("request");
 var http = require("http");
 var fs = require("fs");
 var url = require("url");
 var GithubTimelineStream = require("github-timeline-stream");
 var githubStream = new GithubTimelineStream();
+
+function lookup(loc, cb){
+    request.get(LOCATIONLOOKUP + loc, function(error, response, body){
+        var latlon = null;
+        try{
+            latlon = JSON.parse(body);
+
+        } catch (ex){
+
+        }
+
+        cb(latlon);
+    });
+
+
+};
 
 http.createServer(function (request, response) {
   var parsedURL = url.parse(request.url, true);
@@ -28,8 +46,20 @@ http.createServer(function (request, response) {
         console.log(count);
         count++;
 
-        // response.write("id: " + count + "\n");
-        response.write("data: " + data.url + "\n\n");
+        if(data.actor_attributes && data.actor_attributes.location){
+            lookup(data.actor_attributes.location, function(latlon){
+                if(latlon){
+                    data.actor_attributes.latlon = {
+                        lat: parseFloat(latlon.lat),
+                        lon: parseFloat(latlon.lng)
+                    };
+                }
+                response.write("data: " + JSON.stringify(data) + "\n\n");
+            });
+
+        } else {
+            response.write("data: " + JSON.stringify(data) + "\n\n");
+        }
 
     };
 

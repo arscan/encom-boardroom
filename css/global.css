@@ -9,6 +9,10 @@
     src: url('terminator.woff') format('woff');
 }
 
+#boardroom{
+    visibility: hidden;
+}
+
 .center {
     position: absolute;
     left: 50%;
@@ -45,3 +49,4 @@
     from { box-shadow: 0 0 10px #333; text-shadow: 0 0 8px #ccc; }
     to { box-shadow: 0 0 20px #ccc; text-shadow: 0 0 16px #ccc}
 }
+

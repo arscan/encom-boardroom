@@ -2,18 +2,24 @@ var $ = require("jquery"),
     EventSource = require("event-source")
     Boardroom = require("./Boardroom.js");
 
+require("jquery-ui");
+
 console.log(Boardroom);
 
 
-var active = "br";
+var active = "lt";
 var es = new EventSource("http://localhost:8081/events.js");
 var listener = function (event) {
     var div = document.createElement("div");
     var type = event.type;
     if(type === "message"){
-        //console.log(event.data);
-    } else {
-        //console.log(event.data);
+        if(active === "lt"){
+            LightTable.message(JSON.parse(event.data));
+        } else {
+            Boardroom.message(JSON.parse(event.data));
+        }
+    // } else {
+    //console.log(event.data);
     }
 };
 es.addEventListener("open", listener);
@@ -21,12 +27,26 @@ es.addEventListener("message", listener);
 es.addEventListener("error", listener);
 
 var onSwitch = function(view){
-    $("#screensaver").css({visibility: "visible"});
+    var screensaver = $("#screensaver");
+    screensaver.css({visibility: "visible"});
+
+    screensaver.delay(3000).animate({ opacity: 0 },{ 
+        step: function(now, tween){ 
+            screensaver.css('transform', 'scale(' + now + ',' + now + '');
+        },
+        duration: 600, 
+        easing: "easeInOutBack"});
 
     if(view === "github"){
 
-        $("#screensaver").text("GITHUB");
+        screensaver.text("GITHUB");
         LightTable.hide();
+        Boardroom.init(onSwitch);
+
+        setTimeout(function(){
+            active = "br";
+            Boardroom.show();
+        }, 3000)
 
     } else if (view === "wikipedia"){
         $("#screensaver").text("WIKIPEDIA");
@@ -41,15 +61,13 @@ var onSwitch = function(view){
 };
 $(function(){
 
-    active = "br";
-
     //console.log("-----");
     //console.log(LightTable);
-    // LightTable.init(onSwitch);
-    // LightTable.show();
+    LightTable.init(onSwitch);
+    LightTable.show();
 
-    Boardroom.init(onSwitch);
-    Boardroom.show();
+    // Boardroom.init(onSwitch);
+    // Boardroom.show();
 
     var animate = function(){
 

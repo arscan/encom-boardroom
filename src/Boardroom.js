@@ -1,6 +1,7 @@
 var $ = require("jquery"),
     pushercolor = require("pusher.color"),
     moment = require("moment"),
+    LightTable = require("./LightTable.js"),
     EncomGlobe = require("encom-globe"),
     SimpleClock = require("./SimpleClock.js"),
     Box = require("./Box.js"),
@@ -34,9 +35,9 @@ var boardroomActive = false,
     lastUserDate = Date.now();
 
 sliderHeads = {};
-var boardroom = {};
+var Boardroom = {};
 
-boardroom.init = function(){
+Boardroom.init = function(){
     blinkies = $('.blinky');
     mediaBoxes = $('.media-box .user-pic');
 
@@ -83,10 +84,11 @@ boardroom.init = function(){
     }
 };
 
-boardroom.show = function(){
+Boardroom.show = function(cb){
     startDate = new Date();
     lastTime = Date.now();
 
+    $("#boardroom").css({"visibility": "visible"});
     for(var i = 0; i< 20; i++){
         locationAreaColors[i] = pushercolor('#00eeee').blend('#ffcc00', i/20).hex6();
     }
@@ -173,14 +175,21 @@ boardroom.show = function(){
     globe.init(function(){
         // called after the globe is complete
 
-        box = new Box({containerId: "cube"});
-        satbar = new SatBar("satbar");
-        timertrees = new TimerTrees("timer-trees");
-        stockchart = new StockChart("stock-chart");
-        stockchartsmall = new StockChartSmall("stock-chart-small");
-        swirls = new Swirls("swirls");
-        logo = new Logo("logo");
-        boardroomActive = true;
+        // give anything else on the other side a second before starting
+        setTimeout(function(){
+            box = new Box({containerId: "cube"});
+            satbar = new SatBar("satbar");
+            timertrees = new TimerTrees("timer-trees");
+            stockchart = new StockChart("stock-chart");
+            stockchartsmall = new StockChartSmall("stock-chart-small");
+            swirls = new Swirls("swirls");
+            logo = new Logo("logo");
+            boardroomActive = true;
+        }, 1000);
+
+        if(typeof cb === "function"){
+            cb();
+        }
 
         /*
         var screenSaver = $("#screensaver-info");
@@ -203,7 +212,7 @@ boardroom.show = function(){
 
 };
 
-boardroom.hide = function(){
+Boardroom.hide = function(){
     boardroomActive = false;
 
     box = null;
@@ -216,17 +225,7 @@ boardroom.hide = function(){
 
 };
 
-/*
-   return {
-init: init,
-show: show,
-hide: hide,
-resize: resize,
-animate: animate
-};
-*/
-
-boardroom.animate = function(){
+Boardroom.animate = function(){
     if(boardroomActive){
         var animateTime = Date.now() - lastTime;
         lastTime = Date.now();
@@ -241,6 +240,14 @@ boardroom.animate = function(){
         updateSliders(animateTime);
     }
 
+};
+
+Boardroom.message = function(message){
+
+    if(message.actor_attributes && message.actor_attributes.latlon){
+        var latlon = message.actor_attributes.latlon;
+        globe.addPin(latlon.lat, latlon.lon, message.actor_attributes.location);
+    }
 };
 
 
@@ -411,5 +418,5 @@ lastUserDate = Date.now();
 */
 
 
-module.exports =  boardroom;
+module.exports =  Boardroom;
 

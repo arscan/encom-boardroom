@@ -1,4 +1,4 @@
-var PORT = Number(process.env.PORT || 5000);
+var PORT = Number(process.env.PORT || 8081);
 var LOCATIONLOOKUP = "http://loc.robscanlon.com:8080/";
 
 var request = require("request");
@@ -7,6 +7,22 @@ var fs = require("fs");
 var url = require("url");
 var GithubTimelineStream = require("github-timeline-stream");
 var githubStream = new GithubTimelineStream();
+var map = require("map-stream");
+
+var whitelist = {
+    "/css/boardroom-styles.css": "text/css",
+    "/css/global.css": "text/css",
+    "/css/light-table-styles.css": "text/css",
+    "/css/terminator.woff": "application/octet-stream",
+    "/build/encom-boardroom.js": "text/javascript",
+    "/index.html": "text/html",
+    "/images/encom_folder_xl.png": "image/png",
+    "/images/encom_folder_big.png": "image/png",
+    "/images/encom_folder_small.png": "image/png",
+    "/images/scanlines.png": "image/png",
+    "/images/thumbprint.png": "image/png",
+    "/js/globe-grid.js": "text/javascript"
+};
 
 function lookup(loc, cb){
     request.get(LOCATIONLOOKUP + loc, function(error, response, body){
@@ -28,6 +44,7 @@ http.createServer(function (request, response) {
   var parsedURL = url.parse(request.url, true);
   var pathname = parsedURL.pathname;
   if (pathname === "/events.js") {
+      console.log("CONNECTION");
 
     response.writeHead(200, {
       "Content-Type": "text/event-stream",
@@ -40,29 +57,48 @@ http.createServer(function (request, response) {
 
     var lastEventId = Number(request.headers["last-event-id"]) || Number(parsedURL.query.lastEventId) || 0;
 
-
-    var count = 0;
     var sendData = function(data){
-        count++;
+        setTimeout(function(){
+            response.write("data: " + JSON.stringify(data) + "\n\n");
+        }, 6000 * Math.random());
+    };
 
-        if(data.actor_attributes && data.actor_attributes.location){
-            lookup(data.actor_attributes.location, function(latlon){
+    var formatData = function(data){
+
+        if(data.location){
+            lookup(data.location, function(latlon){
                 if(latlon){
-                    data.actor_attributes.latlon = {
+                    data.latlon = {
                         lat: parseFloat(latlon.lat),
                         lon: parseFloat(latlon.lng)
                     };
                 }
-                response.write("data: " + JSON.stringify(data) + "\n\n");
+                sendData(data);
             });
 
         } else {
-            response.write("data: " + JSON.stringify(data) + "\n\n");
+            sendData(data);
         }
 
     };
 
-    githubStream.on("data", sendData);
+    githubStream.pipe(map(function(data, callback){
+
+        var outdata = {location: null};
+
+        if(data.actor_attributes && data.actor_attributes.location){
+            outdata.location = data.actor_attributes.location;
+        }
+
+        if(data.actor_attributes && data.actor_attributes.gravatar_id){
+            outdata.picSmall = 'http://0.gravatar.com/avatar/' + data.actor_attributes.gravatar_id + '?s=89';
+            outdata.picLarge = 'http://0.gravatar.com/avatar/' + data.actor_attributes.gravatar_id + '?s=184';
+        }
+
+        callback(null, outdata);
+
+        
+    })).on("data", formatData);
 
 
     /*
@@ -91,11 +127,14 @@ http.createServer(function (request, response) {
     if (pathname === "/") {
       pathname = "/index.html";
     }
-    if (pathname === "/index.html" || pathname === "../eventsource.js") {
+
+    if (whitelist[pathname]){
       response.writeHead(200, {
-        "Content-Type": pathname === "/index.html" ? "text/html" : "text/javascript"
+        "Content-Type": whitelist[pathname]
       });
+
       response.write(fs.readFileSync(__dirname + pathname));
+
     }
     response.end();
   }

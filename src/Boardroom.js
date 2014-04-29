@@ -30,9 +30,9 @@ var boardroomActive = false,
     logo,
     blinkies,
     blinkiesColors = ["#000", "#ffcc00", "#00eeee", "#fff"],
-    userIndex = 0,
-    currentUsers = [],
-    lastUserDate = Date.now();
+    picIndex = 0,
+    currentPics = [],
+    lastPicDate = Date.now();
 
 sliderHeads = {};
 var Boardroom = {};
@@ -166,6 +166,7 @@ Boardroom.show = function(cb){
 
     globe = new EncomGlobe(600, 600, {
         tiles: grid.tiles,
+        pinColor: "#8FD8D8"
     });
     $("#globe").append(globe.domElement);
 
@@ -244,11 +245,82 @@ Boardroom.animate = function(){
 
 Boardroom.message = function(message){
 
-    if(message.actor_attributes && message.actor_attributes.latlon){
-        var latlon = message.actor_attributes.latlon;
-        globe.addPin(latlon.lat, latlon.lon, message.actor_attributes.location);
+    if(message.latlon){
+        var latlon = message.latlon;
+        globe.addPin(latlon.lat, latlon.lon, message.location);
     }
+    
+    if(message.picSmall || message.picLarge){
+        addPic(message);
+    }
+ 
+    if(message.location){
+        createZipdot(message);
+    }
+
 };
+
+function createZipdot(message){
+
+    var area = "unknown";
+
+    if(message.latlon){
+        area = findArea(message.latlon.lat, message.latlon.lon);
+        $("#location-city-" + area).text(message.location);
+    }
+
+    locationAreas[area].count = locationAreas[area].count + 1;
+    locationAreas[area].count = Math.min(19,locationAreas[area].count);
+    locationAreas[area].ref.css("background-color", locationAreaColors[locationAreas[area].count]);
+
+    $("#location-slider-" + area + " ul :first-child").css("margin-left", "-=5px");
+    $("#location-slider-" + area + " ul").prepend("<li style='color: " + locationAreaColors[locationAreas[area].count] + "'/>");
+    sliderHeads[area] = {area: area, element: $("#location-slider-" + area + " ul :first-child"), margin: 0}; 
+
+};
+
+function changeBlinkies(){
+    $(blinkies[Math.floor(Math.random() * blinkies.length)]).css('background-color', blinkiesColors[Math.floor(Math.random() * blinkiesColors.length)]);
+}
+
+function addPic(data){
+    var pic = data.picSmall;
+    var showPic = true;
+
+    if(currentPics.length < 10 || Date.now() - lastPicDate > 2000){
+
+        if($(mediaBoxes[picIndex]).width() > 100){
+            pic = data.picLarge;
+        }
+
+        for(var i = 0; i< currentPics.length && showPic; i++){
+            if(currentPics[i] == data.picSmall || currentPics[i] == data.picLarge){
+                showPic = false;
+            }
+        }
+
+        if(showPic){
+            var img = document.createElement('img');
+
+            var profileImageLoaded = function(ui){
+                var mb = $(mediaBoxes[ui]);
+                mb.css('background-image', 'url(' + pic + ')');
+                mb.find('span').text(data.actor);
+            };
+
+            img.addEventListener('load', profileImageLoaded.bind(this, picIndex));
+            img.src = pic;
+
+            currentPics[picIndex] = pic;
+
+            picIndex++;
+            picIndex = picIndex % 10;
+
+            lastPicDate = Date.now();
+
+        }
+    }
+}
 
 
 function updateSliders(animateTime){

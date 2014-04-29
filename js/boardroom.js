@@ -151,7 +151,7 @@ var Boardroom = (function($, THREE){
         }, 2000);
 
         globe = new ENCOM.Globe(600, 600, {
-            scale: 1.05
+            pinColor: "#8FD8D8"
 
         });
         $("#globe").append(globe.domElement);

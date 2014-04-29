@@ -204,10 +204,11 @@ div {
     position: relative;
     top: -9px;
     height: 10px;
-
+    list-style-type:circle;
 }
 
 .location-slider li {
+
     color: #00eeee;
     font-size: 10pt;
     margin-bottom: -6px;

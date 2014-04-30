@@ -150,6 +150,17 @@ Swirls.prototype.tick = function(){
     this.context.drawImage(this.background, 0, 0);
     this.context.globalAlpha = 1.0;
 
+    // remove a random one 
+
+    var len = Object.keys(this.points).length;
+    var keys = Object.keys(this.points);
+
+    var checkAtIndex = Math.floor(Math.random() * keys.length);
+
+    if(keys.length > 0  && Date.now() - this.points[keys[checkAtIndex]].hitTime > 5000){
+        delete this.points[keys[checkAtIndex]];
+    }
+
     /*
        this.context.beginPath();
        this.context.arc(Math.random() * this.width, Math.random() * this.height, 2, 0, Math.PI * 2);

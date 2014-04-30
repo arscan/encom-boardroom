@@ -198,24 +198,6 @@ Boardroom.show = function(cb){
         if(typeof cb === "function"){
             cb();
         }
-
-        /*
-        var screenSaver = $("#screensaver-info");
-
-        $("#screensaver-info span").text("Initializing...");
-        setTimeout(function(){
-            $("#screensaver-info span").css("visibility", "hidden");
-            screenSaver.animate({
-                opacity: 0,
-            },{
-                step: function(now, tween){ 
-                    screenSaver.css('transform', 'scale(' + now + ',' + now + '');
-                },
-                duration: 600, 
-                easing: "easeInOutBack", 
-                complete: start});
-        }, 2000);
-       */
     });
 
 };
@@ -259,6 +241,10 @@ Boardroom.message = function(message){
     
     if(message.picSmall || message.picLarge){
         addPic(message);
+    }
+
+    if(message.type && swirls){
+        swirls.hit(message.type);
     }
  
     createZipdot(message);

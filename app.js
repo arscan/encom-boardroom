@@ -95,6 +95,10 @@ http.createServer(function (request, response) {
             outdata.picLarge = 'http://0.gravatar.com/avatar/' + data.actor_attributes.gravatar_id + '?s=184';
         }
 
+        if(data.repository && data.repository.language){
+            outdata.type = data.repository.language;
+        }
+
         callback(null, outdata);
 
         

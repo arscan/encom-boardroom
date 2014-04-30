@@ -78723,24 +78723,6 @@ Boardroom.show = function(cb){
         if(typeof cb === "function"){
             cb();
         }
-
-        /*
-        var screenSaver = $("#screensaver-info");
-
-        $("#screensaver-info span").text("Initializing...");
-        setTimeout(function(){
-            $("#screensaver-info span").css("visibility", "hidden");
-            screenSaver.animate({
-                opacity: 0,
-            },{
-                step: function(now, tween){ 
-                    screenSaver.css('transform', 'scale(' + now + ',' + now + '');
-                },
-                duration: 600, 
-                easing: "easeInOutBack", 
-                complete: start});
-        }, 2000);
-       */
     });
 
 };
@@ -78784,6 +78766,10 @@ Boardroom.message = function(message){
     
     if(message.picSmall || message.picLarge){
         addPic(message);
+    }
+
+    if(message.type && swirls){
+        swirls.hit(message.type);
     }
  
     createZipdot(message);
@@ -81087,6 +81073,17 @@ Swirls.prototype.tick = function(){
     this.context.globalAlpha = .02;
     this.context.drawImage(this.background, 0, 0);
     this.context.globalAlpha = 1.0;
+
+    // remove a random one 
+
+    var len = Object.keys(this.points).length;
+    var keys = Object.keys(this.points);
+
+    var checkAtIndex = Math.floor(Math.random() * keys.length);
+
+    if(keys.length > 0  && Date.now() - this.points[keys[checkAtIndex]].hitTime > 5000){
+        delete this.points[keys[checkAtIndex]];
+    }
 
     /*
        this.context.beginPath();

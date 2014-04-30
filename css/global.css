@@ -13,14 +13,16 @@
     visibility: hidden;
 }
 
+/*
 .center {
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translate(-50%, -50%); /* Yep! */
+    //transform: translate(-50%, -50%);
     width: 48%;
     height: 59%;
 }
+*/
 #screensaver {
     display:inline-block;
     font-family: 'terminator';

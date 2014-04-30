@@ -4,6 +4,14 @@ var $ = require("jquery"),
 
 require("jquery-ui");
 
+$.fn.center = function () {
+    this.css("position","fixed");
+    this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2 - 40) + 
+                             $(window).scrollTop()) + "px");
+    this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2 - 40) + 
+                              $(window).scrollLeft()) + "px");
+    return this;
+}
 
 var active = "lt";
 var es = new EventSource("http://encom-streams.robscanlon.com/events.js");
@@ -27,6 +35,7 @@ es.addEventListener("error", listener);
 
 var onSwitch = function(view){
     var screensaver = $("#screensaver");
+    screensaver.center();
     screensaver.css({visibility: "visible"});
 
     screensaver.delay(3000).animate({ opacity: 0 },{ 
@@ -100,6 +109,8 @@ $(function(){
 
         if(active === "lt"){
             LightTable.resize();
+        } else {
+            Boardroom.resize();
         }
     }
 

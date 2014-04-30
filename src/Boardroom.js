@@ -38,8 +38,15 @@ sliderHeads = {};
 var Boardroom = {};
 
 Boardroom.init = function(){
+    var ratio = $(window).width() / 1918;
     blinkies = $('.blinky');
     mediaBoxes = $('.media-box .user-pic');
+    $("#boardroom").css({
+        "zoom": ratio,
+        "-moz-transform": "scale(" + ratio + ")",
+        "-moz-transform-origin": "0 0"
+    });
+   
 
     setInterval(function(){
         if(boardroomActive){
@@ -254,10 +261,17 @@ Boardroom.message = function(message){
         addPic(message);
     }
  
-    if(message.location){
-        createZipdot(message);
-    }
+    createZipdot(message);
 
+};
+
+Boardroom.resize = function(){
+    var ratio = $(window).width() / 1918;
+    $("#boardroom").css({
+        "zoom": ratio,
+        "-moz-transform": "scale(" + ratio + ")",
+        "-moz-transform-origin": "0 0"
+    });
 };
 
 function createZipdot(message){
@@ -274,7 +288,7 @@ function createZipdot(message){
     locationAreas[area].ref.css("background-color", locationAreaColors[locationAreas[area].count]);
 
     $("#location-slider-" + area + " ul :first-child").css("margin-left", "-=5px");
-    $("#location-slider-" + area + " ul").prepend("<li style='color: " + locationAreaColors[locationAreas[area].count] + "'/>");
+    $("#location-slider-" + area + " ul").prepend("<li style='color: " + locationAreaColors[locationAreas[area].count] + "'></li>");
     sliderHeads[area] = {area: area, element: $("#location-slider-" + area + " ul :first-child"), margin: 0}; 
 
 };

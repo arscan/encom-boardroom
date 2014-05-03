@@ -2,8 +2,8 @@ Encom Boardroom
 =================
 
 This is an HTML5 recreation (tribute?) of the [Boardroom Scene](http://work.gmunk.com/TRON-Board-Room) 
-in Disney's [Tron: Legacy](http://www.imdb.com/title/tt1104001/).  It currently 
-displays realtime(ish) data from Github and Wikipedia.
+in Disney's [Tron: Legacy](http://www.imdb.com/tible/tt1104001/).  It currently 
+displays realtime(ish) data from Github and Wikipedia.  View it in action at http://www.robscanlon.com/encom-boardroom
 
 ### Motivation
 

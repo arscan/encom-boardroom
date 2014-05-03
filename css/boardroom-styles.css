@@ -272,6 +272,18 @@ div {
     overflow: hidden;
 }
 
+#about {
+
+    display: inline-block;
+    font-size: 18pt;
+}
+#logout {
+
+    display: inline-block;
+    font-size: 18pt;
+}
+
+
 #user-interaction{
     position: absolute;
     top: 0px;

@@ -95,14 +95,28 @@ http.createServer(function (request, response) {
             outdata.picLarge = 'http://0.gravatar.com/avatar/' + data.actor_attributes.gravatar_id + '?s=184';
         }
 
-        if(data.repository && data.repository.language){
-            outdata.type = data.repository.language;
+        if(data.actor){
+            outdata.username = data.actor;
         }
+    
+        if(data.repository){
+            outdata.title = data.repository.name;
+            outdata.url = data.repository.url;
+            outdata.size = data.repository.size;
+            outdata.popularity = data.repository.stargazers;
+
+            if(data.repository.language){
+                outdata.type = data.repository.language;
+            }
+        }
+
+        outdata.action = data.type;
 
         callback(null, outdata);
 
         
     })).on("data", formatData);
+
 
 
     /*

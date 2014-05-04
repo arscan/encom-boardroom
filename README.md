@@ -7,11 +7,12 @@ displays realtime(ish) data from Github and Wikipedia.  View it in action at htt
 
 ### Motivation
 
+
 ### Usage
 
 ### Dependencies
 
-* Webgl
+* Three.js
 * Encom Sphere
 * Hexasphere.js
 * JQuery

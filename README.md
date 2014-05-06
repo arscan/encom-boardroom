@@ -10,14 +10,11 @@ displays realtime(ish) data from Github and Wikipedia.  View it in action at htt
 
 ### Usage
 
-### Dependencies
+### Noteable Dependencies
 
 * Three.js
-* Encom Sphere
+* EncomSphere
 * Hexasphere.js
-* JQuery
-* Tween
-* Pusher.Color
 * Quadtree2
 
 ### License

@@ -68,6 +68,10 @@ var onSwitch = function(view){
 
 };
 $(function(){
+        $("#light-table").center();
+        $("#boardroom").center();
+        console.log("LOADED");
+
 
     //console.log("-----");
     //console.log(LightTable);

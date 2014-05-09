@@ -79618,7 +79618,8 @@ var webglTest,
     currentWidth = 0,
     currentHeight = 0,
     hideFn = function(){}
-    LightTable = {};
+    LightTable = {},
+    ratio = 1;
 
 /* public function */
 
@@ -79635,6 +79636,17 @@ LightTable.init = function(_hideFn){
 
     currentWidth = $(window).width();
     currentHeight = $(window).height();
+
+
+    ratio = currentWidth / 1300;
+
+    $("#light-table").css({
+        "position": "absolute",
+        "top": 100 / ratio,
+        "left": 100 / ratio,
+       "transform": "scale(" + ratio + ")",
+       "transform-origin": "0 0"
+    });
 
 
     /* set events */
@@ -79742,8 +79754,27 @@ LightTable.animate = function(){
     }
 };
 
-var resizing = false;
+// var resizing = false;
 LightTable.resize = function(){
+
+    ratio = $(window).width() / 1300;
+
+    $("#light-table").css({
+        "position": "absolute",
+        "top": 10,
+        "left": 10,
+       "transform": "scale(" + ratio + ")",
+       "transform-origin": "0 0"
+    });
+    /*
+    $("#light-table").css({
+        "zoom": ratio,
+        "-moz-transform": "scale(" + ratio + ")",
+        "-moz-transform-origin": "0 0"
+    });
+   */
+
+    /*
     if(!resizing && 
        (currentWidth > 1600 && $(window).width() <= 1600) || 
            (currentWidth <= 1600 && $(window).width() > 1600) ||
@@ -79757,6 +79788,7 @@ LightTable.resize = function(){
         resizing = false;
     }, 3000);
     }
+   */
 };
 
 
@@ -79771,6 +79803,19 @@ function showContainer(){
     var outside = $("#lt-container-outside");
     var inside = $("#lt-container-inside");
 
+
+    /*
+    outside.css("position","fixed")
+       .css("top", Math.max(0, (($(window).height() - outside.outerHeight()) / 4)) + "px")
+       .css("left", Math.max(0, (($(window).width() - outside.outerWidth()) / 4)) + "px");
+
+    inside.css("position","fixed")
+       .css("top", Math.max(0, (($(window).height() - inside.outerHeight()) / 4)) + "px")
+       .css("left", Math.max(0, (($(window).width() - inside.outerWidth()) / 4)) + "px");
+      */
+
+
+    /*
     outside.css({
         'position' : 'absolute',
         'left' : '50%',
@@ -79786,6 +79831,7 @@ function showContainer(){
         'margin-left' : -inside.width()/2,
         'margin-top' : -inside.height()/2
     });
+   */
 
     var outsideOffset = outside.offset();
     var insideOffset = inside.offset();
@@ -79801,7 +79847,7 @@ function showContainer(){
     var insideBlockerTopRight = $("<div>");
     var insideBlockerBottomLeft = $("<div>");
 
-    $('body').append(outsideBlockerTopRight)
+    $('#light-table').append(outsideBlockerTopRight)
     .append(outsideBlockerBottomLeft)
     .append(insideBlockerTopRight)
     .append(insideBlockerBottomLeft);
@@ -79811,8 +79857,8 @@ function showContainer(){
         // "background-color": "#aa0000",
         // opacity: .5,
         position: "absolute",
-        top: outsideOffset.top - 5,
-        left: outsideOffset.left - 5,
+        top: 100 / ratio + outsideOffset.top - 5,
+        left: 100 / ratio + outsideOffset.left - 5,
         width: outside.outerWidth() + 10,
         height: outside.outerHeight(),
         "z-index": 15
@@ -79951,16 +79997,16 @@ function showContentBoxes(item, extraDelay) {
 
     item.height(0)
     .width(0)
-    .css("top", top + height/2)
-    .css("left", left + width/2);
+    .css("top", top + (height/2/ratio))
+    .css("left", left + (width/2/ratio));
 
     setTimeout(function doHeaderAnimations(){
 
         item.animate({
             height: height,
             width: "100%",
-            left: left,
-            top: top
+            left: left / ratio,
+            top: top / ratio
 
         }, 500);
         item.css({
@@ -81362,6 +81408,10 @@ var onSwitch = function(view){
 
 };
 $(function(){
+        $("#light-table").center();
+        $("#boardroom").center();
+        console.log("LOADED");
+
 
     //console.log("-----");
     //console.log(LightTable);

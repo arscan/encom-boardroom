@@ -78552,6 +78552,7 @@ var boardroomActive = false,
     screensaver, 
     locationAreas, 
     locationAreaColors = [], 
+    interactionContainer,
     logo,
     blinkies,
     blinkiesColors = ["#000", "#ffcc00", "#00eeee", "#fff"],
@@ -78609,7 +78610,7 @@ Boardroom.init = function(){
         }
     }, 3000);
 
-    var interactionContainer = $("#interaction > div");
+    interactionContainer = $("#interaction > div");
 
     for(var i = 0; i< 50; i++){
         interactionContainer.append('<ul class="interaction-data"></ul>');
@@ -78676,8 +78677,6 @@ Boardroom.show = function(cb){
     $("#bottom-border").delay(100).animate({
         width: "1900px"
     }, 4000);
-
-    var interactionContainer = $("#interaction > div")[0];
 
     setTimeout(function(){
         for(var i = 0; i< 2; i++){
@@ -78772,7 +78771,23 @@ Boardroom.message = function(message){
         swirls.hit(message.type);
     }
  
+    if(interactionContainer && interactionContainer[0].lastChild){
+        var lastChild = interactionContainer[0].lastChild;
+        lastChild.innerHTML = '<li class="interaction-username">' + message.username + '</li>' + 
+            '<li class="interaction-title">' + message.title + '</li>' + 
+            '<li class="interaction-type">' + message.type + '</li>' + 
+            '<li class="interaction-size">' + message.size + '</li>' + 
+            '<li class="interaction-popularity">' + message.popularity + '</li>';
+
+        if(message.popularity > 100){
+            lastChild.innerHTML = '<li class="interaction-popular">!</li>' + lastChild.innerHTML;
+        }
+
+        interactionContainer[0].insertBefore(interactionContainer[0].lastChild, interactionContainer[0].firstChild);
+    }
+
     createZipdot(message);
+
 
 };
 
@@ -81294,7 +81309,7 @@ $.fn.center = function () {
 
 var active = "lt";
 var es = new EventSource("http://encom-streams.robscanlon.com/events.js");
-// var es = new EventSource("/events.js");
+//var es = new EventSource("/events.js");
 var listener = function (event) {
     var div = document.createElement("div");
     var type = event.type;

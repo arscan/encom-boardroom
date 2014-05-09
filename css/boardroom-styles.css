@@ -283,6 +283,12 @@ div {
     font-size: 18pt;
 }
 
+#infect {
+
+    display: inline-block;
+    font-size: 18pt;
+}
+
 
 #user-interaction{
     position: absolute;
@@ -304,7 +310,7 @@ div {
 }
 
 #interaction {
-    padding: 2px 5px;
+    padding: 2px 8px;
     margin-top:6px;
     float: left;
     border-right: 1px solid #333;
@@ -326,13 +332,37 @@ div {
     display: inline-block;
     padding: 0px;
     padding-right: 10px;
+    font-size: 10px;
+    line-height: 1em;
 }
-.interaction-data :first-child {
+
+.interaction-username {
     color: #fff;
 }
-.interaction-data :last-child {
+
+.interaction-title {
+    color: #00eeee;
+}
+
+.interaction-type {
+    color: #ffcc00;
+}
+
+.interaction-size {
     color: #fff;
 }
+
+.interaction-popularity {
+    color: #00eeee;
+}
+
+.interaction-popular {
+    color: #00eeee;
+    margin-left: -15px;
+    padding: 0;
+    margin-right: 0;
+}
+
 
 #interaction-overlay {
     position:absolute;

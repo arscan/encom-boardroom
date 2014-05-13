@@ -41,8 +41,8 @@ ul {
 
 #lt-container-inside {
     position:absolute;
-    left: 20px;
-    top:5px;
+    left: 40px;
+    top:20px;
     width: 1100px;
     height: 600px;
     z-index: 20;
@@ -222,11 +222,11 @@ ul {
     overflow: hidden;
 }
 #lt-mobile-readme {
-    display:none;
     position: absolute;
     top: 260px;
     overflow: hidden;
     visibility: hidden;
+    display:none;
     width: 0;
 }
 
@@ -578,7 +578,7 @@ ul {
     }
 
 }
-/*
+
 @media (min-width: 1600px) { 
 
     body {
@@ -593,17 +593,22 @@ ul {
 
     #lt-container-outside{
         position:absolute;
+        /* width: 1140px; */
+        /* height: 610px; */
         width: 1540px;
         height: 760px;
 
     }
 
     #lt-container-inside {
+        /* width: 1100px; */
+        /* height: 600px; */
         width: 1500px;
         height: 750px;
     }
 
     #lt-left-column{
+        /*width: 380px;*/
         width: 580px;
     }
 
@@ -792,4 +797,3 @@ ul {
 
 
 }
-*/

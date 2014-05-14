@@ -47,6 +47,8 @@ Boardroom.init = function(){
         "-moz-transform": "scale(" + ratio + ")",
         "-moz-transform-origin": "0 0"
     });
+
+    $("#boardroom").center();
    
 
     setInterval(function(){
@@ -273,6 +275,8 @@ Boardroom.resize = function(){
         "-moz-transform": "scale(" + ratio + ")",
         "-moz-transform-origin": "0 0"
     });
+
+    $("#boardroom").center();
 };
 
 function createZipdot(message){

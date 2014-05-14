@@ -1,4 +1,3 @@
-
 /* 
     terminator font:
     Allen R. Walden's Friendly Fonts (Unprotected. Please distribute freely.) | Software Friends, Inc. © 1993 (Friendly Fonts)
@@ -9,7 +8,50 @@
     src: url('terminator.woff') format('woff');
 }
 
+body {
+    background-color: black;
+    font-size:6pt;
+    /* color: #6fc0ba; */
+    color: #fff;
+}
+
+#error-message{
+    visibility: hidden;
+    width: 600px;
+}
+
+#error-message p{
+    font-size: 16pt;
+    line-height: 24pt;
+
+}
+
+#error-message .sig{
+    padding-left: 30px;
+}
+
+#error-message .sig a, #error-message .sig a:visited {
+    color: #ffcc00;
+}
+
+#error-message em{
+    text-align: right;
+    display:block;
+
+
+}
+
+#error-message h1{
+    font-size:42pt;
+    margin: 0;
+    padding: 0;
+}
+
 #boardroom{
+    visibility: hidden;
+}
+
+#light-table {
     visibility: hidden;
 }
 

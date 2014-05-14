@@ -67,15 +67,36 @@ var onSwitch = function(view){
 
 
 };
+
+var showWebglError = function(){
+
+
+};
+
 $(function(){
-        $("#light-table").center();
-        $("#boardroom").center();
         console.log("LOADED");
 
 
     //console.log("-----");
     //console.log(LightTable);
-    LightTable.init(onSwitch);
+    try {
+        LightTable.init(onSwitch);
+
+    } catch (ex){
+
+        
+        $("#error-message")
+           .css("visibility", "visible")
+           .center();
+
+        console.log(ex);
+
+        return;
+
+
+    }
+    $("#light-table").center();
+    $("#boardroom").center();
     LightTable.show();
 
     // Boardroom.init(onSwitch);

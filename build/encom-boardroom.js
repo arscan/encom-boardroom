@@ -78668,6 +78668,8 @@ Boardroom.init = function(){
         "-moz-transform": "scale(" + ratio + ")",
         "-moz-transform-origin": "0 0"
     });
+
+    $("#boardroom").center();
    
 
     setInterval(function(){
@@ -78894,6 +78896,8 @@ Boardroom.resize = function(){
         "-moz-transform": "scale(" + ratio + ")",
         "-moz-transform-origin": "0 0"
     });
+
+    $("#boardroom").center();
 };
 
 function createZipdot(message){
@@ -79725,9 +79729,13 @@ LightTable.init = function(_hideFn){
     $(".lt-header").css("visibility", "hidden");
     $(".content-container").css("visibility", "hidden");
 
+
     $("#lt-keyboard").css("opacity", 0);
 
+
     webglTest = createWebGlTest();
+
+    $("#light-table").css("visibility", "visible");
 
     currentWidth = $(window).width();
     currentHeight = $(window).height();
@@ -79840,18 +79848,17 @@ LightTable.animate = function(){
 
 var resizing = false;
 LightTable.resize = function(){
-    if(!resizing && 
-       (currentWidth > 1600 && $(window).width() <= 1600) || 
-           (currentWidth <= 1600 && $(window).width() > 1600) ||
-               (currentWidth > 1100 && $(window).width() <= 1100) || 
-                   (currentWidth <= 1100 && $(window).width() > 1100)){
+    $("#light-table").center();
+    if(!resizing && (currentWidth > 1600 && $(window).width() <= 1600) || (currentWidth <= 1600 && $(window).width() > 1600)){
+
         currentWidth = $(window).width();
-    resizing = true;
-    hide();
-    setTimeout(show,1000);
-    setTimeout(function(){
-        resizing = false;
-    }, 3000);
+        resizing = true;
+        LightTable.hide();
+        setTimeout(LightTable.show,1000);
+
+        setTimeout(function(){
+            resizing = false;
+        }, 3000);
     }
 };
 
@@ -79867,21 +79874,8 @@ function showContainer(){
     var outside = $("#lt-container-outside");
     var inside = $("#lt-container-inside");
 
-    outside.css({
-        'position' : 'absolute',
-        'left' : '50%',
-        'top' : '50%',
-        'margin-left' : -outside.width()/2,
-        'margin-top' : -outside.height()/2
-    });
-
-    inside.css({
-        'position' : 'absolute',
-        'left' : '50%',
-        'top' : '50%',
-        'margin-left' : -inside.width()/2,
-        'margin-top' : -inside.height()/2
-    });
+    outside.center();
+    inside.center();
 
     var outsideOffset = outside.offset();
     var insideOffset = inside.offset();
@@ -81457,15 +81451,36 @@ var onSwitch = function(view){
 
 
 };
+
+var showWebglError = function(){
+
+
+};
+
 $(function(){
-        $("#light-table").center();
-        $("#boardroom").center();
         console.log("LOADED");
 
 
     //console.log("-----");
     //console.log(LightTable);
-    LightTable.init(onSwitch);
+    try {
+        LightTable.init(onSwitch);
+
+    } catch (ex){
+
+        
+        $("#error-message")
+           .css("visibility", "visible")
+           .center();
+
+        console.log(ex);
+
+        return;
+
+
+    }
+    $("#light-table").center();
+    $("#boardroom").center();
     LightTable.show();
 
     // Boardroom.init(onSwitch);

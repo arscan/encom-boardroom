@@ -78670,7 +78670,25 @@ Boardroom.init = function(){
     });
 
     $("#boardroom").center();
-   
+
+    $("#fullscreen-link").click(function(e){
+        e.preventDefault();
+        var el = document.documentElement, 
+            rfs = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen;
+
+        rfs.call(el);
+
+    });
+
+    $("#info-link").click(function(e){
+        e.preventDefault();
+        showReadme();
+    });
+
+    $("#boardroom-readme h2 em").click(function(e){
+        e.preventDefault();
+        hideReadme();
+    });
 
     setInterval(function(){
         if(boardroomActive){
@@ -78728,9 +78746,9 @@ Boardroom.show = function(cb){
 
     // render the other elements intro animations
 
-    $("#fps").delay(100).animate({height: "25px"}, 500).animate({width: "180px"}, 800);
+    $(".footer-bar").delay(4000).animate({"margin-top": "0"}, 500);
 
-    $("#ms").delay(600).animate({height: "25px"}, 500).animate({width: "180px"}, 800);
+    $("#globe-footer img").delay(4500).animate({"opacity": "1"}, 1000);
 
     $("#globalization").delay(600).animate({
         top: "0px",
@@ -78900,6 +78918,67 @@ Boardroom.resize = function(){
     $("#boardroom").center();
 };
 
+function showReadme() {
+
+    var item = $("#boardroom-readme");
+    var itemContent = item.find(".content");
+
+    item.removeAttr("style");
+
+    var height = item.height();
+    var width = item.width();
+    var left = item.position().left;
+    var top = item.position().top;
+
+    var border = item.css("border");
+    var boxShadow = item.css("box-shadow");
+
+    var contentBorder = itemContent.css("border");
+    var contentBoxShadow = itemContent.css("box-shadow");
+
+    itemContent.children().each(function(index, element){
+        $(element).css("visibility", "hidden");
+    });
+
+    item.height(0)
+    .width(0)
+    .css("top", top + height/2)
+    .css("left", left + width/2)
+    .css("visibility", "visible");
+
+
+    item.animate({
+        height: height,
+        width: "500px",
+        left: left,
+        top: top
+
+    }, 500);
+    item.css({
+        opacity: 1
+    });
+
+    setTimeout(function(){
+
+        itemContent.children().each(function(index, element){
+            $(element).css("visibility", "visible");
+        });
+
+
+    }, 1000);
+
+}
+
+function hideReadme(){
+    $("#boardroom-readme").css("visibility", "hidden");
+    $("#boardroom-readme").children().each(function(index, element){
+        $(element).removeAttr("style");
+    });
+    $("#boardroom-readme .content").children().each(function(index, element){
+        $(element).removeAttr("style");
+    });
+}
+
 function createZipdot(message){
 
     var area = "unknown";
@@ -79035,100 +79114,6 @@ function getTime(){
     return (hours < 10 ? "0":"") + hours + ":" + (minutes < 10 ? "0":"") + minutes + ":" + (seconds< 10? "0": "") + seconds + ":" + (mili < 10? "0" : "") + mili;
 
 }
-
-/*
-   function start(){
-
-
-
-   setTimeout(function(){
-   StreamServer.onMessage(function (datain) {
-   var chunks = datain.message.split("*");
-
-   var data = {};
-   if(datain.location){
-   data.location = datain.location.name;
-   if(datain.location.lat && datain.location.lng){
-   data.latlng = {"lat": datain.location.lat, "lng": datain.location.lng};
-   globe.addPin(datain.location.lat, datain.location.lng, datain.location.name);
-   }
-   }
-
-   data.actor = chunks[3].trim();
-   data.repo = chunks[0].trim();
-   data.type = chunks[5].trim();
-   data.pic = chunks[6].trim();
-
-
-// figure out which one I'm in
-
-var area = "unknown";
-
-if(data.latlng){
-area = findArea(data.latlng.lat, data.latlng.lng);
-$("#location-city-" + area).text(data.location);
-}
-
-
-locationAreas[area].count = locationAreas[area].count + 1;
-locationAreas[area].count = Math.min(19,locationAreas[area].count);
-locationAreas[area].ref.css("background-color", locationAreaColors[locationAreas[area].count]);
-
-$("#location-slider-" + area + " ul :first-child").css("margin-left", "-=5px");
-$("#location-slider-" + area + " ul").prepend("<li style='color: " + locationAreaColors[locationAreas[area].count] + "'/>");
-sliderHeads[area] = {area: area, element: $("#location-slider-" + area + " ul :first-child"), margin: 0}; 
-
-// cleanup
-
-var lastChild = interactionContainer.lastChild;
-lastChild.innerHTML = '<li>' + data.actor + '</li><li>' + data.repo + '</li><li>' + data.type + '</li>';
-interactionContainer.insertBefore(interactionContainer.lastChild, interactionContainer.firstChild);
-
-swirls.hit(data.type);
-
-$(blinkies[Math.floor(Math.random() * blinkies.length)]).css('background-color', blinkiesColors[Math.floor(Math.random() * blinkiesColors.length)]);
-
-var showUser = true;
-
-if(currentUsers.length < 10 || Date.now() - lastUserDate > 1000){
-
-for(var i = 0; i< currentUsers.length && showUser; i++){
-if(currentUsers[i] == data.pic){
-showUser = false;
-}
-}
-
-if(showUser){
-var img = document.createElement('img');
-
-var profileImageLoaded = function(ui){
-var mb = $(mediaBoxes[ui]);
-mb.css('background-image', 'url(http://0.gravatar.com/avatar/' + data.pic + '?s=' + mb.width() +')');
-mb.find('span').text(data.actor);
-
-};
-
-img.addEventListener('load', profileImageLoaded.bind(this, userIndex));
-img.src = 'http://0.gravatar.com/avatar/' + data.pic + '?s=' + $(mediaBoxes[userIndex]).width();
-
-currentUsers[userIndex] = data.pic;
-
-userIndex++;
-userIndex = userIndex % 10;
-
-lastUserDate = Date.now();
-
-}
-}
-
-});
-}, 2000);
-
-
-
-}
-*/
-
 
 module.exports =  Boardroom;
 

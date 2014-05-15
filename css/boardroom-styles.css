@@ -265,11 +265,49 @@ div {
 
 #globe-footer{
     position:absolute;
-    width:650px;
-    height:35px;
-    top: 665px;
-    left: 190px;
+    height:55px;
+    top: 650px;
+    left: 350px;
     overflow: hidden;
+}
+
+.footer-bar{
+    width: 1px;
+    height: 200px;
+    border-left: 1px solid #333;
+    float:left;
+    margin-right:15px;
+    margin-top:100px;
+}
+
+#globe-footer a{
+    padding-top:5px;
+    float:left;
+    margin-right: 30px;
+}
+
+#globe-footer img{
+    opacity: 0;
+}
+
+#twitter {
+    width: 30px;
+}
+
+#info-image {
+    width: 25px;
+}
+
+#fullscreen-image {
+    width: 25px;
+}
+
+#keyboard-image {
+    width: 40px;
+}
+
+#github-image {
+    width: 25px;
 }
 
 #about {
@@ -973,3 +1011,44 @@ left: 190px;
     color: #aaa;
 }
 
+#boardroom-readme {
+
+    border: 2px solid #6fc0ba;
+    border-radius: 2px;
+    /* box-shadow: 0 0 6px #005b8e, inset 0 0 6px #005b8e; */
+    padding: 3px;
+    visibility: hidden;
+    background-color: #000;
+    position: absolute;
+    width: 500px;
+    top: 100px;
+    left: 600px;
+}
+
+#boardroom-readme .content{
+    padding: 10px;
+}
+
+#boardroom-readme h2 {
+    color: #fff;
+    margin: 0;
+    border-bottom: 1px solid #1b2f2d;
+    padding: 2px 4px;
+    font-weight: bold;
+}
+
+#boardroom-readme h2 em{
+    font-style: normal;
+    float: right;
+    font-size: .8em;
+    padding-top: 1px;
+    color: #00eeee;
+    cursor: pointer;
+
+}
+
+#boardroom-readme p {
+    margin: 2px 0 0;
+    padding: 4px 6px;
+
+}

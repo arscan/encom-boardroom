@@ -20,6 +20,11 @@ var whitelist = {
     "/images/encom_folder_big.png": "image/png",
     "/images/encom_folder_small.png": "image/png",
     "/images/scanlines.png": "image/png",
+    "/images/twitter.png": "image/png",
+    "/images/keyboard.png": "image/png",
+    "/images/GitHub-Mark-Light-32px.png": "image/png",
+    "/images/info.png": "image/png",
+    "/images/fullscreen.png": "image/png",
     "/images/thumbprint.png": "image/png",
     "/js/globe-grid.js": "text/javascript"
 };

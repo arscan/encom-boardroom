@@ -8,6 +8,10 @@
     src: url('terminator.woff') format('woff');
 }
 
+html {
+    background-color: #000;
+}
+
 body {
     background-color: black;
     font-size:6pt;

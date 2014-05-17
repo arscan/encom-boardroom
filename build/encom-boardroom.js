@@ -79029,7 +79029,9 @@ function addPic(data){
             var profileImageLoaded = function(ui){
                 var mb = $(mediaBoxes[ui]);
                 mb.css('background-image', 'url(' + pic + ')');
-                mb.find('span').text(data.actor);
+                mb.find('span').text(data.username);
+                mb.off();
+                mb.click(function(){window.open('http://github.com/' + data.username, "_blank")});
             };
 
             img.addEventListener('load', profileImageLoaded.bind(this, picIndex));

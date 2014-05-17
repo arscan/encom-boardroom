@@ -647,22 +647,6 @@ div {
     height: 100%;
 }
 
-.media-scanlines{
-    position:absolute;
-    width: 380px;
-    height: 190px;
-    background: transparent url(../images/scanlines.png) repeat;
-    z-index: 5;
-    opacity: .4;
-}
-
-#media-top .media-scanlines{
-    top: 46px;
-}
-
-#media-bottom .media-scanlines{
-    top: 274px;
-}
 
 .media-box{
     float: left;
@@ -679,6 +663,8 @@ div {
     height: 89px;
     width: 89px;
     float: left;
+    cursor: pointer;
+
 }
 #media-bottom .user-pic{
     float: right;

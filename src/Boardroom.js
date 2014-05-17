@@ -38,7 +38,7 @@ var boardroomActive = false,
 sliderHeads = {};
 var Boardroom = {};
 
-Boardroom.init = function(){
+Boardroom.init = function(title, data){
     var ratio = $(window).width() / 1918;
     blinkies = $('.blinky');
     mediaBoxes = $('.media-box .user-pic');
@@ -47,6 +47,8 @@ Boardroom.init = function(){
         "-moz-transform": "scale(" + ratio + ")",
         "-moz-transform-origin": "0 0"
     });
+
+    Boardroom.data = data;
 
     $("#boardroom").center();
 
@@ -91,6 +93,9 @@ Boardroom.init = function(){
         other: {count: 10, ref: $("#location-area-other")},
         unknown: {count: 10, ref: $("#location-area-unknown")}
     };
+
+    $("#ticker-text").text(title.toUpperCase());
+    $("#ticker-value").text(formatYTD(data[0].events, data[data.length-1].events));
 
     setInterval(function(){
         if(boardroomActive){
@@ -207,8 +212,8 @@ Boardroom.show = function(cb){
             box = new Box({containerId: "cube"});
             satbar = new SatBar("satbar");
             timertrees = new TimerTrees("timer-trees");
-            stockchart = new StockChart("stock-chart", {data: window.githubHistory});
-            stockchartsmall = new StockChartSmall("stock-chart-small");
+            stockchart = new StockChart("stock-chart", {data: Boardroom.data});
+            stockchartsmall = new StockChartSmall("stock-chart-small", {data: Boardroom.data});
             swirls = new Swirls("swirls");
             logo = new Logo("logo");
             boardroomActive = true;
@@ -493,6 +498,17 @@ function getTime(){
     return (hours < 10 ? "0":"") + hours + ":" + (minutes < 10 ? "0":"") + minutes + ":" + (seconds< 10? "0": "") + seconds + ":" + (mili < 10? "0" : "") + mili;
 
 }
+
+function formatYTD(first, last){
+    var percentage = 100 * (((last- first) / first) - 1);
+    console.log(percentage);
+    var output = percentage.toFixed(1) + "%";
+    if(percentage > 0 && percentage < 100){
+        output = "+" + output;
+    }
+
+    return output;
+};
 
 module.exports =  Boardroom;
 

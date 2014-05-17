@@ -30,7 +30,6 @@ Utils.shadeColor = function(color, percent) {
 }
 
 Utils.drawCurvedRectangle = function(ctx, left, top, width, height, radius){
-    console.log("drawing");
 
     ctx.beginPath();
     ctx.moveTo(left + radius, top);

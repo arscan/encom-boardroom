@@ -49,7 +49,7 @@ var onSwitch = function(view){
 
         screensaver.text("GITHUB");
         LightTable.hide();
-        Boardroom.init(onSwitch);
+        Boardroom.init("GITHUB", window.githubHistory);
 
         setTimeout(function(){
             active = "br";
@@ -74,11 +74,6 @@ var showWebglError = function(){
 };
 
 $(function(){
-        console.log("LOADED");
-
-
-    //console.log("-----");
-    //console.log(LightTable);
     try {
         LightTable.init(onSwitch);
 

@@ -78659,7 +78659,7 @@ var boardroomActive = false,
 sliderHeads = {};
 var Boardroom = {};
 
-Boardroom.init = function(){
+Boardroom.init = function(title, data){
     var ratio = $(window).width() / 1918;
     blinkies = $('.blinky');
     mediaBoxes = $('.media-box .user-pic');
@@ -78668,6 +78668,8 @@ Boardroom.init = function(){
         "-moz-transform": "scale(" + ratio + ")",
         "-moz-transform-origin": "0 0"
     });
+
+    Boardroom.data = data;
 
     $("#boardroom").center();
 
@@ -78712,6 +78714,9 @@ Boardroom.init = function(){
         other: {count: 10, ref: $("#location-area-other")},
         unknown: {count: 10, ref: $("#location-area-unknown")}
     };
+
+    $("#ticker-text").text(title.toUpperCase());
+    $("#ticker-value").text(formatYTD(data[0].events, data[data.length-1].events));
 
     setInterval(function(){
         if(boardroomActive){
@@ -78828,8 +78833,8 @@ Boardroom.show = function(cb){
             box = new Box({containerId: "cube"});
             satbar = new SatBar("satbar");
             timertrees = new TimerTrees("timer-trees");
-            stockchart = new StockChart("stock-chart", {data: window.githubHistory});
-            stockchartsmall = new StockChartSmall("stock-chart-small");
+            stockchart = new StockChart("stock-chart", {data: Boardroom.data});
+            stockchartsmall = new StockChartSmall("stock-chart-small", {data: Boardroom.data});
             swirls = new Swirls("swirls");
             logo = new Logo("logo");
             boardroomActive = true;
@@ -79114,6 +79119,17 @@ function getTime(){
     return (hours < 10 ? "0":"") + hours + ":" + (minutes < 10 ? "0":"") + minutes + ":" + (seconds< 10? "0": "") + seconds + ":" + (mili < 10? "0" : "") + mili;
 
 }
+
+function formatYTD(first, last){
+    var percentage = 100 * (((last- first) / first) - 1);
+    console.log(percentage);
+    var output = percentage.toFixed(1) + "%";
+    if(percentage > 0 && percentage < 100){
+        output = "+" + output;
+    }
+
+    return output;
+};
 
 module.exports =  Boardroom;
 
@@ -80784,8 +80800,6 @@ StockChart.prototype.addFrame = function(label, data) {
     var sorted = data.slice(0).sort();
     var min = sorted[0] * .8;
     var max = sorted[sorted.length-5];
-    console.log(sorted);
-
     var increment = (max - min) / this.opts.ticks;
     var heightIncrement  = (this.height) / this.opts.ticks;
 
@@ -80820,7 +80834,6 @@ StockChart.prototype.addFrame = function(label, data) {
         ctx.lineWidth = "1px";
         for(var i = 0; i < data.length; i++){
             ctx.lineTo(30 + i*xIncrement, this.height - this.height * (data[i]-min) / max );
-            console.log((data[i]-min)/increment);
         }
         ctx.lineTo(this.width, this.height-1);
         ctx.stroke();
@@ -80942,7 +80955,8 @@ var Utils = require("./Utils.js");
 var StockChartSmall = function(canvasId, opts){
 
     var defaults = {
-        ticks: 5
+        ticks: 5,
+        data: []
     }
 
     var darkerColor = Utils.shadeColor("#00eeee",-50);
@@ -81013,20 +81027,52 @@ var StockChartSmall = function(canvasId, opts){
 
     var data = [];
 
-    for(var i = 0; i< 20; i++){
-        data.push(Math.random()*this.height);
+    if(!this.opts.data.length){
+        for(var i = 0; i< 30; i++){
+            data.push(Math.random()*this.height);
+        }
+    } else {
+        for(var i = 0; i< this.opts.data.length; i++){
+            data.push(this.opts.data[i].events);
+        }
     }
 
-    var xIncrement = (this.width)/(data.length-1);
+    var sorted = data.slice(0).sort();
+    var min = sorted[0]*.8;
+    var max = sorted[sorted.length-4]*1.2;
+    var f = (max-min)/this.height;
+    console.log(f);
+
+    var xIncrement = (this.width)/(30-2);
 
     this.context.strokeStyle = "#aaa"
     this.context.beginPath();
     this.context.moveTo(0,0);
 
+    var divideDataInto = Math.max(1,Math.floor(data.length/30));
+    var subArea = [];
+    var lowData = [];
+
     for(var i = 0; i < data.length; i++){
-        this.context.lineWidth = "1px";
-        this.context.lineTo(i*xIncrement, this.height - data[i]);
+        if(subArea.length < divideDataInto){
+            subArea.push(data[i]);
+        } else {
+            var sum = 0;
+            for(var j = 0; j< subArea.length; j++){
+                sum += subArea[j];
+            }
+            lowData.push(sum/subArea.length);
+            subArea = [];
+        }
     }
+        
+
+    for(var i = 0; i< lowData.length; i++){
+        this.context.lineWidth = "1px";
+        this.context.lineTo(i*xIncrement, this.height - lowData[i]/f);
+    }
+    this.context.lineTo(this.width, this.height - lowData[lowData.length-1]/f);
+    this.context.stroke();
     this.context.lineTo(this.width, 0);
     this.context.stroke();
     this.context.fillStyle = "#000";
@@ -81372,7 +81418,6 @@ Utils.shadeColor = function(color, percent) {
 }
 
 Utils.drawCurvedRectangle = function(ctx, left, top, width, height, radius){
-    console.log("drawing");
 
     ctx.beginPath();
     ctx.moveTo(left + radius, top);
@@ -81443,7 +81488,7 @@ var onSwitch = function(view){
 
         screensaver.text("GITHUB");
         LightTable.hide();
-        Boardroom.init(onSwitch);
+        Boardroom.init("GITHUB", window.githubHistory);
 
         setTimeout(function(){
             active = "br";
@@ -81468,11 +81513,6 @@ var showWebglError = function(){
 };
 
 $(function(){
-        console.log("LOADED");
-
-
-    //console.log("-----");
-    //console.log(LightTable);
     try {
         LightTable.init(onSwitch);
 

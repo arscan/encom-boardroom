@@ -3,7 +3,8 @@ var Utils = require("./Utils.js");
 var StockChartSmall = function(canvasId, opts){
 
     var defaults = {
-        ticks: 5
+        ticks: 5,
+        data: []
     }
 
     var darkerColor = Utils.shadeColor("#00eeee",-50);
@@ -74,20 +75,52 @@ var StockChartSmall = function(canvasId, opts){
 
     var data = [];
 
-    for(var i = 0; i< 20; i++){
-        data.push(Math.random()*this.height);
+    if(!this.opts.data.length){
+        for(var i = 0; i< 30; i++){
+            data.push(Math.random()*this.height);
+        }
+    } else {
+        for(var i = 0; i< this.opts.data.length; i++){
+            data.push(this.opts.data[i].events);
+        }
     }
 
-    var xIncrement = (this.width)/(data.length-1);
+    var sorted = data.slice(0).sort();
+    var min = sorted[0]*.8;
+    var max = sorted[sorted.length-4]*1.2;
+    var f = (max-min)/this.height;
+    console.log(f);
+
+    var xIncrement = (this.width)/(30-2);
 
     this.context.strokeStyle = "#aaa"
     this.context.beginPath();
     this.context.moveTo(0,0);
 
+    var divideDataInto = Math.max(1,Math.floor(data.length/30));
+    var subArea = [];
+    var lowData = [];
+
     for(var i = 0; i < data.length; i++){
-        this.context.lineWidth = "1px";
-        this.context.lineTo(i*xIncrement, this.height - data[i]);
+        if(subArea.length < divideDataInto){
+            subArea.push(data[i]);
+        } else {
+            var sum = 0;
+            for(var j = 0; j< subArea.length; j++){
+                sum += subArea[j];
+            }
+            lowData.push(sum/subArea.length);
+            subArea = [];
+        }
     }
+        
+
+    for(var i = 0; i< lowData.length; i++){
+        this.context.lineWidth = "1px";
+        this.context.lineTo(i*xIncrement, this.height - lowData[i]/f);
+    }
+    this.context.lineTo(this.width, this.height - lowData[lowData.length-1]/f);
+    this.context.stroke();
     this.context.lineTo(this.width, 0);
     this.context.stroke();
     this.context.fillStyle = "#000";

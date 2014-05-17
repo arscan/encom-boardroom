@@ -89,8 +89,6 @@ StockChart.prototype.addFrame = function(label, data) {
     var sorted = data.slice(0).sort();
     var min = sorted[0] * .8;
     var max = sorted[sorted.length-5];
-    console.log(sorted);
-
     var increment = (max - min) / this.opts.ticks;
     var heightIncrement  = (this.height) / this.opts.ticks;
 
@@ -125,7 +123,6 @@ StockChart.prototype.addFrame = function(label, data) {
         ctx.lineWidth = "1px";
         for(var i = 0; i < data.length; i++){
             ctx.lineTo(30 + i*xIncrement, this.height - this.height * (data[i]-min) / max );
-            console.log((data[i]-min)/increment);
         }
         ctx.lineTo(this.width, this.height-1);
         ctx.stroke();

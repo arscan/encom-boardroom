@@ -211,7 +211,7 @@ div {
 .location-slider li {
 
     color: #00eeee;
-    font-size: 20px;
+    font-size: 16px;
     margin-bottom: -6px;
     width: 5px;
     float: left;
@@ -422,6 +422,7 @@ div {
     width: 290px;
     height: 225px;
     border-bottom: 1px solid #333;
+    padding:4px;
 }
 #cube-labels {
     position: absolute;
@@ -484,6 +485,7 @@ div {
     font-weight:bold;
     font-size: 18pt;
     line-height: 17pt;
+    margin-top: 8px;
 }
 #ticker-subtext{
     margin: 0px;
@@ -515,13 +517,14 @@ div {
 #ticker-value{
     font-size: 18pt;
     font-weight: bold;
+    margin-top: 10px;
 }
 #ticker-ytd{
     font-size: 8pt;
     border-bottom: 1px solid #333;
     padding-bottom: 10px;
     margin-right: 18px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 #ticker-line-1{
@@ -975,6 +978,7 @@ left: 190px;
     margin:10px 0;
     overflow: hidden;
     height: 28px;
+    width: 500px;
 }
 
 .section-timerbar{
@@ -993,6 +997,8 @@ left: 190px;
     background-color: #000;
     padding-left:5px;
     width: 110%;
+    height: 17px;
+    overflow: hidden;
 }
 
 .buffer-timerbar > small {

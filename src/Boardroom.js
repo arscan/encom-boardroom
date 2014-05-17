@@ -270,6 +270,8 @@ Boardroom.message = function(message){
     if(message.type && swirls){
         swirls.hit(message.type);
     }
+
+    changeBlinkies();
  
     if(interactionContainer && interactionContainer[0].lastChild){
         var lastChild = interactionContainer[0].lastChild;
@@ -404,6 +406,7 @@ function addPic(data){
 
         if(showPic){
             var img = document.createElement('img');
+
 
             var profileImageLoaded = function(ui){
                 var mb = $(mediaBoxes[ui]);

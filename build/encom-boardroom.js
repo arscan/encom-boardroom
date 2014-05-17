@@ -78891,6 +78891,8 @@ Boardroom.message = function(message){
     if(message.type && swirls){
         swirls.hit(message.type);
     }
+
+    changeBlinkies();
  
     if(interactionContainer && interactionContainer[0].lastChild){
         var lastChild = interactionContainer[0].lastChild;
@@ -79025,6 +79027,7 @@ function addPic(data){
 
         if(showPic){
             var img = document.createElement('img');
+
 
             var profileImageLoaded = function(ui){
                 var mb = $(mediaBoxes[ui]);
@@ -79748,16 +79751,20 @@ LightTable.init = function(_hideFn){
 
     $("#lt-launch-github").click(function(){
         $(this).find(".folder-big").css("background-color", "#fff");
-        simulateCommand("cd github$");
+        simulateCommand("|cd github$");
         simulateCommand("ls$");
         simulateCommand("run github.exe$");
+        $(document).off();
+        $(".folder-container").off();
     });
 
     $("#lt-launch-wikipedia").click(function(){
         $(this).find(".folder-big").css("background-color", "#fff");
-        simulateCommand("cd wikipedia$");
+        simulateCommand("|cd wikipedia$");
         simulateCommand("ls$");
         simulateCommand("run wikipedia.exe$");
+        $(document).off();
+        $(".folder-container").off();
     });
 
     $("#lt-launch-test").click(function(){
@@ -79801,7 +79808,7 @@ LightTable.show = function(cb){
 
     $(document).keydown(function(event){
 
-        if(!event.ctrlKey){
+        if(!event.ctrlKey && (event.which < 112 || event.which > 134) && event.which != 91) { // let them do f1-f12, windows key
             var keycode = event.which;
             event.preventDefault();
             keyClick(keycode);
@@ -79836,7 +79843,7 @@ LightTable.hide = function(cb) {
 
     webglTest.reset();
 
-    $(document).removeAttr("keydown");
+    $(document).off();
 
     if(typeof cb == "function"){
         cb();
@@ -80357,6 +80364,8 @@ function charToKeyCode(char){
         return 32;
     } else if (char === "$"){
         return 13;
+    } else if (char === "|"){
+        return 27; 
     }
 
     return 0;

@@ -701,6 +701,7 @@ div {
     width: 50px;
     color: #fff;
     font-size: 4px;
+    overflow:hidden;
 }
 
 .media-blinkies h3{

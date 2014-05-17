@@ -174,7 +174,10 @@ div {
     overflow: hidden;
     white-space: nowrap;
 }
-.location-slider ul{
+
+.location-name {
+    margin: 0;
+    padding: 0;
 }
 
 .location-area {
@@ -200,7 +203,7 @@ div {
     margin: 0;
     padding-left: 15px;
     position: relative;
-    top: -13px;
+    top: -12px;
     height: 10px;
     list-style-type:disc;
 }
@@ -208,10 +211,11 @@ div {
 .location-slider li {
 
     color: #00eeee;
-    font-size: 10pt;
+    font-size: 20px;
     margin-bottom: -6px;
     width: 5px;
     float: left;
+    height:30px;
     /*display: inline-block;*/
 
 }

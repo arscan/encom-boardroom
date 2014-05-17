@@ -4,8 +4,10 @@ var StockChart = function(containerId, opts){
 
     var defaults = {
         ticks: 7,
-        holdTime: 10000,
+        holdTime: 3000,
         swipeTime: 800,
+        data: []
+   
     }
 
     Utils.extend(opts, defaults);
@@ -26,50 +28,71 @@ var StockChart = function(containerId, opts){
 
     this.currentFrame = -1;
 
-    for(var j = 0; j < 4; j++){
-        var data = [];
+    var q = -1;
+    var count = 0;
+    var quarter = "1st Quarter";
 
-        for(var i = 0; i< 50; i++){
-            data.push(100-((20+i) + Math.random()*30));
+    if(!this.opts.data.length){
+        var end = new Date(2014, 0, 1);
+        for (var d = new Date(2013, 0, 1); d < end; d.setDate(d.getDate() + 1)) {
+            count++;
+            this.opts.data.push({
+                year: d.getFullYear(),
+                month: d.getMonth() + 1,
+                day: d.getDate(),
+                events: 100-((20+(count%92)) + Math.random()*30)
+            });
         }
-
-        var quarter = "";
-        if(j == 0){
-            quarter = "1st Quarter";
-        } else if(j==1){
-            quarter = "2nd Quarter";
-        } else if(j==2){
-            quarter = "3rd Quarter";
-        } else if(j==3){
-            quarter = "4th Quarter";
-        }
-
-        this.addFrame(quarter, data);
-
-        this.frames[this.frames.length-1].id = "stock-chart-canvas" + j;
-        this.frames[this.frames.length-1].div = document.createElement("div");
-        this.frames[this.frames.length-1].div.appendChild( this.frames[j] );
-        this.container.appendChild(this.frames[this.frames.length-1].div);
     }
+
+    var frameData = [];
+
+    for (var i = 0; i< this.opts.data.length; i++){
+
+        if(q >= 0 && q !== parseInt(i / 92, 10)){
+            this.addFrame(quarter + " 2013 Activity", frameData);
+
+            this.frames[this.frames.length-1].id = "stock-chart-canvas" + q;
+            this.frames[this.frames.length-1].div = document.createElement("div");
+            this.frames[this.frames.length-1].div.appendChild( this.frames[q] );
+            this.container.appendChild(this.frames[this.frames.length-1].div);
+
+            frameData = [];
+            if(q == 0){
+                quarter = "2nd Quarter";
+            } else if(q==1){
+                quarter = "3rd Quarter";
+            } else {
+                quarter = "4th Quarter";
+            }
+        }
+
+        frameData.push(this.opts.data[i].events);
+
+        q = parseInt(i / 92, 10);
+
+    }
+
+    this.addFrame(quarter + " 2013 Activity", frameData);
+
+    this.frames[this.frames.length-1].id = "stock-chart-canvas" + q;
+    this.frames[this.frames.length-1].div = document.createElement("div");
+    this.frames[this.frames.length-1].div.appendChild( this.frames[q] );
+    this.container.appendChild(this.frames[this.frames.length-1].div);
+
 };
 
 StockChart.prototype.addFrame = function(label, data) {
 
     // get bounds of the data
 
-    var max, min;
+    var sorted = data.slice(0).sort();
+    var min = sorted[0] * .8;
+    var max = sorted[sorted.length-5];
+    console.log(sorted);
 
-    for(var i = 0; i< data.length; i++){
-        if(max == undefined || max < data[i]){
-            max = data[i];
-        }
-        if(min == undefined || min > data[i]){
-            min = data[i];
-        }
-    }
-
-    var increment = (max - min) / this.opts.ticks; 
-    var heightIncrement  = (this.height) / this.opts.ticks; 
+    var increment = (max - min) / this.opts.ticks;
+    var heightIncrement  = (this.height) / this.opts.ticks;
 
     var frameCanvas = Utils.renderToCanvas(this.width, this.height, function(ctx){
         // draw the y ticks
@@ -101,7 +124,8 @@ StockChart.prototype.addFrame = function(label, data) {
 
         ctx.lineWidth = "1px";
         for(var i = 0; i < data.length; i++){
-            ctx.lineTo(30 + i*xIncrement, data[i]);
+            ctx.lineTo(30 + i*xIncrement, this.height - this.height * (data[i]-min) / max );
+            console.log((data[i]-min)/increment);
         }
         ctx.lineTo(this.width, this.height-1);
         ctx.stroke();
@@ -112,11 +136,11 @@ StockChart.prototype.addFrame = function(label, data) {
         ctx.fill();
         ctx.closePath();
 
-        ctx.fillStyle = "rgba(255,255,255,.5)";
+        ctx.fillStyle = "rgba(255,255,255,.3)";
         for(var i = 0; i < data.length; i++){
 
             ctx.beginPath();
-            ctx.arc(30 + i*xIncrement, data[i], 2, 0, 2*Math.PI);
+            ctx.arc(30 + i*xIncrement,this.height - this.height * (data[i]-min) / max, 2, 0, 2*Math.PI);
             ctx.fill();
         }
 
@@ -213,5 +237,6 @@ function addGrid(ctx, ticks, width, height){
     ctx.stroke();
     ctx.closePath();
 };
+
 
 module.exports = StockChart;

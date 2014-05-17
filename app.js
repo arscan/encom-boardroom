@@ -26,7 +26,8 @@ var whitelist = {
     "/images/info.png": "image/png",
     "/images/fullscreen.png": "image/png",
     "/images/thumbprint.png": "image/png",
-    "/js/globe-grid.js": "text/javascript"
+    "/js/globe-grid.js": "text/javascript",
+    "/js/github-2013.js": "text/javascript"
 };
 
 function lookup(loc, cb){

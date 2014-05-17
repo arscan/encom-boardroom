@@ -94,6 +94,7 @@ Boardroom.init = function(title, data){
         unknown: {count: 10, ref: $("#location-area-unknown")}
     };
 
+
     $("#ticker-text").text(title.toUpperCase());
     $("#ticker-value").text(formatYTD(data[0].events, data[data.length-1].events));
 

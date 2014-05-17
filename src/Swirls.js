@@ -1,43 +1,79 @@
 var Utils = require("./Utils.js");
 
-var SwirlPoint = function(label, radius, canvas){
+var SwirlPoint = function(label, canvas){
 
     this.hitTime = Date.now();
     this.hit = true;
     this.startTime = Date.now();
+    this.hitCount = 1;
+    this.lastTime = Date.now();
+    this.decayTime = 200;
+    this.chaseRate = .005;
 
     this.startRadians = Math.random() * Math.PI * 2;
 
-    this.radius = radius;
     this.label = label;
     this.canvas = canvas;
+    this.maxRadius = Math.min(this.canvas.width, this.canvas.height)/2;
     this.context = this.canvas.getContext("2d");
+    this.radius = this.maxRadius / 2;
+    this.targetRadius = this.radius;
 
-    this.x = this.canvas.width / 2;
-    this.y = this.canvas.height / 2;
+    this.x = 0;
+    this.y = 0;
 
-    this.animate();
 }
 
 SwirlPoint.prototype.animate = function(){
 
     var timeSinceStart = Date.now() - this.startTime;
+    var animateTime = Date.now() - this.lastTime;
 
     var radians = this.startRadians + (timeSinceStart/10000) * Math.PI * 2;
+
+    this.prevX = this.x;
+    this.prevY = this.y;
 
     this.x = this.canvas.width / 2 + Math.sin(radians) * this.radius;
     this.y = this.canvas.height / 2 + Math.cos(radians) * this.radius;
 
+    if(!this.prevX){
+
+        this.prevX = this.canvas.width / 2;
+        this.prevY = this.canvas.height / 2;
+
+    }
+
+    this.targetRadius = Math.max(1, this.targetRadius - animateTime / this.decayTime);
+
+    if(this.targetRadius > this.radius){
+        this.radius = Math.min(this.targetRadius, this.radius + this.chaseRate * animateTime);
+    } else {
+        this.radius = Math.max(this.targetRadius, this.radius - this.chaseRate * animateTime);
+    }
+
+    this.lastTime = Date.now();
 
 };
 
+SwirlPoint.prototype.registerHit = function(){
+    this.targetRadius = Math.min(this.maxRadius, this.targetRadius + 20);
+
+    this.hitTime = Date.now();
+    this.hit = true;
+    this.hitCount++;
+};
+
 SwirlPoint.prototype.draw = function(currentTime){
-
-
-    if(Date.now() - this.hitTime < 1000){
+    if(Date.now() - this.startTime < 1000){
+        this.context.fillStyle="#00eeee";
+        this.context.strokeStyle = "#00eeee";
+    }  else if(Date.now() - this.hitTime < 1000){
         this.context.fillStyle = "#ffcc00";
+        this.context.strokeStyle = "#ffcc00";
     } else {
-        this.context.fillStyle = "#aaa";
+        this.context.fillStyle = "#ccc";
+        this.context.strokeStyle = "#ccc";
     }
 
     if(this.hit){
@@ -47,15 +83,21 @@ SwirlPoint.prototype.draw = function(currentTime){
 
         } else {
             this.context.fillText(this.label, this.x + 10, this.y+10);
-
         }
     }
 
     this.context.beginPath();
+    this.context.moveTo(this.prevX, this.prevY);
+    this.context.lineTo(this.x, this.y);
+    this.context.stroke();
+    this.context.closePath();
+
+        /*
+    this.context.beginPath();
     this.context.arc(this.x, this.y, 1, 0, Math.PI * 2);
     this.context.fill();
     this.context.closePath();
-
+   */
 };
 
 
@@ -76,8 +118,8 @@ var Swirls = function(containerId, opts){
     this.points = {};
 
     this.background = Utils.renderToCanvas(this.width, this.height, function(ctx){
-        ctx.fillStyle = "#111";
-        ctx.fillRect(5,5, this.width -10, this.height-10);
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0,0, this.width, this.height);
         ctx.strokeStyle = "#666"
 
         ctx.beginPath();
@@ -145,44 +187,40 @@ var Swirls = function(containerId, opts){
 };
 
 Swirls.prototype.tick = function(){
-
-    this.context.globalAlpha = .02;
-    this.context.drawImage(this.background, 0, 0);
-    this.context.globalAlpha = 1.0;
-
-    // remove a random one 
-
     var len = Object.keys(this.points).length;
     var keys = Object.keys(this.points);
 
     var checkAtIndex = Math.floor(Math.random() * keys.length);
 
-    if(keys.length > 0  && Date.now() - this.points[keys[checkAtIndex]].hitTime > 5000){
+    if(keys.length > 0  && this.points[keys[checkAtIndex]].radius < 2){
         delete this.points[keys[checkAtIndex]];
     }
 
-    /*
-       this.context.beginPath();
-       this.context.arc(Math.random() * this.width, Math.random() * this.height, 2, 0, Math.PI * 2);
-       this.context.fill();
-       this.context.closePath();
-       */
+    if(!this.evenFrame){
+        this.evenFrame = true;
 
-    for(var p in this.points){
-        this.points[p].animate();
-        this.points[p].draw();
+        this.context.globalAlpha = .1;
+        this.context.drawImage(this.background, 0, 0);
+        this.context.globalAlpha = 1.0;
+
+    } else {
+        this.evenFrame = false;
+        for(var p in this.points){
+            this.points[p].animate();
+            this.points[p].draw();
+        }
     }
+
 };
 
 Swirls.prototype.hit = function(label){
 
     if(this.points[label]){
-        this.points[label].hitTime = Date.now();
-        this.points[label].hit = true;
+        this.points[label].registerHit();
         return;
     }
 
-    this.points[label] = new SwirlPoint(label, Math.random() * 100, this.canvas);
+    this.points[label] = new SwirlPoint(label, this.canvas);
 };
 
 module.exports = Swirls;

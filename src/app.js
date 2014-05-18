@@ -49,7 +49,7 @@ var onSwitch = function(view){
 
         screensaver.text("GITHUB");
         LightTable.hide();
-        Boardroom.init("GITHUB", window.githubHistory);
+        Boardroom.init("github", window.githubHistory);
 
         setTimeout(function(){
             active = "br";
@@ -59,11 +59,13 @@ var onSwitch = function(view){
     } else if (view === "wikipedia"){
         $("#screensaver").text("WIKIPEDIA");
         LightTable.hide();
+        Boardroom.init("wikipedia", window.githubHistory);
+        setTimeout(function(){
+            active = "br";
+            Boardroom.show();
+        }, 3000)
 
-    } else if (view === "lighttable") {
-
-
-    }
+    } 
 
 
 };

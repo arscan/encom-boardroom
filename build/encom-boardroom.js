@@ -78654,12 +78654,15 @@ var boardroomActive = false,
     blinkiesColors = ["#000", "#ffcc00", "#00eeee", "#fff"],
     picIndex = 0,
     currentPics = [],
-    lastPicDate = Date.now();
+    lastPicDate = Date.now(),
+    streamType;
 
 sliderHeads = {};
 var Boardroom = {};
 
-Boardroom.init = function(title, data){
+Boardroom.init = function(_streamType, data){
+
+    streamType = _streamType;
     var ratio = $(window).width() / 1918;
     blinkies = $('.blinky');
     mediaBoxes = $('.media-box .user-pic');
@@ -78716,7 +78719,11 @@ Boardroom.init = function(title, data){
     };
 
 
-    $("#ticker-text").text(title.toUpperCase());
+    $("#ticker-text").text(streamType.toUpperCase());
+    if(streamType.length > 6){
+        $("#ticker-text").css("font-size", "12pt");
+    }
+
     $("#ticker-value").text(formatYTD(data[0].events, data[data.length-1].events));
 
     setInterval(function(){
@@ -78837,7 +78844,7 @@ Boardroom.show = function(cb){
             stockchart = new StockChart("stock-chart", {data: Boardroom.data});
             stockchartsmall = new StockChartSmall("stock-chart-small", {data: Boardroom.data});
             swirls = new Swirls("swirls");
-            logo = new Logo("logo");
+            logo = new Logo("logo", streamType.toUpperCase());
             boardroomActive = true;
         }, 1000);
 
@@ -78880,6 +78887,10 @@ Boardroom.animate = function(){
 
 Boardroom.message = function(message){
 
+    if(message.stream != streamType){
+        return;
+    }
+
     if(message.latlon){
         var latlon = message.latlon;
         globe.addPin(latlon.lat, latlon.lon, message.location);
@@ -78901,7 +78912,7 @@ Boardroom.message = function(message){
             '<li class="interaction-title">' + message.title + '</li>' + 
             '<li class="interaction-type">' + message.type + '</li>' + 
             '<li class="interaction-size">' + message.size + '</li>' + 
-            '<li class="interaction-popularity">' + message.popularity + '</li>';
+            '<li class="interaction-popularity">' + (message.popularity ? message.popularity : "")+ '</li>';
 
         if(message.popularity > 100){
             lastChild.innerHTML = '<li class="interaction-popular">!</li>' + lastChild.innerHTML;
@@ -79021,13 +79032,13 @@ function addPic(data){
         }
 
         for(var i = 0; i< currentPics.length && showPic; i++){
-            if(currentPics[i] == data.picSmall || currentPics[i] == data.picLarge){
+            if(pic.indexOf("http") === 0 && (currentPics[i] == data.picSmall || currentPics[i] == data.picLarge)){
                 showPic = false;
             }
         }
 
         if(showPic){
-            var img = document.createElement('img');
+
 
 
             var profileImageLoaded = function(ui){
@@ -79035,11 +79046,16 @@ function addPic(data){
                 mb.css('background-image', 'url(' + pic + ')');
                 mb.find('span').text(data.username);
                 mb.off();
-                mb.click(function(){window.open('http://github.com/' + data.username, "_blank")});
+                mb.click(function(){window.open(data.userurl, "_blank")});
             };
 
-            img.addEventListener('load', profileImageLoaded.bind(this, picIndex));
-            img.src = pic;
+            if(pic.indexOf("http") === 0){
+                var img = document.createElement('img');
+                img.addEventListener('load', profileImageLoaded.bind(this, picIndex));
+                img.src = pic;
+            } else {
+                profileImageLoaded(picIndex);
+            }
 
             currentPics[picIndex] = pic;
 
@@ -81538,7 +81554,7 @@ var onSwitch = function(view){
 
         screensaver.text("GITHUB");
         LightTable.hide();
-        Boardroom.init("GITHUB", window.githubHistory);
+        Boardroom.init("github", window.githubHistory);
 
         setTimeout(function(){
             active = "br";
@@ -81548,11 +81564,13 @@ var onSwitch = function(view){
     } else if (view === "wikipedia"){
         $("#screensaver").text("WIKIPEDIA");
         LightTable.hide();
+        Boardroom.init("wikipedia", window.githubHistory);
+        setTimeout(function(){
+            active = "br";
+            Boardroom.show();
+        }, 3000)
 
-    } else if (view === "lighttable") {
-
-
-    }
+    } 
 
 
 };

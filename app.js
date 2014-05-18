@@ -1,12 +1,17 @@
 var PORT = Number(process.env.PORT || 8081);
 var LOCATIONLOOKUP = "http://loc.robscanlon.com:8080/";
+var IPLOOKUP = "http://loc.robscanlon.com:8081/json/";
 
 var request = require("request");
 var http = require("http");
 var fs = require("fs");
 var url = require("url");
 var GithubTimelineStream = require("github-timeline-stream");
+var WikipediaStream = require("wikipedia-stream");
+
 var githubStream = new GithubTimelineStream();
+var wikipediaStream = new WikipediaStream();
+
 var map = require("map-stream");
 
 var whitelist = {
@@ -25,25 +30,50 @@ var whitelist = {
     "/images/GitHub-Mark-Light-32px.png": "image/png",
     "/images/info.png": "image/png",
     "/images/fullscreen.png": "image/png",
+    "/images/not_available_small.png": "image/png",
+    "/images/not_available_large.png": "image/png",
     "/images/thumbprint.png": "image/png",
     "/js/globe-grid.js": "text/javascript",
     "/js/github-2013.js": "text/javascript"
 };
 
-function lookup(loc, cb){
+var wikipediaLanguageMap = {
+    "en": "English",
+    "zh": "Chinese",
+    "fr": "French",
+    "ru": "Russian",
+    "es": "Spanish",
+    "it": "Italian",
+    "pt": "Portuguese",
+    "nl": "Dutch",
+    "de": "German",
+    "sv": "Swedish",
+    "vi": "Vietnamese",
+    "ja": "Japanese"
+}
+
+function lookupByLocation(loc, cb){
     request.get(LOCATIONLOOKUP + loc, function(error, response, body){
         var latlon = null;
         try{
             latlon = JSON.parse(body);
-
         } catch (ex){
 
         }
-
         cb(latlon);
     });
+};
 
+function lookupByIP(ip, cb){
+    request.get(IPLOOKUP + encodeURIComponent(ip), function(error, response, body){
+        var result = null;
+        try{
+            result = JSON.parse(body);
+        } catch (ex){
 
+        }
+        cb(result);
+    });
 };
 
 http.createServer(function (request, response) {
@@ -69,10 +99,10 @@ http.createServer(function (request, response) {
         }, 6000 * Math.random());
     };
 
-    var formatData = function(data){
+    var formatGithubData = function(data){
 
         if(data.location){
-            lookup(data.location, function(latlon){
+            lookupByLocation(data.location, function(latlon){
                 if(latlon){
                     data.latlon = {
                         lat: parseFloat(latlon.lat),
@@ -88,9 +118,41 @@ http.createServer(function (request, response) {
 
     };
 
+    var formatWikipediaData = function(data){
+
+        if(data.ip){
+            lookupByIP(data.ip, function(result){
+                if(result){
+                    if(result.latitude && result.longitude){
+                        data.latlon = {
+                            lat: result.latitude,
+                            lon: result.longitude
+                        };
+                    }
+                    if(result.city && result.city.length){
+                        data.location = result.city + ", " + result.country_code;
+                    } else {
+                        data.location = result.country_name;
+
+                    }
+                }
+
+                sendData(data);
+            });
+        } else {
+            sendData(data);
+        }
+
+    };
+
+
+
     githubStream.pipe(map(function(data, callback){
 
-        var outdata = {location: null};
+        var outdata = {
+            stream: "github",
+            ip: null
+        };
 
         if(data.actor_attributes && data.actor_attributes.location){
             outdata.location = data.actor_attributes.location;
@@ -103,6 +165,7 @@ http.createServer(function (request, response) {
 
         if(data.actor){
             outdata.username = data.actor;
+            outdata.userurl = "http://github.com/" + data.actor + "/";
         }
     
         if(data.repository){
@@ -121,30 +184,40 @@ http.createServer(function (request, response) {
         callback(null, outdata);
 
         
-    })).on("data", formatData);
+    })).on("data", formatGithubData);
 
 
+    wikipediaStream.pipe(map(function(data, callback){
+        var outdata = {
+            stream: "wikipedia",
+            location: null,
+            title: data.page,
+            type: data.language,
+            url: data.url,
+            size: parseInt(data.size, 10),
+            ip: data.ip,
+            username: data.user,
+            action: data.type
+        };
 
-    /*
-    var timeoutId = 0;
-    var i = lastEventId;
-    var c = i + 100;
-    var f = function () {
-      if (++i < c) {
-        response.write("id: " + i + "\n");
-        response.write("data: " + i + "\n\n");
-        timeoutId = setTimeout(f, 1000);
-      } else {
-        response.end();
-      }
-    };
+        if(data.user){
+            outdata.picSmall = 'images/not_available_small.png';
+            outdata.picLarge = 'images/not_available_large.png';
+            outdata.userurl = "http://" + data.language + ".wikipedia.org/wiki/User:" + data.user;
+        }
 
-    f();
+        if(data.language && wikipediaLanguageMap[data.language]){
+            outdata.type = wikipediaLanguageMap[data.language];
+        }
 
-   */
+        callback(null, outdata);
+
+    })).on("data", formatWikipediaData);
 
     response.on("close", function () {
-      githubStream.removeListener("data", sendData);
+        console.log("disconnecting");
+      githubStream.removeListener("data", formatGithubData);
+      wikipediaStream.removeListener("data", formatWikipediaData);
     });
 
   } else {

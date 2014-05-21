@@ -5,9 +5,9 @@
   "main": "index.html",
   "dependencies": {
     "grunt": "~0.4.2",
-    "encom-globe": "~0.3.1",
-    "github-timeline-stream": "~0.1.0",
-    "wikipedia-stream": "~0.1.0",
+    "encom-globe": "*",
+    "github-timeline-stream": "*",
+    "wikipedia-stream": "*",
     "pusher.color": "~0.2.4",
     "three": "~0.66.2",
     "jquery": "~2.1.0",

@@ -205,7 +205,8 @@ Boardroom.show = function(cb){
 
     globe = new EncomGlobe(600, 600, {
         tiles: grid.tiles,
-        pinColor: "#8FD8D8"
+        pinColor: "#8FD8D8",
+        viewAngle: .1
     });
     $("#globe").append(globe.domElement);
 

@@ -21,6 +21,7 @@ var listener = function (event) {
     var type = event.type;
     if(type === "message"){
         if(active === "lt"){
+
             LightTable.message(JSON.parse(event.data));
         } else {
             Boardroom.message(JSON.parse(event.data));

@@ -7,7 +7,9 @@ var webglTest,
     currentWidth = 0,
     currentHeight = 0,
     hideFn = function(){}
-    LightTable = {};
+    LightTable = {},
+    lastMessageTime = null,
+    dataStreamOn = false;
 
 /* public function */
 
@@ -158,6 +160,7 @@ LightTable.resize = function(){
 
 LightTable.message = function(message){
     // noop
+    lastMessageTime = Date.now();
 
 };
 
@@ -470,11 +473,26 @@ function createWebGlTest(){
                 splineMaterial.opacity = 1;
             }
 
+            if(lastMessageTime !== null && !dataStreamOn){
+                dataStreamOn = true;
+                console.log("set message");
+                $("#datalink-status").text("CONNECTED");
+                $("#datalink-status").css("color", "green");
+            }
+
+            if(Math.random() < .1){
+                if((lastMessageTime === null && timeSinceStart > 5000) || (lastMessageTime !== null && Date.now() - lastMessageTime > 5000)){
+                    $("#datalink-status").text("ERROR");
+                    $("#datalink-status").css("color", "red");
+                } 
+            }
+
 
             camera.position.x = Math.sin(cameraAngle) * 20;
             renderer.render(scene, camera );
 
             splineLine.rotation.x += .01;
+
         }, 
         reset: function(){
             firstRun = null;

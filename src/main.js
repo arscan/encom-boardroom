@@ -14,8 +14,11 @@ $.fn.center = function () {
 }
 
 var active = "lt";
-// var es = new EventSource("http://encom-streams.robscanlon.com/events.js");
-var es = new EventSource("/events.js");
+var esPath = "/events.js";
+if(window._esPath){
+    esPath = window._esPath;
+}
+var es = new EventSource(esPath);
 var listener = function (event) {
     var div = document.createElement("div");
     var type = event.type;
@@ -25,8 +28,6 @@ var listener = function (event) {
         } else {
             Boardroom.message(JSON.parse(event.data));
         }
-    // } else {
-    //console.log(event.data);
     }
 };
 es.addEventListener("open", listener);

@@ -9,7 +9,7 @@ module.exports = function(grunt) {
             files: ['src/*.js', 'index.html', 'css/*', 'Gruntfile.js', 'browserify.js']
         },
         browserify: {
-            'build/<%= pkg.name %>.js': ['src/app.js']
+            'build/<%= pkg.name %>.js': ['src/main.js']
         },
         uglify: {
             main: {

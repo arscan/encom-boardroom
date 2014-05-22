@@ -75,6 +75,11 @@ var StockChartSmall = function(canvasId, opts){
 
     var data = [];
 
+    if(!this.opts.data){
+        this.opts.data = [];
+        
+    }
+
     if(!this.opts.data.length){
         for(var i = 0; i< 30; i++){
             data.push(Math.random()*this.height);

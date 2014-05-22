@@ -1008,7 +1008,7 @@ left: 190px;
     color: #aaa;
 }
 
-#boardroom-readme {
+.boardroom-readme {
 
     border: 2px solid #6fc0ba;
     border-radius: 2px;
@@ -1018,15 +1018,17 @@ left: 190px;
     background-color: #000;
     position: absolute;
     width: 500px;
-    top: 100px;
+    top: 50px;
     left: 600px;
+    z-index:250;
 }
 
-#boardroom-readme .content{
-    padding: 10px;
+.boardroom-readme .content{
+    padding: 0;
+    margin: 0;
 }
 
-#boardroom-readme h2 {
+.boardroom-readme h2 {
     color: #fff;
     margin: 0;
     border-bottom: 1px solid #1b2f2d;
@@ -1034,7 +1036,7 @@ left: 190px;
     font-weight: bold;
 }
 
-#boardroom-readme h2 em{
+.boardroom-readme h2 em{
     font-style: normal;
     float: right;
     font-size: .8em;
@@ -1044,8 +1046,9 @@ left: 190px;
 
 }
 
-#boardroom-readme p {
-    margin: 2px 0 0;
+.boardroom-readme p {
+    margin: 4px 4px 0;
     padding: 4px 6px;
+    line-height: 1.8em;
 
 }

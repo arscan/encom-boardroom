@@ -14,14 +14,13 @@ $.fn.center = function () {
 }
 
 var active = "lt";
-var es = new EventSource("http://encom-streams.robscanlon.com/events.js");
-// var es = new EventSource("/events.js");
+// var es = new EventSource("http://encom-streams.robscanlon.com/events.js");
+var es = new EventSource("/events.js");
 var listener = function (event) {
     var div = document.createElement("div");
     var type = event.type;
     if(type === "message"){
         if(active === "lt"){
-
             LightTable.message(JSON.parse(event.data));
         } else {
             Boardroom.message(JSON.parse(event.data));
@@ -60,19 +59,46 @@ var onSwitch = function(view){
     } else if (view === "wikipedia"){
         $("#screensaver").text("WIKIPEDIA");
         LightTable.hide();
-        Boardroom.init("wikipedia", window.githubHistory);
+        Boardroom.init("wikipedia");
         setTimeout(function(){
             active = "br";
             Boardroom.show();
         }, 3000)
 
-    } 
+    } else if (view === "test"){
+        $("#screensaver").text("TEST DATA");
+        LightTable.hide();
+        Boardroom.init("test");
+        setTimeout(function(){
+            active = "br";
+            Boardroom.show();
+        }, 3000)
 
+        /* lets just throw some data in there */
 
-};
+        setInterval(function(){
+            if(Boardroom){
+                Boardroom.message({
+                    stream: 'test',
+                    latlon: {
+                        lat: Math.random() * 180 - 90,
+                        lon: Math.random() * 360 - 180
+                    },
+                    location: 'Test ' + Math.floor(Math.random() * 100),
+                    type: 'Type ' + Math.floor(Math.random() * 8),
+                    picSmall: 'images/not_available_small.png',
+                    picLarge: 'images/not_available_large.png',
+                    username: "arscan" + Math.floor(Math.random()*1000),
+                    userurl: "http://github.com/arscan",
+                    title: "Test " + Math.floor(Math.random() * 100),
+                    url: "http://github.com/arscan/encom-boardroom/",
+                    size: Math.floor(Math.random()*10000),
+                    popularity: Math.floor(Math.random()*10000)
+                });
+            }
 
-var showWebglError = function(){
-
+        }, 800);
+    }
 
 };
 

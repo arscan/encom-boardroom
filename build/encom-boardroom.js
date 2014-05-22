@@ -2862,7 +2862,7 @@ var createParticles = function(){
         "{",
         "   gl_FragColor = vColor;",
         "   float depth = gl_FragCoord.z / gl_FragCoord.w;",
-        "   float fogFactor = smoothstep(" + (parseInt(this.cameraDistance)-200) +".0," + (parseInt(this.cameraDistance+300)) +".0, depth );",
+        "   float fogFactor = smoothstep(" + parseInt(this.cameraDistance) +".0," + (parseInt(this.cameraDistance+300)) +".0, depth );",
         "   vec3 fogColor = vec3(0.0);",
         "   gl_FragColor = mix( vColor, vec4( fogColor, gl_FragColor.w ), fogFactor );",
         "}"
@@ -3119,7 +3119,7 @@ function Globe(width, height, opts){
 Globe.prototype.init = function(cb){
 
     // create the camera
-    this.camera = new THREE.PerspectiveCamera( 50, this.width / this.height, 1, this.cameraDistance + 350 );
+    this.camera = new THREE.PerspectiveCamera( 50, this.width / this.height, 1, this.cameraDistance + 300 );
     this.camera.position.z = this.cameraDistance;
 
     this.cameraAngle=(Math.PI);
@@ -3127,7 +3127,7 @@ Globe.prototype.init = function(cb){
     // create the scene
     this.scene = new THREE.Scene();
 
-    this.scene.fog = new THREE.Fog( 0x000000, this.cameraDistance, this.cameraDistance+350 );
+    this.scene.fog = new THREE.Fog( 0x000000, this.cameraDistance, this.cameraDistance+300 );
 
     createIntroLines.call(this);
 
@@ -3343,6 +3343,13 @@ Globe.prototype.setPinColor = function(_color){
 Globe.prototype.setScale = function(_scale){
     this.scale = _scale;
     this.cameraDistance = 1700/_scale;
+    if(this.scene && this.scene.fog){
+       this.scene.fog.near = this.cameraDistance;
+       this.scene.fog.far = this.cameraDistance + 300;
+       createParticles.call(this);
+       this.camera.far = this.cameraDistance + 300;
+       this.camera.updateProjectionMatrix();
+    }
 };
 
 Globe.prototype.tick = function(){
@@ -3389,7 +3396,6 @@ Globe.prototype.tick = function(){
 
     for(var i = 0; i< this.satelliteMeshes.length; i++){
         var mesh = this.satelliteMeshes[i];
-        // this.satelliteMeshes[i].rotation.y-=rotateCameraBy;
         mesh.lookAt(this.camera.position);
         mesh.rotateZ(mesh.tiltDirection * Math.PI/2);
         mesh.rotateZ(Math.sin(this.cameraAngle + (mesh.lon / 180) * Math.PI) * mesh.tiltMultiplier * mesh.tiltDirection * -1);
@@ -3412,12 +3418,10 @@ Globe.prototype.tick = function(){
 
     // do the shaders
 
-    // this.smokeUniforms.currentTime.value = this.totalRunTime;
     this.pointUniforms.currentTime.value = this.totalRunTime;
 
     this.smokeProvider.tick(this.totalRunTime);
 
-    // updateSatellites.call(this, renderTime);
     this.camera.lookAt( this.scene.position );
     this.renderer.render( this.scene, this.camera );
 
@@ -78717,7 +78721,8 @@ var boardroomActive = false,
     picIndex = 0,
     currentPics = [],
     lastPicDate = Date.now(),
-    streamType;
+    streamType,
+    readmeContainer;
 
 sliderHeads = {};
 var Boardroom = {};
@@ -78733,6 +78738,9 @@ Boardroom.init = function(_streamType, data){
         "-moz-transform": "scale(" + ratio + ")",
         "-moz-transform-origin": "0 0"
     });
+
+    readmeContainer = $("#boardroom-readme-" + _streamType);
+
 
     Boardroom.data = data;
 
@@ -78752,7 +78760,7 @@ Boardroom.init = function(_streamType, data){
         showReadme();
     });
 
-    $("#boardroom-readme h2 em").click(function(e){
+    $(".boardroom-readme h2 em").click(function(e){
         e.preventDefault();
         hideReadme();
     });
@@ -78780,13 +78788,19 @@ Boardroom.init = function(_streamType, data){
         unknown: {count: 10, ref: $("#location-area-unknown")}
     };
 
+    $("#user-interaction-header").text(streamType.toUpperCase() + " LIVE DATA FEED");
+    $("#globalization-header").text(streamType.toUpperCase() + " GLOBALIZATION");
+    $("#growth-header").text(streamType.toUpperCase() + " HISTORIC PERFORMANCE");
+    $("#media-header").text(streamType.toUpperCase() + " USERS");
 
     $("#ticker-text").text(streamType.toUpperCase());
     if(streamType.length > 6){
         $("#ticker-text").css("font-size", "12pt");
     }
 
-    $("#ticker-value").text(formatYTD(data[0].events, data[data.length-1].events));
+    if(data){
+        $("#ticker-value").text(formatYTD(data[0].events, data[data.length-1].events));
+    }
 
     setInterval(function(){
         if(boardroomActive){
@@ -78950,7 +78964,7 @@ Boardroom.animate = function(){
 
 Boardroom.message = function(message){
 
-    if(message.stream != streamType){
+    if(message.stream != streamType || !globe){
         return;
     }
 
@@ -79002,18 +79016,17 @@ Boardroom.resize = function(){
 
 function showReadme() {
 
-    var item = $("#boardroom-readme");
-    var itemContent = item.find(".content");
+    var itemContent = readmeContainer.find(".content");
 
-    item.removeAttr("style");
+    readmeContainer.removeAttr("style");
 
-    var height = item.height();
-    var width = item.width();
-    var left = item.position().left;
-    var top = item.position().top;
+    var height = readmeContainer.height();
+    var width = readmeContainer.width();
+    var left = readmeContainer.position().left;
+    var top = readmeContainer.position().top;
 
-    var border = item.css("border");
-    var boxShadow = item.css("box-shadow");
+    var border = readmeContainer.css("border");
+    var boxShadow = readmeContainer.css("box-shadow");
 
     var contentBorder = itemContent.css("border");
     var contentBoxShadow = itemContent.css("box-shadow");
@@ -79022,21 +79035,21 @@ function showReadme() {
         $(element).css("visibility", "hidden");
     });
 
-    item.height(0)
+    readmeContainer.height(0)
     .width(0)
     .css("top", top + height/2)
     .css("left", left + width/2)
     .css("visibility", "visible");
 
 
-    item.animate({
+    readmeContainer.animate({
         height: height,
         width: "500px",
         left: left,
         top: top
 
     }, 500);
-    item.css({
+    readmeContainer.css({
         opacity: 1
     });
 
@@ -79052,12 +79065,12 @@ function showReadme() {
 }
 
 function hideReadme(){
-    $("#boardroom-readme").css("visibility", "hidden");
-    $("#boardroom-readme").children().each(function(index, element){
+    readmeContainer.css("visibility", "hidden");
+    readmeContainer.children().each(function(index, element){
         $(element).removeAttr("style");
-    });
-    $("#boardroom-readme .content").children().each(function(index, element){
-        $(element).removeAttr("style");
+        $(element).children().each(function(index, element){
+            $(element).removeAttr("style");
+        });
     });
 }
 
@@ -79841,7 +79854,7 @@ LightTable.init = function(_hideFn){
     });
 
     $("#lt-launch-wikipedia").click(function(){
-        $(this).find(".folder-big").css("background-color", "#fff");
+        $(this).find(".folder-small").css("background-color", "#fff");
         simulateCommand("|cd wikipedia$");
         simulateCommand("ls$");
         simulateCommand("run wikipedia.exe$");
@@ -79850,8 +79863,13 @@ LightTable.init = function(_hideFn){
     });
 
     $("#lt-launch-test").click(function(){
-        $(this).find(".folder-big").css("background-color", "#fff");
-        simulateCommand("cd test$");
+        $(this).find(".folder-small").css("background-color", "#fff");
+        simulateCommand("|cd test$");
+        simulateCommand("ls$");
+        simulateCommand("run test.exe$");
+        $(document).off();
+        $(".folder-container").off();
+
     });
 
     $("#lt-launch-bitcoin").click(function(){
@@ -80272,7 +80290,6 @@ function createWebGlTest(){
 
             if(lastMessageTime !== null && !dataStreamOn){
                 dataStreamOn = true;
-                console.log("set message");
                 $("#datalink-status").text("CONNECTED");
                 $("#datalink-status").css("color", "green");
             }
@@ -80377,6 +80394,19 @@ function executeCommand(){
             writeResponse("<span class='alert'>Error:</span> No such file");
             writePrompt();
         }
+    } else if(command == "run test.exe"){
+        if(currentDir == "test"){
+            $(".ls-exec").addClass("ls-highlight")
+            $(".container-border").animate({opacity: 0}, 500);
+
+            setTimeout(function(){
+                hideFn("test");
+            }, 500);
+
+        } else {
+            writeResponse("<span class='alert'>Error:</span> No such file");
+            writePrompt();
+        }
 
     } else if(command == "cd github"){
         $(".ls-github").addClass("ls-highlight")
@@ -80392,6 +80422,17 @@ function executeCommand(){
         $("#lt-launch-wikipedia .folder-label").addClass("selected");
         currentDir = "wikipedia";
         writeResponse("Changed directory to <span class='highlight'>wikipedia</span>");
+        writePrompt();
+
+    } else if(command == "cd test"){
+        $(".ls-test").addClass("ls-highlight")
+        $(".folder-label").removeClass("selected");
+        $("#lt-launch-test .folder-label").addClass("selected");
+        currentDir = "test";
+        writeResponse("Changed directory to <span class='highlight'>test</span>");
+        writePrompt();
+    } else if(command == "cd bitcoin") {
+        writeResponse("<span class='alert'>Not yet implemented</span>");
         writePrompt();
     } else if(command.indexOf("cd encom") == 0 || command == "cd /"){
         currentDir = "encom_root";
@@ -80827,8 +80868,9 @@ var StockChart = function(containerId, opts){
         holdTime: 3000,
         swipeTime: 800,
         data: []
-   
     }
+
+    var testData = false;
 
     Utils.extend(opts, defaults);
     this.opts = defaults;
@@ -80852,7 +80894,12 @@ var StockChart = function(containerId, opts){
     var count = 0;
     var quarter = "1st Quarter";
 
+    if(!this.opts.data){
+        this.opts.data = [];
+    }
+
     if(!this.opts.data.length){
+        testData = true;
         var end = new Date(2014, 0, 1);
         for (var d = new Date(2013, 0, 1); d < end; d.setDate(d.getDate() + 1)) {
             count++;
@@ -80860,7 +80907,7 @@ var StockChart = function(containerId, opts){
                 year: d.getFullYear(),
                 month: d.getMonth() + 1,
                 day: d.getDate(),
-                events: 100-((20+(count%92)) + Math.random()*30)
+                events: ((40+(count%92)) + Math.floor(Math.random()*50))
             });
         }
     }
@@ -80870,7 +80917,7 @@ var StockChart = function(containerId, opts){
     for (var i = 0; i< this.opts.data.length; i++){
 
         if(q >= 0 && q !== parseInt(i / 92, 10)){
-            this.addFrame(quarter + " 2013 Activity", frameData);
+            this.addFrame(quarter + " 2013 Activity" + (testData ? " (PLACEHOLDER DATA)" : ""), frameData);
 
             this.frames[this.frames.length-1].id = "stock-chart-canvas" + q;
             this.frames[this.frames.length-1].div = document.createElement("div");
@@ -80893,7 +80940,7 @@ var StockChart = function(containerId, opts){
 
     }
 
-    this.addFrame(quarter + " 2013 Activity", frameData);
+    this.addFrame(quarter + " 2013 Activity" + (testData ? " (PLACEHOLDER DATA)" : ""), frameData);
 
     this.frames[this.frames.length-1].id = "stock-chart-canvas" + q;
     this.frames[this.frames.length-1].div = document.createElement("div");
@@ -81136,6 +81183,11 @@ var StockChartSmall = function(canvasId, opts){
 
     var data = [];
 
+    if(!this.opts.data){
+        this.opts.data = [];
+        
+    }
+
     if(!this.opts.data.length){
         for(var i = 0; i< 30; i++){
             data.push(Math.random()*this.height);
@@ -81216,6 +81268,8 @@ var SwirlPoint = function(label, canvas){
     this.x = 0;
     this.y = 0;
 
+    this.firstHit = true;
+
 }
 
 SwirlPoint.prototype.animate = function(){
@@ -81232,10 +81286,8 @@ SwirlPoint.prototype.animate = function(){
     this.y = this.canvas.height / 2 + Math.cos(radians) * this.radius;
 
     if(!this.prevX){
-
-        this.prevX = this.canvas.width / 2;
-        this.prevY = this.canvas.height / 2;
-
+        this.prevX = this.x;
+        this.prevY = this.y;
     }
 
     this.targetRadius = Math.max(1, this.targetRadius - animateTime / this.decayTime);
@@ -81270,7 +81322,15 @@ SwirlPoint.prototype.draw = function(currentTime){
         this.context.strokeStyle = "#ccc";
     }
 
-    if(this.hit){
+    if(this.firstHit){
+
+        this.context.beginPath();
+        this.context.arc(this.x, this.y, 3, 0, 2*Math.PI);
+        this.context.fill()
+        this.context.closePath();
+        this.firstHit = false;
+
+    } else if(this.hit){
         this.hit = false;
         if(this.x < this.canvas.width / 2){
             this.context.fillText(this.label, this.x + 10, this.y-10);
@@ -81281,17 +81341,12 @@ SwirlPoint.prototype.draw = function(currentTime){
     }
 
     this.context.beginPath();
+    this.context.lineWidth = 1 + 2 * this.radius/this.maxRadius;
     this.context.moveTo(this.prevX, this.prevY);
     this.context.lineTo(this.x, this.y);
     this.context.stroke();
     this.context.closePath();
 
-        /*
-    this.context.beginPath();
-    this.context.arc(this.x, this.y, 1, 0, Math.PI * 2);
-    this.context.fill();
-    this.context.closePath();
-   */
 };
 
 
@@ -81600,14 +81655,13 @@ $.fn.center = function () {
 }
 
 var active = "lt";
-var es = new EventSource("http://encom-streams.robscanlon.com/events.js");
-// var es = new EventSource("/events.js");
+// var es = new EventSource("http://encom-streams.robscanlon.com/events.js");
+var es = new EventSource("/events.js");
 var listener = function (event) {
     var div = document.createElement("div");
     var type = event.type;
     if(type === "message"){
         if(active === "lt"){
-
             LightTable.message(JSON.parse(event.data));
         } else {
             Boardroom.message(JSON.parse(event.data));
@@ -81646,19 +81700,46 @@ var onSwitch = function(view){
     } else if (view === "wikipedia"){
         $("#screensaver").text("WIKIPEDIA");
         LightTable.hide();
-        Boardroom.init("wikipedia", window.githubHistory);
+        Boardroom.init("wikipedia");
         setTimeout(function(){
             active = "br";
             Boardroom.show();
         }, 3000)
 
-    } 
+    } else if (view === "test"){
+        $("#screensaver").text("TEST DATA");
+        LightTable.hide();
+        Boardroom.init("test");
+        setTimeout(function(){
+            active = "br";
+            Boardroom.show();
+        }, 3000)
 
+        /* lets just throw some data in there */
 
-};
+        setInterval(function(){
+            if(Boardroom){
+                Boardroom.message({
+                    stream: 'test',
+                    latlon: {
+                        lat: Math.random() * 180 - 90,
+                        lon: Math.random() * 360 - 180
+                    },
+                    location: 'Test ' + Math.floor(Math.random() * 100),
+                    type: 'Type ' + Math.floor(Math.random() * 8),
+                    picSmall: 'images/not_available_small.png',
+                    picLarge: 'images/not_available_large.png',
+                    username: "arscan" + Math.floor(Math.random()*1000),
+                    userurl: "http://github.com/arscan",
+                    title: "Test " + Math.floor(Math.random() * 100),
+                    url: "http://github.com/arscan/encom-boardroom/",
+                    size: Math.floor(Math.random()*10000),
+                    popularity: Math.floor(Math.random()*10000)
+                });
+            }
 
-var showWebglError = function(){
-
+        }, 800);
+    }
 
 };
 

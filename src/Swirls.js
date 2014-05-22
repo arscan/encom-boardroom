@@ -22,6 +22,8 @@ var SwirlPoint = function(label, canvas){
     this.x = 0;
     this.y = 0;
 
+    this.firstHit = true;
+
 }
 
 SwirlPoint.prototype.animate = function(){
@@ -38,10 +40,8 @@ SwirlPoint.prototype.animate = function(){
     this.y = this.canvas.height / 2 + Math.cos(radians) * this.radius;
 
     if(!this.prevX){
-
-        this.prevX = this.canvas.width / 2;
-        this.prevY = this.canvas.height / 2;
-
+        this.prevX = this.x;
+        this.prevY = this.y;
     }
 
     this.targetRadius = Math.max(1, this.targetRadius - animateTime / this.decayTime);
@@ -76,7 +76,15 @@ SwirlPoint.prototype.draw = function(currentTime){
         this.context.strokeStyle = "#ccc";
     }
 
-    if(this.hit){
+    if(this.firstHit){
+
+        this.context.beginPath();
+        this.context.arc(this.x, this.y, 3, 0, 2*Math.PI);
+        this.context.fill()
+        this.context.closePath();
+        this.firstHit = false;
+
+    } else if(this.hit){
         this.hit = false;
         if(this.x < this.canvas.width / 2){
             this.context.fillText(this.label, this.x + 10, this.y-10);
@@ -87,17 +95,12 @@ SwirlPoint.prototype.draw = function(currentTime){
     }
 
     this.context.beginPath();
+    this.context.lineWidth = 1 + 2 * this.radius/this.maxRadius;
     this.context.moveTo(this.prevX, this.prevY);
     this.context.lineTo(this.x, this.y);
     this.context.stroke();
     this.context.closePath();
 
-        /*
-    this.context.beginPath();
-    this.context.arc(this.x, this.y, 1, 0, Math.PI * 2);
-    this.context.fill();
-    this.context.closePath();
-   */
 };
 
 

@@ -44,7 +44,7 @@ LightTable.init = function(_hideFn){
     });
 
     $("#lt-launch-wikipedia").click(function(){
-        $(this).find(".folder-big").css("background-color", "#fff");
+        $(this).find(".folder-small").css("background-color", "#fff");
         simulateCommand("|cd wikipedia$");
         simulateCommand("ls$");
         simulateCommand("run wikipedia.exe$");
@@ -53,8 +53,13 @@ LightTable.init = function(_hideFn){
     });
 
     $("#lt-launch-test").click(function(){
-        $(this).find(".folder-big").css("background-color", "#fff");
-        simulateCommand("cd test$");
+        $(this).find(".folder-small").css("background-color", "#fff");
+        simulateCommand("|cd test$");
+        simulateCommand("ls$");
+        simulateCommand("run test.exe$");
+        $(document).off();
+        $(".folder-container").off();
+
     });
 
     $("#lt-launch-bitcoin").click(function(){
@@ -475,7 +480,6 @@ function createWebGlTest(){
 
             if(lastMessageTime !== null && !dataStreamOn){
                 dataStreamOn = true;
-                console.log("set message");
                 $("#datalink-status").text("CONNECTED");
                 $("#datalink-status").css("color", "green");
             }
@@ -580,6 +584,19 @@ function executeCommand(){
             writeResponse("<span class='alert'>Error:</span> No such file");
             writePrompt();
         }
+    } else if(command == "run test.exe"){
+        if(currentDir == "test"){
+            $(".ls-exec").addClass("ls-highlight")
+            $(".container-border").animate({opacity: 0}, 500);
+
+            setTimeout(function(){
+                hideFn("test");
+            }, 500);
+
+        } else {
+            writeResponse("<span class='alert'>Error:</span> No such file");
+            writePrompt();
+        }
 
     } else if(command == "cd github"){
         $(".ls-github").addClass("ls-highlight")
@@ -595,6 +612,17 @@ function executeCommand(){
         $("#lt-launch-wikipedia .folder-label").addClass("selected");
         currentDir = "wikipedia";
         writeResponse("Changed directory to <span class='highlight'>wikipedia</span>");
+        writePrompt();
+
+    } else if(command == "cd test"){
+        $(".ls-test").addClass("ls-highlight")
+        $(".folder-label").removeClass("selected");
+        $("#lt-launch-test .folder-label").addClass("selected");
+        currentDir = "test";
+        writeResponse("Changed directory to <span class='highlight'>test</span>");
+        writePrompt();
+    } else if(command == "cd bitcoin") {
+        writeResponse("<span class='alert'>Not yet implemented</span>");
         writePrompt();
     } else if(command.indexOf("cd encom") == 0 || command == "cd /"){
         currentDir = "encom_root";

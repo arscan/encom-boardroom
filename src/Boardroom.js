@@ -34,7 +34,8 @@ var boardroomActive = false,
     picIndex = 0,
     currentPics = [],
     lastPicDate = Date.now(),
-    streamType;
+    streamType,
+    readmeContainer;
 
 sliderHeads = {};
 var Boardroom = {};
@@ -50,6 +51,9 @@ Boardroom.init = function(_streamType, data){
         "-moz-transform": "scale(" + ratio + ")",
         "-moz-transform-origin": "0 0"
     });
+
+    readmeContainer = $("#boardroom-readme-" + _streamType);
+
 
     Boardroom.data = data;
 
@@ -69,7 +73,7 @@ Boardroom.init = function(_streamType, data){
         showReadme();
     });
 
-    $("#boardroom-readme h2 em").click(function(e){
+    $(".boardroom-readme h2 em").click(function(e){
         e.preventDefault();
         hideReadme();
     });
@@ -97,13 +101,19 @@ Boardroom.init = function(_streamType, data){
         unknown: {count: 10, ref: $("#location-area-unknown")}
     };
 
+    $("#user-interaction-header").text(streamType.toUpperCase() + " LIVE DATA FEED");
+    $("#globalization-header").text(streamType.toUpperCase() + " GLOBALIZATION");
+    $("#growth-header").text(streamType.toUpperCase() + " HISTORIC PERFORMANCE");
+    $("#media-header").text(streamType.toUpperCase() + " USERS");
 
     $("#ticker-text").text(streamType.toUpperCase());
     if(streamType.length > 6){
         $("#ticker-text").css("font-size", "12pt");
     }
 
-    $("#ticker-value").text(formatYTD(data[0].events, data[data.length-1].events));
+    if(data){
+        $("#ticker-value").text(formatYTD(data[0].events, data[data.length-1].events));
+    }
 
     setInterval(function(){
         if(boardroomActive){
@@ -267,7 +277,7 @@ Boardroom.animate = function(){
 
 Boardroom.message = function(message){
 
-    if(message.stream != streamType){
+    if(message.stream != streamType || !globe){
         return;
     }
 
@@ -319,18 +329,17 @@ Boardroom.resize = function(){
 
 function showReadme() {
 
-    var item = $("#boardroom-readme");
-    var itemContent = item.find(".content");
+    var itemContent = readmeContainer.find(".content");
 
-    item.removeAttr("style");
+    readmeContainer.removeAttr("style");
 
-    var height = item.height();
-    var width = item.width();
-    var left = item.position().left;
-    var top = item.position().top;
+    var height = readmeContainer.height();
+    var width = readmeContainer.width();
+    var left = readmeContainer.position().left;
+    var top = readmeContainer.position().top;
 
-    var border = item.css("border");
-    var boxShadow = item.css("box-shadow");
+    var border = readmeContainer.css("border");
+    var boxShadow = readmeContainer.css("box-shadow");
 
     var contentBorder = itemContent.css("border");
     var contentBoxShadow = itemContent.css("box-shadow");
@@ -339,21 +348,21 @@ function showReadme() {
         $(element).css("visibility", "hidden");
     });
 
-    item.height(0)
+    readmeContainer.height(0)
     .width(0)
     .css("top", top + height/2)
     .css("left", left + width/2)
     .css("visibility", "visible");
 
 
-    item.animate({
+    readmeContainer.animate({
         height: height,
         width: "500px",
         left: left,
         top: top
 
     }, 500);
-    item.css({
+    readmeContainer.css({
         opacity: 1
     });
 
@@ -369,12 +378,12 @@ function showReadme() {
 }
 
 function hideReadme(){
-    $("#boardroom-readme").css("visibility", "hidden");
-    $("#boardroom-readme").children().each(function(index, element){
+    readmeContainer.css("visibility", "hidden");
+    readmeContainer.children().each(function(index, element){
         $(element).removeAttr("style");
-    });
-    $("#boardroom-readme .content").children().each(function(index, element){
-        $(element).removeAttr("style");
+        $(element).children().each(function(index, element){
+            $(element).removeAttr("style");
+        });
     });
 }
 

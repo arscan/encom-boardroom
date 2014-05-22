@@ -7,8 +7,9 @@ var StockChart = function(containerId, opts){
         holdTime: 3000,
         swipeTime: 800,
         data: []
-   
     }
+
+    var testData = false;
 
     Utils.extend(opts, defaults);
     this.opts = defaults;
@@ -32,7 +33,12 @@ var StockChart = function(containerId, opts){
     var count = 0;
     var quarter = "1st Quarter";
 
+    if(!this.opts.data){
+        this.opts.data = [];
+    }
+
     if(!this.opts.data.length){
+        testData = true;
         var end = new Date(2014, 0, 1);
         for (var d = new Date(2013, 0, 1); d < end; d.setDate(d.getDate() + 1)) {
             count++;
@@ -40,7 +46,7 @@ var StockChart = function(containerId, opts){
                 year: d.getFullYear(),
                 month: d.getMonth() + 1,
                 day: d.getDate(),
-                events: 100-((20+(count%92)) + Math.random()*30)
+                events: ((40+(count%92)) + Math.floor(Math.random()*50))
             });
         }
     }
@@ -50,7 +56,7 @@ var StockChart = function(containerId, opts){
     for (var i = 0; i< this.opts.data.length; i++){
 
         if(q >= 0 && q !== parseInt(i / 92, 10)){
-            this.addFrame(quarter + " 2013 Activity", frameData);
+            this.addFrame(quarter + " 2013 Activity" + (testData ? " (PLACEHOLDER DATA)" : ""), frameData);
 
             this.frames[this.frames.length-1].id = "stock-chart-canvas" + q;
             this.frames[this.frames.length-1].div = document.createElement("div");
@@ -73,7 +79,7 @@ var StockChart = function(containerId, opts){
 
     }
 
-    this.addFrame(quarter + " 2013 Activity", frameData);
+    this.addFrame(quarter + " 2013 Activity" + (testData ? " (PLACEHOLDER DATA)" : ""), frameData);
 
     this.frames[this.frames.length-1].id = "stock-chart-canvas" + q;
     this.frames[this.frames.length-1].div = document.createElement("div");

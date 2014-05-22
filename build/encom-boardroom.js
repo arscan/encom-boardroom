@@ -78741,7 +78741,6 @@ Boardroom.init = function(_streamType, data){
 
     readmeContainer = $("#boardroom-readme-" + _streamType);
 
-
     Boardroom.data = data;
 
     $("#boardroom").center();
@@ -79022,8 +79021,8 @@ function showReadme() {
 
     var height = readmeContainer.height();
     var width = readmeContainer.width();
-    var left = readmeContainer.position().left;
-    var top = readmeContainer.position().top;
+    var left = ($(window).width() - 500)/ 2;
+    var top = ($(window).height() - 400) / 2;
 
     var border = readmeContainer.css("border");
     var boxShadow = readmeContainer.css("box-shadow");
@@ -80295,7 +80294,7 @@ function createWebGlTest(){
             }
 
             if(Math.random() < .1){
-                if((lastMessageTime === null && timeSinceStart > 5000) || (lastMessageTime !== null && Date.now() - lastMessageTime > 5000)){
+                if((lastMessageTime === null && timeSinceStart > 8000) || (lastMessageTime !== null && Date.now() - lastMessageTime > 8000)){
                     $("#datalink-status").text("ERROR");
                     $("#datalink-status").css("color", "red");
                 } 

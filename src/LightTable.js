@@ -485,7 +485,7 @@ function createWebGlTest(){
             }
 
             if(Math.random() < .1){
-                if((lastMessageTime === null && timeSinceStart > 5000) || (lastMessageTime !== null && Date.now() - lastMessageTime > 5000)){
+                if((lastMessageTime === null && timeSinceStart > 8000) || (lastMessageTime !== null && Date.now() - lastMessageTime > 8000)){
                     $("#datalink-status").text("ERROR");
                     $("#datalink-status").css("color", "red");
                 } 

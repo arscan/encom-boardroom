@@ -50,6 +50,7 @@ app.get('/events.js', function(req, res) {
         'Access-Control-Allow-Origin': '*'
     });
     res.write('\n');
+    res._encom_start_time = Date.now();
  
     openConnections.push(res);
     console.log("New Connection.  Current Connections: " + openConnections.length);
@@ -66,6 +67,27 @@ app.get('/events.js', function(req, res) {
         console.log("Closed Connection. Current Connections: " + openConnections.length);
     });
 });
+
+setInterval(function(){
+        var toRemove = -1;
+        for (var j =0 ; j < openConnections.length ; j++) {
+            if (Date.now() - openConnections[j]._encom_start_time > 60000){
+                toRemove =j;
+                break;
+            }
+        }
+
+        if(toRemove > -1){
+            var closeConnection = openConnections[toRemove];
+            closeConnection.status = 500;
+            closeConnection.end('Clearing out the connection');
+            openConnections.splice(toRemove,1);
+            console.log("Forced connection close.  Current Connections: " + openConnections.length);
+
+        }
+
+}, 10000);
+
  
 
 var sendData = function(data){

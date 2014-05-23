@@ -28,11 +28,11 @@ The code isn't particularly well organized right now to quickly add in new feeds
 
 ### Noteable Dependencies
 
-* Nodejs
-* Three.js
-* Hexasphere.js
-* Quadtree2
-* Browserify
+* [Node.js](http://nodejs.org/)
+* [Three.js](http://threejs.org/)
+* [Encom Globe](http://www.robscanlon.com/encom-globe)
+* [Hexasphere.js](http://www.robscanlon.com/hexasphere/)
+* [Quadtree2](https://github.com/burninggramma/quadtree2.js)
 
 ### Feed Info
 

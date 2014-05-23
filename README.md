@@ -5,9 +5,9 @@ An HTML5 recreation of the [Boardroom Scene](http://work.gmunk.com/TRON-Board-Ro
 in Disney's [Tron: Legacy](http://www.imdb.com/tible/tt1104001/).  It currently
 displays realtime data from Github and Wikipedia to make it a bit more fun.  View it in action at http://www.robscanlon.com/encom-boardroom .
 
-![Boardroom light table](https://raw.github.com/arscan/encom-boardroom/master/images/screenshot_lighttable.jpg "Boardroom light table)
+![Boardroom light table](https://raw.github.com/arscan/encom-boardroom/master/images/screenshot_lighttable.jpg "Boardroom light table")
 
-![Boardroom screen](https://raw.github.com/arscan/encom-boardroom/master/images/screenshot.jpg "Boardroom screen)
+![Boardroom screen](https://raw.github.com/arscan/encom-boardroom/master/images/screenshot.jpg "Boardroom screen")
 
 While I attempted to stay true to the film, it simply wasn't practical to recreate every element that is portrayed in the scene. The graphics displayed in the film contain a remarkable amount of detail despite only being visible for a couple of seconds. I am in awe of the those that put it together.
 

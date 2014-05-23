@@ -3,10 +3,9 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <meta property="og:image" content="resources/screenshot.jpg" />
+        <meta property="og:image" content="images/screenshot.jpg" />
         <meta property="og:description" content="A WebGL implementation of the Encom Boardroom scene in Tron: Legacy" />
-        <title>Tron: Legacy Boardroom sceen in HTML5</title>
-        <title>Encom Boardroom Visualization</title>
+        <title>Tron: Legacy Encom Boardroom Visualization</title>
         <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
         <link href="css/global.css" rel="stylesheet" type="text/css" />
         <link href="css/light-table-styles.css" rel="stylesheet" type="text/css" />
@@ -54,14 +53,12 @@
                                 <em>END. PROGRAM</em>
                             </h2>
                             <p>
-                            Hello <strong>User</strong>. Welcome to Encom's <strong>OS12</strong>, the worlds most secure operating system.
+                            Hello <strong>User</strong>.  This is a recreation of the graphics in the boardroom scene in Tron: Legacy.  If you have not seen that movie,
+                            check out <a href="http://work.gmunk.com/TRON-Board-Room" target="_blank">this background material on the making of that scene</a> before proceeding.
                             </p>
-                            <p>
-                            This is an recreation of the boardroom scene in Tron: Legacy.  If you have not seen that movie,
-                            please familiarize yourself with <a href="http://work.gmunk.com/TRON-Board-Room" target="_blank">this background material</a> before proceeding.
-                            To make it a bit more fun, it is currently configured to display live data from <strong>Github</strong> and <strong>Wikipedia</strong>, 
-                            with more live streams to come.  Click on the appropriate stream in the window to the right if 
-                            you would like to continue.
+
+                            <p>To make this a bit more fun, the boardroom is configured to visualize live updates from <strong>Github</strong> and <strong>Wikipedia</strong>, 
+                            with more streams to come.  Click on a stream in the window to the right to continue.
                             </p>
 
                             <p>
@@ -231,7 +228,7 @@
                             Hello <strong>User</strong>. Welcome to Encom's <strong>OS12</strong>, the worlds most secure operating system.
                             </p>
                             <p>
-                            If you have not seen Tron: Legacy, please familiarize yourself with <a href="http://work.gmunk.com/TRON-Board-Room" onclick="alert('please do not visit yet, dont want referals to show up'); return false" target="_blank">this background material</a> before proceeding to the boardroom 
+                            If you have not seen Tron: Legacy, please familiarize yourself with <a href="http://work.gmunk.com/TRON-Board-Room" target="_blank">this background material</a> before proceeding to the boardroom 
                             visualization.  Click on the appropriate stream above to continue.
                             </p>
 
@@ -741,6 +738,9 @@
                     <em>X CLOSE</em>
                 </h2>
                 <p>
+                You are looking at a visualization of live updates to repositories hosted by <a href="http://github.com" target="_blank">Github</a>.
+                </p>
+                <p>
                 Data is being streamed in realtime from Github's public <a href="http://github.com/timeline.json" target="_blank">timeline feed</a>.
                 Location information is retrieved from the user's github profile and is mapped using <a href="http://geonames.org" target="_blank">geonames.org</a>.
                 Historic 2013 data was retrieved from the <a href="http://githubarchive.org" target="_blank">Github Archive</a>.  User pictures are 
@@ -766,6 +766,9 @@
                     WIKIPEDIA STREAM INFO <span class="alt-1">.TXT</span>
                     <em>X CLOSE</em>
                 </h2>
+                <p>
+                You are looking at a visualization of live updates to <a href="http://wikipedia.com" target="_blank">Wikipedia</a>.
+                </p>
                 <p>
                 Data is being streamed in realtime from Wikipedia's public <a href="http://meta.wikimedia.org/wiki/IRC_channels#Raw_feeds" target="_blank">irc feed</a>.
                 Location information is only available from anonymous users in the form of IP addresses, and is mapped to real locations 

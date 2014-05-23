@@ -147,9 +147,9 @@ Boardroom.show = function(cb){
 
     // render the other elements intro animations
 
-    $(".footer-bar").delay(4000).animate({"margin-top": "0"}, 500);
+    $(".footer-bar").delay(1000).animate({"margin-top": "0"}, 500);
 
-    $("#globe-footer img").delay(4500).animate({"opacity": "1"}, 1000);
+    $("#globe-footer img").delay(1500).animate({"opacity": "1"}, 1000);
 
     $("#globalization").delay(600).animate({
         top: "0px",
@@ -193,7 +193,7 @@ Boardroom.show = function(cb){
 
     $("#bottom-border").delay(100).animate({
         width: "1900px"
-    }, 4000);
+    }, 2000);
 
     setTimeout(function(){
         for(var i = 0; i< 2; i++){
@@ -335,7 +335,7 @@ function showReadme() {
     var height = readmeContainer.height();
     var width = readmeContainer.width();
     var left = ($(window).width() - 500)/ 2;
-    var top = ($(window).height() - 400) / 2;
+    var top = ($(window).height() - 500) / 2;
 
     var border = readmeContainer.css("border");
     var boxShadow = readmeContainer.css("box-shadow");

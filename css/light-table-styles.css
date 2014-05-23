@@ -281,13 +281,17 @@ ul {
 
 .blink {
     animation: blink 1s steps(2, start) infinite;
-    -webkit-animation: blink 1s steps(2, start) infinite;
+    -webkit-animation-name: blink;  
+    -webkit-animation-iteration-count: infinite;  
+    -webkit-animation-timing-function: cubic-bezier(1.0,0,0,1.0);
+    -webkit-animation-duration: 1s; 
 }
 @keyframes blink {
     to { visibility: hidden; }
 }
 @-webkit-keyframes blink {
-    to { visibility: hidden; }
+    from {opacity: 1.0;}
+    to {opacity: 0.0;}
 }
 
 .command-text {

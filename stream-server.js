@@ -51,7 +51,6 @@ app.get('/events.js', function(req, res) {
         'Access-Control-Allow-Origin': '*'
     });
     res.write('\n');
-    res._encom_start_time = Date.now();
  
     openConnections.push(res);
     console.log("New Connection.  Current Connections: " + openConnections.length);
@@ -68,22 +67,6 @@ app.get('/events.js', function(req, res) {
         console.log("Closed Connection. Current Connections: " + openConnections.length);
     });
 });
-
-/* having problems where heroku won't close connections */
-/* I think its because the router makes my script think that the client is still connected */
-/* There is probably an elegant solution to this, but for now I'm just going to kill old connections occasionally */
-
-/*
-setInterval(function(){
-    while(openConnections.length > 0 && Date.now() - openConnections[0]._encom_start_time > 10000){
-        openConnections[0].status = 400;
-        openConnections[0].end('Clearing out old connection');
-        openConnections.shift();
-        console.log("Forced connection close.  Current Connections: " + openConnections.length);
-    }
-
-}, 1000);
-*/
 
 var sendData = function(data){
 

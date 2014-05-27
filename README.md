@@ -24,7 +24,7 @@ PORT=8000 node stream-server.js
 
 Then point your browser at `http://localhost:8000`.
 
-The code isn't particularly well organized right now to quickly add in new feeds, but it certainly is possible.  I did split out the globe into its own [standalone library](/arscan/encom-globe) that can be easily reused though.
+The code isn't particularly well organized right now to quickly add in new feeds, but it certainly is possible.  I did split out the globe into its own [standalone library](https://github.com/arscan/encom-globe) that can be easily reused though.
 
 ### Noteable Dependencies
 

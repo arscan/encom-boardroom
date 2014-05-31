@@ -9,7 +9,7 @@ displays realtime data from Github and Wikipedia to make it a bit more fun.  Vie
 
 ![Boardroom screen](https://raw.github.com/arscan/encom-boardroom/master/images/screenshot.jpg "Boardroom screen")
 
-While I attempted to stay true to the film, it simply wasn't practical to recreate every element that is portrayed in the scene. The graphics displayed in the film contain a remarkable amount of detail despite only being visible for a couple of seconds. I am in awe of the those that put it together.
+While I attempted to stay true to the film, it simply wasn't practical to recreate every element that is portrayed in the scene. The graphics displayed in the film contain a remarkable amount of detail despite only being visible for a couple of seconds. I am in awe of those that put it together.
 
 My focus was on the globe and I made it available as a [standalone library](http://github.com/arscan/encom-globe) for those interested. The other elements are only loose adaptations of the film version. This project is not associated with Github, Wikipedia, Tron: Legacy, or Disney. It is just a tribute.
 

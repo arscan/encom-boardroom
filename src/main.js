@@ -124,9 +124,6 @@ $(function(){
     $("#boardroom").center();
     LightTable.show();
 
-    // Boardroom.init(onSwitch);
-    // Boardroom.show();
-
     var animate = function(){
 
         if(active === "lt"){
@@ -139,20 +136,6 @@ $(function(){
     };
 
     animate();
-
-    /*
-       setTimeout(function(){
-       LightTable.hide();
-       active = "br-gh";
-       }, 5000);
-       setTimeout(function(){
-       LightTable.show();
-       active = "lt";
-       }, 10000);
-       */
-
-    //setTimeout(LightTable.hide,5000);
-    //setTimeout(LightTable.show,7000);
 
     var timeout = 0;
     function onWindowResize(){

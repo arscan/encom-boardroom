@@ -9,6 +9,7 @@ var webglTest,
     hideFn = function(){}
     LightTable = {},
     lastMessageTime = null,
+    numUsers = 1,
     dataStreamOn = false;
 
 /* public function */
@@ -164,8 +165,12 @@ LightTable.resize = function(){
 
 
 LightTable.message = function(message){
-    // noop
     lastMessageTime = Date.now();
+
+    if(message.stream === "meta" && message.size > 0){
+        $("#datalink-status").text("CONNECTED (" + message.size + " user" + (parseInt(message.size,10) === 1 ? ")" : "s) "));
+        $("#datalink-status").css("color", "green");
+    }
 
 };
 

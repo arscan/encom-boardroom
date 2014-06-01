@@ -51,7 +51,7 @@ app.get('/events.js', function(req, res) {
         'Access-Control-Allow-Origin': '*'
     });
     res.write('\n');
- 
+
     openConnections.push(res);
     console.log("New Connection.  Current Connections: " + openConnections.length);
  
@@ -64,9 +64,28 @@ app.get('/events.js', function(req, res) {
             }
         }
         openConnections.splice(j,1);
+        sendData({
+            stream: "meta",
+            type: "disconnect",
+            size: openConnections.length
+        });
         console.log("Closed Connection. Current Connections: " + openConnections.length);
     });
+
+    sendData({
+        stream: "meta",
+        type: "connect",
+        size: openConnections.length
+    });
 });
+
+setInterval(function(){
+    sendData({
+        stream: "meta",
+        type: "heartbeat",
+        size: openConnections.length
+    });
+}, 3000);
 
 var sendData = function(data){
 

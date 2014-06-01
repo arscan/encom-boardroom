@@ -79924,6 +79924,7 @@ var webglTest,
     hideFn = function(){}
     LightTable = {},
     lastMessageTime = null,
+    numUsers = 1,
     dataStreamOn = false;
 
 /* public function */
@@ -80079,8 +80080,12 @@ LightTable.resize = function(){
 
 
 LightTable.message = function(message){
-    // noop
     lastMessageTime = Date.now();
+
+    if(message.stream === "meta" && message.size > 0){
+        $("#datalink-status").text("CONNECTED (" + message.size + " user" + (parseInt(message.size,10) === 1 ? ")" : "s) "));
+        $("#datalink-status").css("color", "green");
+    }
 
 };
 
@@ -81870,9 +81875,6 @@ $(function(){
     $("#boardroom").center();
     LightTable.show();
 
-    // Boardroom.init(onSwitch);
-    // Boardroom.show();
-
     var animate = function(){
 
         if(active === "lt"){
@@ -81885,20 +81887,6 @@ $(function(){
     };
 
     animate();
-
-    /*
-       setTimeout(function(){
-       LightTable.hide();
-       active = "br-gh";
-       }, 5000);
-       setTimeout(function(){
-       LightTable.show();
-       active = "lt";
-       }, 10000);
-       */
-
-    //setTimeout(LightTable.hide,5000);
-    //setTimeout(LightTable.show,7000);
 
     var timeout = 0;
     function onWindowResize(){

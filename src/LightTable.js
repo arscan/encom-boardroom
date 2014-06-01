@@ -168,7 +168,7 @@ LightTable.message = function(message){
     lastMessageTime = Date.now();
 
     if(message.stream === "meta" && message.size > 0){
-        $("#datalink-status").text("CONNECTED (" + message.size + " user" + (parseInt(message.size,10) === 1 ? ")" : "s) "));
+        $("#datalink-status").text("CONNECTED. " + message.size + " USER" + (parseInt(message.size,10) === 1 ? "" : "S "));
         $("#datalink-status").css("color", "green");
     }
 

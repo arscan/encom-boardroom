@@ -10,7 +10,12 @@ var express = require('express'),
 
 // some helper services
 var LOCATIONLOOKUP = "http://loc.robscanlon.com:8080/",
-  IPLOOKUP = "http://loc.robscanlon.com:8081/json/";
+  IPLOOKUP = "http://loc.robscanlon.com:8081/json/",
+  USERLOOKUP = "http://loc.robscanlon.com:8082/";
+
+// env vars
+var PORT = process.env.PORT || 8081,
+    GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 // express middleware
 var favicon = require('serve-favicon');
@@ -19,14 +24,14 @@ var favicon = require('serve-favicon');
 var GithubTimelineStream = require("github-timeline-stream"),
     WikipediaStream = require("wikipedia-stream");
 
-var githubStream = new GithubTimelineStream(),
+var githubStream = new GithubTimelineStream({token: GITHUB_TOKEN}),
     wikipediaStream = new WikipediaStream();
  
 // create the app
 var app = express();
  
 // configure everything, just basic setup
-app.set('port', process.env.PORT || 8081);
+app.set('port', PORT);
 app.use(favicon("images/favicon.ico"));
 app.use("/js", express.static(path.join(__dirname, 'js')));
 app.use("/images", express.static(path.join(__dirname, 'images')));
@@ -191,34 +196,50 @@ githubStream.pipe(map(function(data, callback){
         ip: null
     };
 
-    if(data.actor_attributes && data.actor_attributes.location){
-        outdata.location = data.actor_attributes.location;
-    }
+    outdata.action = data.type;
 
-    if(data.actor_attributes && data.actor_attributes.gravatar_id){
-        outdata.picSmall = 'http://0.gravatar.com/avatar/' + data.actor_attributes.gravatar_id + '?s=89';
-        outdata.picLarge = 'http://0.gravatar.com/avatar/' + data.actor_attributes.gravatar_id + '?s=184';
+    if(data.repo){
+        outdata.title = data.repo.name;
+        outdata.url = data.repo.url;
+        /*
+        outdata.size = 0;
+        outdata.popularity = 0;
+        outdata.type = data.repository.language
+       */
     }
 
     if(data.actor){
-        outdata.username = data.actor;
-        outdata.userurl = "http://github.com/" + data.actor + "/";
+        outdata.picSmall = 'http://0.gravatar.com/avatar/' + data.actor.gravatar_id + '?s=89';
+        outdata.picLarge = 'http://0.gravatar.com/avatar/' + data.actor.gravatar_id + '?s=184';
+        outdata.username = data.actor.login;
+        outdata.userurl = "http://github.com/" + data.actor.login + "/";
+        
+        request.get(USERLOOKUP + data.actor.login, function(error, response, body){
+            if(error){
+                console.log("error looking up user..." + error);
+            }
+
+            try{
+                var actorInfo = JSON.parse(body);
+
+                if(actorInfo.location){
+                    outdata.location = actorInfo.location;
+                }
+            } catch(ex) {
+                console.log("error looking up user... " + ex);
+            }
+
+            callback(null, outdata);
+
+        });
+    } else {
+
+        callback(null, outdata);
+
     }
 
-    if(data.repository){
-        outdata.title = data.repository.name;
-        outdata.url = data.repository.url;
-        outdata.size = data.repository.size;
-        outdata.popularity = data.repository.stargazers;
 
-        if(data.repository.language){
-            outdata.type = data.repository.language;
-        }
-    }
 
-    outdata.action = data.type;
-
-    callback(null, outdata);
 })).on("data", formatAndSendGithubData);
 
 

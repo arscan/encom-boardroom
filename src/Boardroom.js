@@ -299,8 +299,8 @@ Boardroom.message = function(message){
         var lastChild = interactionContainer[0].lastChild;
         lastChild.innerHTML = '<li class="interaction-username">' + message.username + '</li>' + 
             '<li class="interaction-title">' + message.title + '</li>' + 
-            '<li class="interaction-type">' + message.type + '</li>' + 
-            '<li class="interaction-size">' + message.size + '</li>' + 
+            '<li class="interaction-type">' + (message.type ? message.type : "") + '</li>' + 
+            '<li class="interaction-size">' + (message.size ? message.size : "") + '</li>' + 
             '<li class="interaction-popularity">' + (message.popularity ? message.popularity : "")+ '</li>';
 
         if(message.popularity > 100){

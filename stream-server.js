@@ -11,7 +11,8 @@ var express = require('express'),
 // some helper services
 var LOCATIONLOOKUP = "http://loc.robscanlon.com:8080/",
   IPLOOKUP = "http://loc.robscanlon.com:8081/json/",
-  USERLOOKUP = "http://loc.robscanlon.com:8082/";
+  USERLOOKUP = "http://loc.robscanlon.com:8082/users/",
+  REPOLOOKUP = "http://loc.robscanlon.com:8082/repos/";
 
 // env vars
 var PORT = process.env.PORT || 8081,
@@ -26,6 +27,8 @@ var GithubTimelineStream = require("github-timeline-stream"),
 
 var githubStream = new GithubTimelineStream({token: GITHUB_TOKEN}),
     wikipediaStream = new WikipediaStream();
+
+console.log("UP ON PORT: " + PORT);
  
 // create the app
 var app = express();
@@ -198,15 +201,8 @@ githubStream.pipe(map(function(data, callback){
 
     outdata.action = data.type;
 
-    if(data.repo){
-        outdata.title = data.repo.name;
-        outdata.url = data.repo.url;
-        /*
-        outdata.size = 0;
-        outdata.popularity = 0;
-        outdata.type = data.repository.language
-       */
-    }
+
+    /* TODO: REFACTOR TO USE ASYNC */
 
     if(data.actor){
         outdata.picSmall = 'http://0.gravatar.com/avatar/' + data.actor.gravatar_id + '?s=89';
@@ -229,16 +225,35 @@ githubStream.pipe(map(function(data, callback){
                 console.log("error looking up user... " + ex);
             }
 
-            callback(null, outdata);
+            if(data.repo){
+                outdata.title = data.repo.name;
+                outdata.url = data.repo.url;
+
+                request.get(REPOLOOKUP + data.repo.name, function(error, response, body){
+                    if(error){
+                        console.log("error looking up repo..." + error);
+                    }
+
+                    try{
+                        var repoInfo = JSON.parse(body);
+
+                        outdata.size = repoInfo.size;
+                        outdata.popularity = repoInfo.stargazers_count;
+                        outdata.type = repoInfo.language;
+                    } catch(ex) {
+                        console.log("error looking up repo... " + ex);
+                    }
+
+                    callback(null, outdata);
+                })
+            } else {
+                callback(null, outdata);
+            }
 
         });
     } else {
-
         callback(null, outdata);
-
     }
-
-
 
 })).on("data", formatAndSendGithubData);
 

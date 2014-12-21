@@ -1,6 +1,8 @@
 var $ = require("jquery"),
-    EventSource = require("event-source")
-    Boardroom = require("./Boardroom.js");
+    EventSource = require("event-source"),
+    Boardroom = require("./Boardroom.js"),
+    PleaseRotate = require("pleaserotate.js"),
+    init = false;
 
 require("jquery-ui");
 
@@ -33,6 +35,7 @@ var listener = function (event) {
 es.addEventListener("open", listener);
 es.addEventListener("message", listener);
 es.addEventListener("error", listener);
+
 
 var onSwitch = function(view){
     var screensaver = $("#screensaver");
@@ -103,7 +106,11 @@ var onSwitch = function(view){
 
 };
 
-$(function(){
+PleaseRotate.start({onHide: function(){
+    if(init){
+        return;
+    }
+    init = true;
     try {
         LightTable.init(onSwitch);
 
@@ -149,5 +156,5 @@ $(function(){
 
     window.addEventListener( 'resize', onWindowResize, false );
 
-});
+}});
 

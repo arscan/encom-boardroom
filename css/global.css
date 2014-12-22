@@ -98,7 +98,14 @@ body {
 }
 
 /* style the please rotate elements */
+#pleaserotate-container {
+    width: 400px;
+    font-size: 20pt;
+
+}
+
 #pleaserotate-graphic{
+    width: 300px;
     fill: #fff;
 }
 

@@ -77773,6 +77773,7 @@ module.exports={
             setBodyClass("hiding");
         }
 
+
         if(propogate !== undefined && !propogate){
             return;
         }
@@ -77822,7 +77823,15 @@ module.exports={
         window.addEventListener( 'resize', checkOrientationChange, false );
 
         if(options.allowClickBypass){
-            document.getElementById("pleaserotate-backdrop").addEventListener("click", setVisibility.bind(this, false), false);
+            document.getElementById("pleaserotate-backdrop").addEventListener("click", function(){
+                var propogate = options.onHide();
+                setBodyClass("hiding");
+                PleaseRotate.Showing = false;
+                
+                if(propogate === undefined || propogate){
+                    setVisibility(false);
+                }
+            });
         }
     }
 
@@ -82129,7 +82138,7 @@ var onSwitch = function(view){
 
 };
 
-PleaseRotate.start({onHide: function(){
+PleaseRotate.start({onlyMobile: false, onHide: function(){
     if(init){
         return;
     }

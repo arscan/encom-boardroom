@@ -106,7 +106,7 @@ var onSwitch = function(view){
 
 };
 
-PleaseRotate.start({onHide: function(){
+PleaseRotate.start({onlyMobile: false, onHide: function(){
     if(init){
         return;
     }

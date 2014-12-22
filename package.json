@@ -1,6 +1,6 @@
 {
   "name": "encom-boardroom",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "encom-boardroom",
   "main": "index.html",
   "dependencies": {

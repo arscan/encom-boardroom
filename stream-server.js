@@ -9,8 +9,8 @@ var express = require('express'),
   request = require("request");
 
 // some helper services
-var LOCATIONLOOKUP = "http://loc.robscanlon.com:8080/",
-  IPLOOKUP = "http://loc.robscanlon.com:8081/json/",
+var LOCATIONLOOKUP = "http://localhost:8080/",
+  IPLOOKUP = "http://localhost:8081/json/",
   USERLOOKUP = "http://loc.robscanlon.com:8082/users/",
   REPOLOOKUP = "http://loc.robscanlon.com:8082/repos/";
 
@@ -201,12 +201,13 @@ githubStream.pipe(map(function(data, callback){
 
     outdata.action = data.type;
 
-
     /* TODO: REFACTOR TO USE ASYNC */
 
     if(data.actor){
-        outdata.picSmall = 'http://0.gravatar.com/avatar/' + data.actor.gravatar_id + '?s=89';
-        outdata.picLarge = 'http://0.gravatar.com/avatar/' + data.actor.gravatar_id + '?s=184';
+        if(data.actor.avatar_url && data.actor.avatar_url.length > 0){
+            outdata.picSmall = data.actor.avatar_url + 's=89';
+            outdata.picLarge = data.actor.avatar_url + 's=184';
+        }
         outdata.username = data.actor.login;
         outdata.userurl = "http://github.com/" + data.actor.login + "/";
         

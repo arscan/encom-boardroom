@@ -11,8 +11,8 @@ var express = require('express'),
 // some helper services
 var LOCATIONLOOKUP = "http://localhost:8080/",
   IPLOOKUP = "http://localhost:8081/json/",
-  USERLOOKUP = "http://loc.robscanlon.com:8082/users/",
-  REPOLOOKUP = "http://loc.robscanlon.com:8082/repos/";
+  USERLOOKUP = "http://localhost:8082/users/",
+  REPOLOOKUP = "http://localhost:8082/repos/";
 
 // env vars
 var PORT = process.env.PORT || 8081,

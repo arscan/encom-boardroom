@@ -5,7 +5,7 @@ An HTML5 recreation of the [Boardroom
 Scene](http://work.gmunk.com/TRON-Board-Room) in Disney's [Tron:
 Legacy](http://www.imdb.com/tible/tt1104001/).  It currently displays realtime
 data from Github and Wikipedia to make it a bit more fun.  View it in action at
-http://www.robscanlon.com/encom-boardroom .
+https://www.robscanlon.com/encom-boardroom .
 
 ![Boardroom light table](https://raw.github.com/arscan/encom-boardroom/master/images/screenshot_lighttable.jpg "Boardroom light table")
 
@@ -17,7 +17,7 @@ in the film contain a remarkable amount of detail despite only being visible
 for a couple of seconds. I am in awe of those that put it together.
 
 My focus was on the globe and I made it available as a [standalone
-library](http://github.com/arscan/encom-globe) for those interested. The other
+library](https://github.com/arscan/encom-globe) for those interested. The other
 elements are only loose adaptations of the film version. This project is not
 associated with Github, Wikipedia, Tron: Legacy, or Disney. It is just a
 tribute.

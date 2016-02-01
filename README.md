@@ -5,7 +5,7 @@ An HTML5 recreation of the [Boardroom
 Scene](http://work.gmunk.com/TRON-Board-Room) in Disney's [Tron:
 Legacy](http://www.imdb.com/tible/tt1104001/).  It currently displays realtime
 data from Github and Wikipedia to make it a bit more fun.  View it in action at
-https://www.robscanlon.com/encom-boardroom .
+https://www.robscanlon.com/encom-boardroom/ .
 
 ![Boardroom light table](https://raw.github.com/arscan/encom-boardroom/master/images/screenshot_lighttable.jpg "Boardroom light table")
 

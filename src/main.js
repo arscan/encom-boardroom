@@ -6,12 +6,19 @@ var $ = require("jquery"),
 
 require("jquery-ui");
 
-$.fn.center = function () {
+$.fn.center = function (scale) {
+
+    var top = Math.max(0, (($(window).height() - $(this).outerHeight()) / 2 - 50) + $(window).scrollTop());
+    var left = Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft());
+
+    if(scale){
+        top = Math.max(0, (($(window).height() - $(this).outerHeight() * scale) / 2 - 50) + $(window).scrollTop());
+        left = Math.max(0, (($(window).width() - $(this).outerWidth() * scale) / 2) + $(window).scrollLeft());
+    }
+
     this.css("position","fixed");
-    this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2 - 40) + 
-                             $(window).scrollTop()) + "px");
-    this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2 - 40) + 
-                              $(window).scrollLeft()) + "px");
+    this.css("top", top + "px");
+    this.css("left", left + "px");
     return this;
 }
 

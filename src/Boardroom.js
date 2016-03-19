@@ -43,20 +43,21 @@ var Boardroom = {};
 Boardroom.init = function(_streamType, data){
 
     streamType = _streamType;
-    var ratio = $(window).width() / 1918;
     blinkies = $('.blinky');
     mediaBoxes = $('.media-box .user-pic');
+
+    var ratio = $(window).width() / 1918;
     $("#boardroom").css({
         "zoom": ratio,
         "-moz-transform": "scale(" + ratio + ")",
         "-moz-transform-origin": "0 0"
     });
+    $("#boardroom").center(ratio);
 
     readmeContainer = $("#boardroom-readme-" + _streamType);
 
     Boardroom.data = data;
 
-    $("#boardroom").center();
 
     $("#fullscreen-link").click(function(e){
         e.preventDefault();
@@ -323,7 +324,7 @@ Boardroom.resize = function(){
         "-moz-transform-origin": "0 0"
     });
 
-    $("#boardroom").center();
+    $("#boardroom").center(ratio);
 };
 
 function showReadme() {
@@ -532,7 +533,6 @@ function getTime(){
 
 function formatYTD(first, last){
     var percentage = 100 * (((last- first) / first) - 1);
-    console.log(percentage);
     var output = percentage.toFixed(1) + "%";
     if(percentage > 0 && percentage < 100){
         output = "+" + output;

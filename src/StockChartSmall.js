@@ -94,7 +94,6 @@ var StockChartSmall = function(canvasId, opts){
     var min = sorted[0]*.8;
     var max = sorted[sorted.length-4]*1.2;
     var f = (max-min)/this.height;
-    console.log(f);
 
     var xIncrement = (this.width)/(30-2);
 

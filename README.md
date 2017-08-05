@@ -37,7 +37,7 @@ Or build and run with docker:
 
 ```sh
 docker build -t encom-boardroom .
-docker run -d -p 8000:8000 encom-boardroom
+docker run -p 8000:8000 encom-boardroom
 ```
 
 Then point your browser at `http://localhost:8000`.

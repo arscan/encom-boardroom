@@ -40,7 +40,7 @@ feeds, but it certainly is possible.  I did split out the globe into its own
 [standalone library](https://github.com/arscan/encom-globe) that can be easily
 reused though.
 
-### Noteable Dependencies
+### Notable Dependencies
 
 * [Node.js](http://nodejs.org/)
 * [Three.js](http://threejs.org/)

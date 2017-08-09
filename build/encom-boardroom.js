@@ -82066,7 +82066,9 @@ var listener = function (event) {
         if(active === "lt"){
             LightTable.message(JSON.parse(event.data));
         } else {
-            Boardroom.message(JSON.parse(event.data));
+            setTimeout(function(){
+                Boardroom.message(JSON.parse(event.data));
+            }, 3000 * Math.random());
         }
     }
 };

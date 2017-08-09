@@ -50,7 +50,7 @@ app.get('/', function(req, res){
  
 app.get('/events.js', function(req, res) {
  
-    req.socket.setTimeout(Infinity);
+    req.socket.setTimeout(Number.MAX_VALUE);
  
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
@@ -96,13 +96,10 @@ setInterval(function(){
 }, 3000);
 
 var sendData = function(data){
-
-    setTimeout(function(){
-        openConnections.forEach(function(resp) {
-            resp.write('id: ' + Date.now() + '\n');
-            resp.write('data:' + JSON.stringify(data) +   '\n\n');
-        });
-    }, 6000 * Math.random()); // spreading things out a bit
+    openConnections.forEach(function(resp) {
+        resp.write('id: ' + Date.now() + '\n');
+        resp.write('data:' + JSON.stringify(data) +   '\n\n');
+    });
 };
 
 

@@ -33,6 +33,13 @@ npm install
 PORT=8000 node stream-server.js
 ```
 
+Or build and run with docker:
+
+```sh
+docker build -t encom-boardroom .
+docker run -p 8000:8000 encom-boardroom
+```
+
 Then point your browser at `http://localhost:8000`.
 
 The code isn't particularly well organized right now to quickly add in new

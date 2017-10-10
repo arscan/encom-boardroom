@@ -490,6 +490,7 @@ function updateSliders(animateTime){
 
 function findArea(lat, lng){
 	// Data are from Daniel Pereira
+	// Polygon code from https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
 
 	const LatNAm = [90,      90, 78.13,  57.5, 15, 15, 1.25, 1.25, 51, 60,   60];
 	const LonNAm = [-168.75, -10, -10,  -37.5, -30, -75, -82.5, -105, -180, -180, -168.75];
@@ -523,7 +524,6 @@ function findArea(lat, lng){
 		for(i = 0, j = plats.length - 1; i < plats.length; j = i++) {
 			if(((plats[i] > lat) != (plats[j] > lat)) &&
 			(lng < (plngs[j] - plngs[i]) * (lat - plats[i]) / (plats[j] - plats[i]) + plngs[i])) {
-				//process.stderr.write("r = " + r + "\n");
 				r = !r;
 			}
 		}
